@@ -48,8 +48,8 @@ const Header: React.FC = () => {
     return (
         <header className="sticky top-0 bg-[#FBF9F4]/80 backdrop-blur-sm z-20 p-4 flex justify-between items-center border-b border-[#F1EADF]">
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                <img src="/AWARDLOGO.png" alt="Michy Logo" className="h-8 w-8" />
-                <span className="text-lg font-bold text-[#3A3A3A]">Michy</span>
+                <img src="/awardlogo.png" alt="Mitché Logo" className="h-8 w-8" />
+                <span className="text-lg font-bold text-[#3A3A3A]">Mitché</span>
             </div>
             <div className="relative">
                 <button onClick={handleBellClick} className="relative p-2 rounded-full hover:bg-gray-200/50">
