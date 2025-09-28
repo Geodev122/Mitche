@@ -33,12 +33,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const login = (idNumber: string, symbolicName: string, symbolicIcon: string) => {
-    // In a real app, idNumber would be verified server-side.
+    // In a real app, idNumber would be verified and role would come from the server.
+    // For demonstration, we'll assign roles based on the ID number string.
+    let userRole: Role = Role.Citizen;
+    if (idNumber.toUpperCase().includes('NGO')) {
+        userRole = Role.NGO;
+    } else if (idNumber.toUpperCase().includes('GOV')) {
+        userRole = Role.PublicWorker;
+    } else if (idNumber.toUpperCase().includes('ADMIN')) {
+        userRole = Role.Admin;
+    }
+
     const newUser: User = {
       id: `user_${Date.now()}`,
       symbolicName,
       symbolicIcon,
-      role: Role.Citizen,
+      role: userRole,
       hopePoints: 0,
       hopePointsBreakdown: {},
     };

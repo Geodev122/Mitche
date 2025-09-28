@@ -1,16 +1,22 @@
-
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import Card from '../components/ui/Card';
 import SymbolIcon from '../components/ui/SymbolIcon';
 import { Award, ShieldCheck, LogOut } from 'lucide-react';
-import { HopePointCategory } from '../types';
+import { HopePointCategory, Role } from '../types';
 
 interface ChartData {
   label: string;
   value: number;
   color: string;
 }
+
+const roleTranslation: { [key in Role]: string } = {
+    [Role.Citizen]: 'مواطن',
+    [Role.NGO]: 'منظمة غير حكومية',
+    [Role.PublicWorker]: 'عامل في القطاع العام',
+    [Role.Admin]: 'مدير',
+};
 
 const BarChart: React.FC<{ data: ChartData[]; max: number }> = ({ data, max }) => {
   return (
@@ -55,7 +61,8 @@ const Constellation: React.FC = () => {
           <SymbolIcon name={user.symbolicIcon} className="w-12 h-12 text-[#D4AF37]" />
         </div>
         <h1 className="text-3xl font-bold text-gray-800">{user.symbolicName}</h1>
-        <p className="text-md text-gray-500 mt-1">نجم في كوكبة الأمل</p>
+        <p className="text-sm bg-gray-100 text-gray-600 font-semibold inline-block px-3 py-1 rounded-full mt-2">{roleTranslation[user.role]}</p>
+        <p className="text-md text-gray-500 mt-2">نجم في كوكبة الأمل</p>
       </header>
       
       <Card className="text-center mb-6">
