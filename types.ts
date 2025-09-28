@@ -59,6 +59,8 @@ export interface Request {
   timestamp: Date;
   region: string;
   status: RequestStatus;
+  helperId?: string;
+  isConfirmedByRequester?: boolean;
 }
 
 export interface Offering {

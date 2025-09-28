@@ -21,7 +21,7 @@ const CreateRequest: React.FC = () => {
     e.preventDefault();
     if (!user) return;
     
-    addRequest({ title, description, type, mode, region }, user.id, user.symbolicName, user.symbolicIcon);
+    addRequest({ title, description, type, mode, region }, user);
     navigate('/echoes');
   };
 

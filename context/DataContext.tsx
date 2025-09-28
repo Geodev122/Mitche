@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import { Request, Offering, RequestType, RequestMode, Notification, HopePointCategory, RequestStatus, TapestryThread, TapestryThreadColor, TapestryThreadPattern } from '../types';
+import { Request, Offering, RequestType, RequestMode, Notification, HopePointCategory, RequestStatus, TapestryThread, TapestryThreadColor, TapestryThreadPattern, User } from '../types';
 import { useAuth } from './AuthContext';
 
 interface DataContextType {
@@ -7,9 +7,11 @@ interface DataContextType {
   offerings: Offering[];
   notifications: Notification[];
   tapestryThreads: TapestryThread[];
-  addRequest: (request: Omit<Request, 'id' | 'timestamp' | 'userId' | 'userSymbolicName' | 'userSymbolicIcon' | 'status'>, userId: string, userSymbolicName: string, userSymbolicIcon: string) => void;
+  addRequest: (request: Omit<Request, 'id' | 'timestamp' | 'userId' | 'userSymbolicName' | 'userSymbolicIcon' | 'status' | 'helperId' | 'isConfirmedByRequester'>, user: User) => void;
   addOffering: (offering: Omit<Offering, 'id' | 'timestamp' | 'userId'>, userId: string) => void;
-  fulfillRequest: (requestId: string, offeringUserId: string) => void;
+  initiateHelp: (requestId: string, helperId: string) => void;
+  confirmReceipt: (requestId: string) => void;
+  fulfillRequest: (requestId: string, helperId: string) => void;
   getNotificationsForUser: (userId: string) => Notification[];
   markAsRead: (notificationId: string) => void;
   acceptNomination: (userId: string, choice: 'Reveal' | 'Anonymous', details?: { realName: string, photoUrl?: string }) => void;
@@ -32,6 +34,7 @@ const MOCK_REQUESTS: Request[] = [
         timestamp: new Date(Date.now() - 86400000 * 1),
         region: 'بيروت',
         status: RequestStatus.Open,
+        isConfirmedByRequester: false,
     },
     {
         id: 'req_2',
@@ -45,6 +48,8 @@ const MOCK_REQUESTS: Request[] = [
         timestamp: new Date(Date.now() - 86400000 * 2),
         region: 'طرابلس',
         status: RequestStatus.Fulfilled,
+        helperId: 'user_789',
+        isConfirmedByRequester: true,
     },
      {
         id: 'req_3',
@@ -57,7 +62,9 @@ const MOCK_REQUESTS: Request[] = [
         mode: RequestMode.Silent,
         timestamp: new Date(Date.now() - 86400000 * 3),
         region: 'صيدا',
-        status: RequestStatus.Open,
+        status: RequestStatus.Pending,
+        helperId: 'user_123',
+        isConfirmedByRequester: false,
     },
 ];
 
@@ -129,15 +136,16 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [user]);
 
-  const addRequest = (requestData: Omit<Request, 'id' | 'timestamp' | 'userId' | 'userSymbolicName' | 'userSymbolicIcon' | 'status'>, userId: string, userSymbolicName: string, userSymbolicIcon: string) => {
+  const addRequest = (requestData: Omit<Request, 'id' | 'timestamp' | 'userId' | 'userSymbolicName' | 'userSymbolicIcon' | 'status' | 'helperId' | 'isConfirmedByRequester'>, user: User) => {
     const newRequest: Request = {
         ...requestData,
         id: `req_${Date.now()}`,
         timestamp: new Date(),
-        userId,
-        userSymbolicName,
-        userSymbolicIcon,
+        userId: user.id,
+        userSymbolicName: user.symbolicName,
+        userSymbolicIcon: user.symbolicIcon,
         status: RequestStatus.Open,
+        isConfirmedByRequester: false,
     };
     setRequests(prev => [newRequest, ...prev]);
   };
@@ -161,7 +169,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             id: `notif_${Date.now()}`,
             userId: request.userId,
             requestId: request.id,
-            message: `عرض جديد على طلبك "${request.title.substring(0, 20)}..."`,
+            message: `رسالة تشجيع جديدة على طلبك "${request.title.substring(0, 20)}..."`,
             timestamp: new Date(),
             isRead: false,
             type: 'Generic'
@@ -170,26 +178,62 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const fulfillRequest = (requestId: string, offeringUserId: string) => {
-    setRequests(prev => prev.map(r => r.id === requestId ? {...r, status: RequestStatus.Fulfilled} : r));
-    const request = requests.find(r => r.id === requestId);
-    if (request) {
-        const category = request.mode === RequestMode.Loud ? HopePointCategory.CommunityBuilder : HopePointCategory.SilentHero;
-        const pointsForHelp = 10;
-        addHopePoints(pointsForHelp, category);
+  const initiateHelp = (requestId: string, helperId: string) => {
+      setRequests(prev => prev.map(r => r.id === requestId ? {...r, status: RequestStatus.Pending, helperId: helperId} : r));
+      const request = requests.find(r => r.id === requestId);
+      const helper = user; // Assuming current user is the helper
+      if(request && helper) {
+        const newNotification: Notification = {
+            id: `notif_${Date.now()}_help_offer`,
+            userId: request.userId,
+            requestId: request.id,
+            message: `مستخدم "${helper.symbolicName}" بدأ بمساعدتك في طلبك "${request.title.substring(0, 20)}...".`,
+            timestamp: new Date(),
+            isRead: false,
+            type: 'Generic',
+        };
+        setNotifications(prev => [newNotification, ...prev]);
+      }
+  };
 
-        if (request.userId !== offeringUserId) {
-             const newNotification: Notification = {
-                id: `notif_${Date.now()}_fulfill`,
-                userId: request.userId,
-                requestId: request.id,
-                message: `تمت تلبية طلبك "${request.title.substring(0, 20)}..."!`,
-                timestamp: new Date(),
-                isRead: false,
-                type: 'Generic',
-            };
-            setNotifications(prev => [newNotification, ...prev]);
-        }
+  const confirmReceipt = (requestId: string) => {
+      setRequests(prev => prev.map(r => r.id === requestId ? {...r, isConfirmedByRequester: true} : r));
+      const request = requests.find(r => r.id === requestId);
+      if(request && request.helperId) {
+        const newNotification: Notification = {
+            id: `notif_${Date.now()}_help_confirm`,
+            userId: request.helperId,
+            requestId: request.id,
+            message: `صاحب الطلب "${request.title.substring(0, 20)}..." أكد استلام المساعدة. يمكنك الآن المطالبة بنقاط الأمل.`,
+            timestamp: new Date(),
+            isRead: false,
+            type: 'Generic',
+        };
+        setNotifications(prev => [newNotification, ...prev]);
+      }
+  };
+
+  const fulfillRequest = (requestId: string, helperId: string) => {
+    const request = requests.find(r => r.id === requestId);
+    if (!request || !request.isConfirmedByRequester) return;
+
+    setRequests(prev => prev.map(r => r.id === requestId ? {...r, status: RequestStatus.Fulfilled} : r));
+    
+    const category = request.mode === RequestMode.Loud ? HopePointCategory.CommunityBuilder : HopePointCategory.SilentHero;
+    const pointsForHelp = 10;
+    addHopePoints(pointsForHelp, category);
+
+    if (request.userId !== helperId) {
+         const newNotification: Notification = {
+            id: `notif_${Date.now()}_fulfill`,
+            userId: request.userId,
+            requestId: request.id,
+            message: `تمت تلبية طلبك "${request.title.substring(0, 20)}..."! شكراً للمستخدم الذي ساعدك.`,
+            timestamp: new Date(),
+            isRead: false,
+            type: 'Generic',
+        };
+        setNotifications(prev => [newNotification, ...prev]);
     }
   };
   
@@ -249,7 +293,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 
   return (
-    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread }}>
+    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt }}>
       {children}
     </DataContext.Provider>
   );
