@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import Card from '../components/ui/Card';
 import SymbolIcon from '../components/ui/SymbolIcon';
-import { Award, ShieldCheck, LogOut } from 'lucide-react';
+import { Award, ShieldCheck, LogOut, Download } from 'lucide-react';
 import { HopePointCategory, Role } from '../types';
 
 interface ChartData {
@@ -42,6 +42,32 @@ const BarChart: React.FC<{ data: ChartData[]; max: number }> = ({ data, max }) =
 
 const Constellation: React.FC = () => {
   const { user, logout } = useAuth();
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+    };
+  }, []);
+
+  const handleInstallClick = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult: { outcome: string }) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the A2HS prompt');
+        } else {
+          console.log('User dismissed the A2HS prompt');
+        }
+        setDeferredPrompt(null);
+      });
+    }
+  };
 
   if (!user) return null;
 
@@ -90,10 +116,12 @@ const Constellation: React.FC = () => {
       </Card>
       
       <div className="space-y-2 text-sm">
-        <button 
-            onClick={() => navigate('/nomination')}
-            className="w-full flex items-center justify-center py-3 px-4 bg-white border rounded-lg text-gray-700 hover:bg-gray-50"
-        >
+        {deferredPrompt && (
+          <button onClick={handleInstallClick} className="w-full flex items-center justify-center py-3 px-4 bg-green-50 border rounded-lg text-green-700 font-semibold">
+              <Download className="w-5 h-5 ml-2" /> تثبيت التطبيق
+          </button>
+        )}
+        <button className="w-full flex items-center justify-center py-3 px-4 bg-white border rounded-lg text-gray-700">
             <Award className="w-5 h-5 ml-2" /> ترشيحات الجوائز
         </button>
         <button className="w-full flex items-center justify-center py-3 px-4 bg-white border rounded-lg text-gray-700">

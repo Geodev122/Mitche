@@ -235,18 +235,6 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         };
         setNotifications(prev => [newNotification, ...prev]);
     }
-    
-    // Add notification to helper about earning points
-    const helperNotification: Notification = {
-        id: `notif_${Date.now()}_points`,
-        userId: helperId,
-        requestId: request.id,
-        message: `تم منحك ${pointsForHelp} نقاط أمل لمساعدتك في "${request.title.substring(0, 20)}..."`,
-        timestamp: new Date(),
-        isRead: false,
-        type: 'Generic',
-    };
-    setNotifications(prev => [helperNotification, ...prev]);
   };
   
     const getNotificationsForUser = (userId: string) => {

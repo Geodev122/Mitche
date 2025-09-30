@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 import { useNavigate } from 'react-router-dom';
 import Card from '../components/ui/Card';
-import { Shield, UserCheck, CircleCheck as CheckCircle, ArrowRight } from 'lucide-react';
+import { Shield, UserCheck, CheckCircle, ArrowRight } from 'lucide-react';
 
 const NominationResponse: React.FC = () => {
   const { user } = useAuth();
@@ -85,9 +85,8 @@ const NominationResponse: React.FC = () => {
       case 3: // Reveal Form
         return (
           <Card className="animate-fade-in-down">
-             <button onClick={() => setStep(2)} className="mb-4 text-gray-500 hover:text-gray-800 flex items-center">
+             <button onClick={() => setStep(2)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
                  <ArrowRight size={20} />
-                <span className="mr-2">العودة</span>
              </button>
             <h2 className="text-xl font-bold text-center text-gray-800 mb-4">الكشف عن هويتك</h2>
             <form onSubmit={handleRevealSubmit} className="space-y-4">
