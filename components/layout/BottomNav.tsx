@@ -10,20 +10,15 @@ const BottomNav: React.FC = () => {
   const { user } = useAuth();
 
   const navItems = [
-    { path: '/', label: t('nav.sanctuary'), icon: Home, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
+    { path: '/', label: t('nav.home'), icon: Home, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
     { path: '/echoes', label: t('nav.echoes'), icon: MessageSquare, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
     { path: '/events', label: t('nav.events'), icon: Calendar, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
     { path: '/leaderboard', label: t('nav.leaderboard'), icon: Trophy, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
-    { path: '/constellation', label: t('nav.constellation'), icon: Star, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
     { path: '/tapestry', label: t('nav.tapestry'), icon: BookOpen, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
     { path: '/admin', label: t('nav.admin'), icon: Shield, roles: [Role.Admin] },
   ];
   
   const accessibleNavItems = navItems.filter(item => user && item.roles.includes(user.role));
-
-  const activeLinkStyle = {
-    color: '#D4AF37', // A gold-like color for active state
-  };
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-[#FFFDF9] border-t border-[#EAE2D6] shadow-md z-10">
@@ -33,8 +28,13 @@ const BottomNav: React.FC = () => {
             key={path}
             to={path}
             end={path === '/'}
-            className="flex flex-col items-center justify-center w-full py-2 text-[#7F7B74] hover:text-[#D4AF37] transition-colors duration-300"
-            style={({ isActive }) => (isActive ? activeLinkStyle : {})}
+            className={({ isActive }) => 
+              `flex flex-col items-center justify-center w-full py-3 transition-colors duration-300 ${
+                isActive 
+                  ? 'text-[#D4AF37] bg-amber-50/50' 
+                  : 'text-[#7F7B74] hover:text-[#D4AF37]'
+              }`
+            }
           >
             <Icon size={24} />
             <span className="text-xs mt-1">{label}</span>

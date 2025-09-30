@@ -3,13 +3,15 @@ import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
 import SymbolIcon from '../components/ui/SymbolIcon';
-import { Award, ShieldCheck, LogOut, Download, MessageSquare, HeartHandshake, Building, Sunrise, Heart, PlusCircle, Handshake, CheckCircle, Pencil, MapPin, QrCode, ScanLine, Calendar } from 'lucide-react';
+import { Award, ShieldCheck, LogOut, Download, MessageSquare, HeartHandshake, Building, Sunrise, Heart, PlusCircle, Handshake, CheckCircle, Pencil, MapPin, QrCode, ScanLine, Calendar, Bell, BellOff, Send, ChevronRight } from 'lucide-react';
 import { HopePointCategory, RequestStatus, Role } from '../types';
 import { useTranslation } from 'react-i18next';
 import Modal from '../components/ui/Modal';
 import EditProfileModal from '../components/ui/EditProfileModal';
 import { useNavigate } from 'react-router-dom';
 import { timeSince } from '../utils/time';
+import { isPushSupported, subscribeUser, unsubscribeUser, getSubscription } from '../utils/notifications';
+
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -62,6 +64,17 @@ interface Activity {
     icon: React.ElementType;
 }
 
+const SettingsButton: React.FC<{icon: React.ElementType, label: string, onClick?: () => void, isDestructive?: boolean}> = ({icon: Icon, label, onClick, isDestructive}) => (
+    <button onClick={onClick} className={`w-full flex items-center justify-between text-left p-4 rounded-lg bg-white transition-colors duration-200 active:bg-gray-100 ${isDestructive ? 'text-red-600' : 'text-gray-700'}`}>
+        <div className="flex items-center">
+            <Icon className={`w-5 h-5 mr-3 rtl:mr-0 rtl:ml-3 ${isDestructive ? 'text-red-500' : 'text-gray-500'}`} />
+            <span className="font-semibold">{label}</span>
+        </div>
+        {!isDestructive && <ChevronRight className="w-5 h-5 text-gray-400" />}
+    </button>
+);
+
+
 const Constellation: React.FC = () => {
   const { user, logout } = useAuth();
   const { requests, offerings, tapestryThreads, communityEvents } = useData();
@@ -71,6 +84,10 @@ const Constellation: React.FC = () => {
   const [isAppInstalled, setIsAppInstalled] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  
+  const [isPushSupportedState, setIsPushSupportedState] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isSubscriptionLoading, setSubscriptionLoading] = useState(true);
 
   useEffect(() => {
     // Check if the app is already running in standalone mode.
@@ -103,6 +120,22 @@ const Constellation: React.FC = () => {
       window.removeEventListener('appinstalled', appInstalledHandler);
     };
   }, []);
+  
+  // New useEffect for push notifications
+  useEffect(() => {
+    if (isPushSupported()) {
+        setIsPushSupportedState(true);
+        // Check initial subscription status
+        getSubscription().then(sub => {
+            if (sub) {
+                setIsSubscribed(true);
+            }
+            setSubscriptionLoading(false);
+        });
+    } else {
+        setSubscriptionLoading(false);
+    }
+  }, []);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
@@ -120,6 +153,40 @@ const Constellation: React.FC = () => {
     // The `appinstalled` event will be fired if the user accepts.
     // If dismissed, the button will remain available.
   };
+  
+  const handleSubscriptionToggle = async () => {
+    setSubscriptionLoading(true);
+    if (isSubscribed) {
+        try {
+            await unsubscribeUser();
+            setIsSubscribed(false);
+        } catch (error) {
+            console.error('Failed to unsubscribe', error);
+        }
+    } else {
+        try {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                await subscribeUser();
+                setIsSubscribed(true);
+            } else {
+                console.warn('Notification permission denied.');
+            }
+        } catch (error) {
+            console.error('Failed to subscribe', error);
+        }
+    }
+    setSubscriptionLoading(false);
+  };
+
+  const handleSendTestNotification = () => {
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: 'show-test-notification' });
+    } else {
+        console.error("Service worker not active or not supported.");
+    }
+  }
+
 
   if (!user) return null;
 
@@ -211,50 +278,47 @@ const Constellation: React.FC = () => {
   const showInstallButton = deferredPrompt && !isAppInstalled;
 
   return (
-    <div className="p-4 space-y-6">
-      <header className="my-6">
-        <Card className="text-center">
-            <div className="w-24 h-24 bg-white border-2 border-[#D4AF37] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg -mt-16">
+    <div className="p-4 pb-24 space-y-6">
+        <Card className="relative pt-12">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-white border-4 border-[#D4AF37] rounded-full flex items-center justify-center shadow-lg">
                 <SymbolIcon name={user.symbolicIcon} className="w-12 h-12 text-[#D4AF37]" />
             </div>
-            <div className="flex items-center justify-center gap-2">
-                <h1 className="text-3xl font-bold text-gray-800">{user.symbolicName}</h1>
-                 <button 
-                    onClick={() => setIsEditModalOpen(true)}
-                    className="p-2 text-gray-400 hover:text-[#D4AF37] rounded-full hover:bg-gray-100 transition-colors"
-                    aria-label={t('constellation.editProfile.title')}
-                >
-                    <Pencil className="w-5 h-5" />
-                </button>
+            <div className="text-center">
+                 <div className="flex items-center justify-center gap-2">
+                    <h1 className="text-3xl font-bold text-gray-800">{user.symbolicName}</h1>
+                </div>
+                <p className="text-sm bg-gray-100 text-gray-600 font-semibold inline-block px-3 py-1 rounded-full mt-2">{t(`roles.${user.role}`)}</p>
+                
+                 <div className="mt-4 text-sm text-gray-600 text-center space-y-2">
+                    {user.location && (
+                        <div className="flex items-center justify-center gap-1">
+                            <MapPin className="w-4 h-4 text-gray-400" />
+                            <span>{user.location}</span>
+                        </div>
+                    )}
+                    {user.bio && (
+                        <p className="italic px-4">"{user.bio}"</p>
+                    )}
+                </div>
             </div>
-            <p className="text-sm bg-gray-100 text-gray-600 font-semibold inline-block px-3 py-1 rounded-full mt-2">{t(`roles.${user.role}`)}</p>
-            
-            <div className="mt-4 text-sm text-gray-600 text-center space-y-2">
-                {user.location && (
-                    <div className="flex items-center justify-center gap-1">
-                        <MapPin className="w-4 h-4 text-gray-400" />
-                        <span>{user.location}</span>
-                    </div>
-                )}
-                {user.bio && (
-                    <p className="italic px-4">"{user.bio}"</p>
-                )}
-                {user.qrCodeUrl && (
-                    <div className="pt-2">
-                        <button onClick={() => setIsQrModalOpen(true)} className="inline-flex items-center justify-center gap-2 text-sm bg-gray-100 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-200 transition-colors">
-                            <QrCode className="w-4 h-4" />
-                            {t('constellation.showQrCode')}
+            <div className="mt-4 pt-4 border-t flex justify-around text-center">
+                 <div>
+                    <p className="text-sm text-gray-500">{t('constellation.totalHopePoints')}</p>
+                    <p className="text-3xl font-bold text-[#D4AF37] my-1">{user.hopePoints}</p>
+                 </div>
+                 {user.qrCodeUrl && (
+                    <div className="border-l my-[-1rem] mx-2"></div>
+                 )}
+                 {user.qrCodeUrl && (
+                     <div>
+                        <p className="text-sm text-gray-500">{t('constellation.showQrCode')}</p>
+                        <button onClick={() => setIsQrModalOpen(true)} className="inline-flex items-center justify-center gap-2 text-3xl my-1 p-2 rounded-full text-[#D4AF37] bg-amber-50 hover:bg-amber-100 transition-colors">
+                            <QrCode className="w-6 h-6" />
                         </button>
                     </div>
-                )}
-            </div>
-
-            <div className="mt-4 pt-4 border-t">
-                <p className="text-sm text-gray-500">{t('constellation.totalHopePoints')}</p>
-                <p className="text-5xl font-bold text-[#D4AF37] my-2">{user.hopePoints}</p>
+                 )}
             </div>
         </Card>
-      </header>
       
       {isCitizen && (
         <Card>
@@ -323,31 +387,46 @@ const Constellation: React.FC = () => {
         <BarChart data={chartData} max={maxPoints} />
       </Card>
       
-      <button onClick={() => navigate('/scanner')} className="w-full flex items-center justify-center py-3 px-4 bg-[#D4AF37] text-white rounded-lg font-bold hover:bg-opacity-90 transition-colors text-lg shadow-md">
+      <button onClick={() => navigate('/scanner')} className="w-full flex items-center justify-center py-3 px-4 bg-[#D4AF37] text-white rounded-lg font-bold hover:bg-opacity-90 transition-colors text-lg shadow-md active:scale-95">
         <ScanLine className="w-6 h-6 mx-2" /> {t('constellation.scanToGiveHope')}
       </button>
 
-      <div className="space-y-2 text-sm">
-        {showInstallButton && (
-          <button onClick={handleInstallClick} className="w-full flex items-center justify-center py-3 px-4 bg-green-50 border rounded-lg text-green-700 font-semibold hover:bg-green-100 transition-colors">
-              <Download className="w-5 h-5 mx-2" /> {t('constellation.installApp')}
-          </button>
-        )}
-        {isAppInstalled && (
-            <div className="w-full flex items-center justify-center py-3 px-4 bg-green-50/50 border rounded-lg text-green-600/70">
-                <CheckCircle className="w-5 h-5 mx-2" /> {t('constellation.appInstalled')}
-            </div>
-        )}
-        <button className="w-full flex items-center justify-center py-3 px-4 bg-white border rounded-lg text-gray-700">
-            <Award className="w-5 h-5 mx-2" /> {t('constellation.awardNominations')}
-        </button>
-        <button className="w-full flex items-center justify-center py-3 px-4 bg-white border rounded-lg text-gray-700">
-            <ShieldCheck className="w-5 h-5 mx-2" /> {t('constellation.privacySettings')}
-        </button>
-        <button onClick={logout} className="w-full flex items-center justify-center py-3 px-4 bg-red-50 border rounded-lg text-red-600">
-            <LogOut className="w-5 h-5 mx-2" /> {t('constellation.logout')}
-        </button>
-      </div>
+      <Card className="!p-2">
+        <div className="space-y-2">
+            <SettingsButton icon={Pencil} label={t('constellation.editProfile.title')} onClick={() => setIsEditModalOpen(true)} />
+            <SettingsButton icon={Award} label={t('constellation.awardNominations')} />
+            <SettingsButton icon={ShieldCheck} label={t('constellation.privacySettings')} />
+            {isPushSupportedState && (
+                <div className="flex gap-2">
+                    <button
+                        onClick={handleSubscriptionToggle}
+                        disabled={isSubscriptionLoading}
+                        className="w-full flex items-center justify-between text-left p-4 rounded-lg bg-white transition-colors duration-200 active:bg-gray-100 text-gray-700 disabled:opacity-50"
+                    >
+                         <div className="flex items-center">
+                            {isSubscribed ? <BellOff className="w-5 h-5 mr-3 rtl:mr-0 rtl:ml-3 text-gray-500" /> : <Bell className="w-5 h-5 mr-3 rtl:mr-0 rtl:ml-3 text-gray-500" />}
+                            <span className="font-semibold">
+                                {isSubscriptionLoading ? t('constellation.notifications.loading') : (isSubscribed ? t('constellation.notifications.disable') : t('constellation.notifications.enable'))}
+                            </span>
+                        </div>
+                    </button>
+                    {isSubscribed && (
+                        <button
+                            onClick={handleSendTestNotification}
+                            className="flex-shrink-0 flex items-center justify-center p-4 bg-white rounded-lg text-green-700 hover:bg-gray-50 active:bg-gray-100"
+                            title={t('constellation.notifications.testTitle')}
+                        >
+                            <Send className="w-5 h-5" />
+                        </button>
+                    )}
+                </div>
+            )}
+             {showInstallButton && (
+              <SettingsButton icon={Download} label={t('constellation.installApp')} onClick={handleInstallClick} />
+            )}
+             <SettingsButton icon={LogOut} label={t('constellation.logout')} onClick={logout} isDestructive />
+        </div>
+      </Card>
       
       <EditProfileModal 
         isOpen={isEditModalOpen}

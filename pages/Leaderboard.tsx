@@ -46,7 +46,7 @@ const Leaderboard: React.FC = () => {
     const isCurrentUserInTop3 = currentUserRank > 0 && currentUserRank <= 3;
 
     return (
-        <div className="p-4">
+        <div className="p-4 pb-24">
             <header className="text-center my-6">
                 <Trophy className="w-12 h-12 mx-auto text-[#D4AF37] mb-2" />
                 <h1 className="text-3xl font-bold text-gray-800">{t('leaderboard.title')}</h1>
@@ -98,10 +98,10 @@ const Leaderboard: React.FC = () => {
 
             {/* Current User's Rank */}
             {currentUserRank > 0 && !isCurrentUserInTop3 && (
-                <div className="sticky bottom-20 mt-4">
+                <div className="fixed bottom-20 left-4 right-4 z-10">
                      <div className="bg-white/80 backdrop-blur-sm p-3 rounded-xl shadow-lg border border-[#D4AF37] flex items-center justify-between">
                         <div className="flex items-center">
-                            <span className="font-bold text-lg text-gray-700 mr-4">#{currentUserRank}</span>
+                            <span className="font-bold text-lg text-gray-700 mr-4 rtl:mr-0 rtl:ml-4">#{currentUserRank}</span>
                             <div className="flex items-center space-x-3 rtl:space-x-reverse">
                                 <SymbolIcon name={currentUser.symbolicIcon} className="w-8 h-8 text-gray-600" />
                                 <div>
@@ -110,7 +110,7 @@ const Leaderboard: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="text-right">
+                        <div className="text-right rtl:text-left">
                            <p className="font-bold text-lg text-[#D4AF37]">{currentUser.hopePoints}</p>
                            <p className="text-xs text-gray-500">{t('leaderboard.points')}</p>
                         </div>

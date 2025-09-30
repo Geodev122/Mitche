@@ -3,11 +3,11 @@
   "appName": "Mitché",
   "appSlogan": "Where Hope Echoes",
   "nav": {
-    "sanctuary": "Sanctuary",
+    "home": "Home",
     "echoes": "Echoes",
     "events": "Events",
     "leaderboard": "Leaderboard",
-    "constellation": "Constellation",
+    "constellation": "Profile",
     "tapestry": "Hope Tapestry",
     "admin": "Admin"
   },
@@ -29,11 +29,11 @@
     "selectName": "-- Select a Name --",
     "signupLoading": "Creating Account...",
     "symbolicNames": {
-      "hopeBearer": "Hope_Bearer",
-      "voiceOfLight": "Voice_of_Light",
-      "helpingHand": "Helping_Hand",
-      "morningStar": "Morning_Star",
-      "braveHeart": "Brave_Heart"
+      "hopeBearer": "Hope Bearer",
+      "voiceOfLight": "Voice of Light",
+      "helpingHand": "Helping Hand",
+      "morningStar": "Morning Star",
+      "braveHeart": "Brave Heart"
     },
     "errorInvalid": "Incorrect username or password.",
     "errorExists": "Username already exists.",
@@ -48,9 +48,7 @@
       "events": "Community Events",
       "eventsSub": "Join initiatives and gatherings",
       "tapestry": "Hope Tapestry",
-      "tapestrySub": "Read stories of resilience",
-      "constellation": "Your Constellation",
-      "constellationSub": "Your record of hope"
+      "tapestrySub": "Read stories of resilience"
     }
   },
   "echoes": {
@@ -59,6 +57,8 @@
     "filter": "Filter",
     "allCategories": "All Categories",
     "loading": "Loading echoes...",
+    "emptyTitle": "The Wall is a Sanctuary of Peace",
+    "emptySubtitle": "Its silence is a sign that for now, needs are met. New echoes will appear as they are cast by the community.",
     "time": {
       "just_now": "just now",
       "seconds_ago_one": "{{count}} second ago",
@@ -84,6 +84,7 @@
     "helpModal": {
       "titleHelp": "Provide Help",
       "bodyHelp": "You are about to start helping with this request. The requester will be notified. Please contact them at the number below to proceed.",
+      "phoneNumber": "📞 +961 71 123 456",
       "dummyPhone": "(This is a dummy number for demonstration purposes)",
       "confirmHelp": "I Confirm, I Will Help"
     },
@@ -170,10 +171,17 @@
       "bioPlaceholder": "Tell us a little about yourself...",
       "save": "Save Changes"
     },
-    "showQrCode": "Show QR Code",
+    "showQrCode": "QR Code",
     "qrCodeTitle": "Your QR Code",
     "qrCodeDesc": "Share this code to connect with {{name}}.",
-    "qrCodeMissing": "Save your profile to generate a QR code."
+    "qrCodeMissing": "Save your profile to generate a QR code.",
+    "notifications": {
+      "enable": "Enable Push Notifications",
+      "disable": "Disable Push Notifications",
+      "loading": "Loading...",
+      "testTitle": "Send Test Notification",
+      "unsupported": "Push notifications are not supported on this browser."
+    }
   },
   "tapestry": {
     "title": "Hope Tapestry",
@@ -247,6 +255,7 @@
     "CommunityGift": "Community Gift"
   },
   "requestStatus": {
+    "title": "Status",
     "Open": "Open",
     "Pending": "Pending",
     "Fulfilled": "Fulfilled",
@@ -272,8 +281,8 @@
   "events": {
     "title": "Community Events",
     "subtitle": "Opportunities to connect, give, and participate",
-    "emptyTitle": "No events right now.",
-    "emptySubtitle": "Organizations are always adding new events, check back soon."
+    "emptyTitle": "Be the Spark of Connection",
+    "emptySubtitle": "No events are scheduled yet. This is your chance to bring people together. Create an event and foster our community bonds."
   },
   "createEvent": {
     "title": "Create a New Event",
@@ -312,5 +321,37 @@
     "bearer": "Bearer",
     "points": "Points",
     "yourPosition": "Your Position"
+  },
+  "requestDetail": {
+    "title": "Request Details",
+    "notFound": "Request not found.",
+    "backToWall": "Back to Wall of Echoes",
+    "requester": "Requester",
+    "helper": "Being helped by",
+    "postedOn": "Posted",
+    "encouragementTitle": "Words of Encouragement",
+    "noEncouragement": "Be the first to send a word of encouragement.",
+    "detailsTitle": "Details"
+  },
+  "orgDashboard": {
+    "subtitle": "Your central hub for community action and support.",
+    "metrics": {
+      "openRequests": "Open Requests",
+      "silentRequests": "Silent Whispers",
+      "eventsOrganized": "Events Organized"
+    },
+    "silentWhispers": {
+      "title": "Silent Whispers",
+      "subtitle": "Confidential requests needing your attention.",
+      "empty": "No silent requests at the moment."
+    },
+    "echoes": {
+      "title": "Wall of Echoes Overview"
+    },
+    "events": {
+      "title": "Your Community Events"
+    },
+    "viewAll": "View All",
+    "createEvent": "Create New Event"
   }
 }

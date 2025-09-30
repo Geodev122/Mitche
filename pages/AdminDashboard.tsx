@@ -19,18 +19,21 @@ const StatCard: React.FC<{ icon: React.ElementType, value: number, label: string
 
 
 const AdminDashboard: React.FC = () => {
-    const { getAllUsers } = useAuth();
+    const { getAllUsers, user } = useAuth();
     const { requests, communityEvents, loading } = useData();
     const { t } = useTranslation();
     
     const totalUsers = getAllUsers().length;
 
     return (
-        <div className="p-4">
-            <header className="text-center my-6">
-                <Shield className="w-12 h-12 mx-auto text-[#3A3A3A] mb-2"/>
-                <h1 className="text-3xl font-bold text-gray-800">{t('admin.title')}</h1>
-                <p className="text-md text-gray-500 mt-1">{t('admin.subtitle')}</p>
+        <div className="p-4 pb-24">
+            <header className="my-6">
+                 <div className="text-center">
+                    <Shield className="w-12 h-12 mx-auto text-[#3A3A3A] mb-2"/>
+                    <h1 className="text-3xl font-bold text-gray-800">{t('admin.title')}</h1>
+                    <p className="text-md text-gray-500 mt-1">{t('admin.subtitle')}</p>
+                </div>
+                <p className="text-center text-lg text-gray-600 mt-4">{t('sanctuary.welcome', { name: user?.symbolicName })}</p>
             </header>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

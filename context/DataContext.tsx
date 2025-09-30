@@ -21,6 +21,8 @@ interface DataContextType {
   echoThread: (threadId: string) => void;
   loading: boolean;
   giveDailyPoint: (receiverId: string) => Promise<{ success: boolean; messageKey: string; receiverName?: string }>;
+  getRequestById: (requestId: string) => Request | undefined;
+  getOfferingsForRequest: (requestId: string) => Offering[];
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -70,6 +72,27 @@ const MOCK_REQUESTS: Request[] = [
         helperId: 'user_123',
         isConfirmedByRequester: false,
     },
+];
+
+const MOCK_OFFERINGS: Offering[] = [
+    {
+        id: 'offering_1',
+        userId: 'user_789', // يد_العون
+        requestId: 'req_1', // بحاجة إلى دعم نفسي
+        type: 'Encouragement',
+        message: 'أنت لست وحدك. القوة تكمن في طلب المساعدة. أتمنى لك السلام والطمأنينة.',
+        timestamp: new Date(Date.now() - 86400000 * 0.5),
+        pointsEarned: 3,
+    },
+    {
+        id: 'offering_2',
+        userId: 'user_123', // Bearer_324
+        requestId: 'req_3', // مساعدة في الحصول على دواء
+        type: 'Encouragement',
+        message: 'أتمنى لوالدتك الشفاء العاجل. لا تفقد الأمل، فالخير موجود.',
+        timestamp: new Date(Date.now() - 86400000 * 2.5),
+        pointsEarned: 3,
+    }
 ];
 
 const MOCK_EVENTS: CommunityEvent[] = [
@@ -133,6 +156,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Simulate API fetch
     setTimeout(() => {
       setRequests(MOCK_REQUESTS);
+      setOfferings(MOCK_OFFERINGS);
       setTapestryThreads(MOCK_THREADS);
       setCommunityEvents(MOCK_EVENTS);
       setLoading(false);
@@ -380,9 +404,16 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return { success: true, messageKey: 'scanner.success.giftSent', receiverName: receiver.symbolicName };
     };
 
+    const getRequestById = (requestId: string): Request | undefined => {
+        return requests.find(r => r.id === requestId);
+    };
+
+    const getOfferingsForRequest = (requestId: string): Offering[] => {
+        return offerings.filter(o => o.requestId === requestId).sort((a,b) => b.timestamp.getTime() - a.timestamp.getTime());
+    };
 
   return (
-    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, communityEvents, addCommunityEvent }}>
+    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, communityEvents, addCommunityEvent, getRequestById, getOfferingsForRequest }}>
       {children}
     </DataContext.Provider>
   );

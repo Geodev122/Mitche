@@ -1,0 +1,206 @@
+import React, { useState } from 'react';
+// FIX: Import the `Navigate` component from `react-router-dom` to handle declarative navigation.
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
+import { useData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
+import Card from '../components/ui/Card';
+import SymbolIcon from '../components/ui/SymbolIcon';
+import Modal from '../components/ui/Modal';
+import { Request, RequestStatus, Offering, Role } from '../types';
+import { timeSince } from '../utils/time';
+import { useTranslation } from 'react-i18next';
+import { ArrowLeft, ArrowRight, Info, Heart, Calendar, MapPin, Tag, Shield } from 'lucide-react';
+
+const statusStyles: { [key in RequestStatus]: { text: string; classes: string } } = {
+  [RequestStatus.Open]: { text: 'requestStatus.Open', classes: 'bg-green-100 text-green-700' },
+  [RequestStatus.Pending]: { text: 'requestStatus.Pending', classes: 'bg-yellow-100 text-yellow-700' },
+  [RequestStatus.Fulfilled]: { text: 'requestStatus.Fulfilled', classes: 'bg-blue-100 text-blue-700' },
+  [RequestStatus.Closed]: { text: 'requestStatus.Closed', classes: 'bg-gray-100 text-gray-700' },
+};
+
+const DetailItem: React.FC<{ icon: React.ElementType; label: string; value: string }> = ({ icon: Icon, label, value }) => (
+  <div className="flex items-start text-sm">
+    <Icon className="w-4 h-4 text-gray-400 mt-1 mr-3 rtl:mr-0 rtl:ml-3 flex-shrink-0" />
+    <div>
+      <p className="font-semibold text-gray-500">{label}</p>
+      <p className="text-gray-800">{value}</p>
+    </div>
+  </div>
+);
+
+const EncouragementCard: React.FC<{ offering: Offering }> = ({ offering }) => {
+  const { getUserById } = useAuth();
+  const { t } = useTranslation();
+  const sender = getUserById(offering.userId);
+  if (!sender) return null;
+
+  return (
+    <div className="flex items-start space-x-3 rtl:space-x-reverse p-4 border-b last:border-b-0">
+      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+        <SymbolIcon name={sender.symbolicIcon} className="w-6 h-6 text-gray-500" />
+      </div>
+      <div className="flex-grow">
+        <div className="flex justify-between items-center">
+          <p className="font-bold text-sm text-gray-800">{sender.symbolicName}</p>
+          <p className="text-xs text-gray-400">{timeSince(offering.timestamp, t)}</p>
+        </div>
+        <p className="text-gray-600 text-sm mt-1">{offering.message}</p>
+      </div>
+    </div>
+  );
+};
+
+const RequestDetail: React.FC = () => {
+  const { requestId } = useParams<{ requestId: string }>();
+  const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const { getRequestById, getOfferingsForRequest, addOffering, initiateHelp, confirmReceipt, fulfillRequest } = useData();
+  const { user, getUserById } = useAuth();
+  
+  const [isHelpModalOpen, setHelpModalOpen] = useState(false);
+  const [isEncourageModalOpen, setEncourageModalOpen] = useState(false);
+  const [encouragementMessage, setEncouragementMessage] = useState('');
+
+  if (!requestId || !user) {
+    return <Navigate to="/echoes" />;
+  }
+
+  const request = getRequestById(requestId);
+  const offerings = getOfferingsForRequest(requestId);
+  const encouragements = offerings.filter(o => o.type === 'Encouragement');
+  
+  if (!request) {
+    return <div className="p-6 text-center">{t('requestDetail.notFound')}</div>;
+  }
+  
+  const helper = request.helperId ? getUserById(request.helperId) : null;
+  const isOwner = user.id === request.userId;
+  const isHelper = user.id === request.helperId;
+
+  const handleInitiateHelp = () => {
+    initiateHelp(request.id, user.id);
+    setHelpModalOpen(false);
+  };
+
+  const handleSendEncouragement = () => {
+    if (encouragementMessage.trim() === '') return;
+    const offering = {
+      requestId: request.id,
+      type: 'Encouragement' as 'Encouragement',
+      message: encouragementMessage,
+      pointsEarned: 3,
+    };
+    addOffering(offering, user.id);
+    setEncourageModalOpen(false);
+    setEncouragementMessage('');
+  };
+
+  const renderActionButtons = () => {
+    let buttons = null;
+    if (isOwner) {
+      if (request.status === RequestStatus.Pending && !request.isConfirmedByRequester) {
+        buttons = <button onClick={() => confirmReceipt(request.id)} className="w-full px-4 py-3 text-sm bg-green-500 text-white rounded-lg font-bold hover:bg-green-600">{t('echoes.card.confirmReceipt')}</button>;
+      }
+    } else if (request.status === RequestStatus.Open) {
+      buttons = (
+        <div className="flex flex-col sm:flex-row gap-2">
+          <button onClick={() => setHelpModalOpen(true)} className="flex-1 px-4 py-3 text-sm bg-[#3A3A3A] text-white rounded-lg font-bold hover:bg-opacity-80">{t('echoes.card.provideHelp')}</button>
+          <button onClick={() => setEncourageModalOpen(true)} className="flex-1 px-4 py-3 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50">{t('echoes.card.sendEncouragement')}</button>
+        </div>
+      );
+    } else if (request.status === RequestStatus.Pending && isHelper) {
+      if (request.isConfirmedByRequester) {
+        buttons = <button onClick={() => fulfillRequest(request.id, user.id)} className="w-full px-4 py-3 text-sm bg-[#D4AF37] text-white rounded-lg font-bold hover:bg-opacity-80">{t('echoes.card.claimHopePoints')}</button>;
+      } else {
+        buttons = <button className="w-full px-4 py-3 text-sm bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed" disabled>{t('echoes.card.waitingReceipt')}</button>;
+      }
+    }
+
+    if (!buttons) return null;
+
+    return (
+        <div className="fixed bottom-16 left-0 right-0 bg-[#FBF9F4]/80 backdrop-blur-sm p-4 border-t border-[#F1EADF] z-10">
+            {buttons}
+        </div>
+    );
+  };
+  
+  const currentStatus = statusStyles[request.status];
+  const BackArrow = i18n.dir() === 'rtl' ? ArrowRight : ArrowLeft;
+
+  return (
+    <>
+      <div className="p-4 pb-32">
+        <header className="flex items-center my-4">
+          <button onClick={() => navigate('/echoes')} className="p-2 mr-2 rtl:mr-0 rtl:ml-2 rounded-full hover:bg-gray-100">
+            <BackArrow size={24} className="text-gray-700" />
+          </button>
+          <h1 className="text-2xl font-bold text-gray-800">{t('requestDetail.title')}</h1>
+        </header>
+        
+        <div className="space-y-4">
+            <Card>
+                <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-[#F1EADF] rounded-full flex items-center justify-center">
+                        <SymbolIcon name={request.userSymbolicIcon} className="w-7 h-7 text-[#D4AF37]" />
+                    </div>
+                    <div className="mx-3">
+                        <h3 className="font-bold text-gray-800">{request.userSymbolicName}</h3>
+                        <p className="text-xs text-gray-500">{t('requestDetail.postedOn')} {timeSince(request.timestamp, t)}</p>
+                    </div>
+                </div>
+                <h2 className="text-xl font-bold text-gray-800 mb-2">{request.title}</h2>
+                <p className="text-gray-600 whitespace-pre-wrap">{request.description}</p>
+                {helper && <p className="text-sm text-center bg-blue-50 text-blue-700 font-semibold p-2 rounded-md mt-4">{t('requestDetail.helper')}: {helper.symbolicName}</p>}
+            </Card>
+            
+            <Card>
+                <h3 className="text-lg font-bold text-gray-800 mb-4">{t('requestDetail.detailsTitle')}</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <DetailItem icon={Info} label={t('requestStatus.title')} value={t(currentStatus.text)} />
+                    <DetailItem icon={Tag} label={t('createRequest.form.category')} value={t(`requestTypes.${request.type}`)} />
+                    <DetailItem icon={MapPin} label={t('createRequest.form.region')} value={request.region} />
+                    <DetailItem icon={Shield} label={t('createRequest.form.mode')} value={request.mode === 'Loud' ? t('createRequest.form.modeLoud') : t('createRequest.form.modeSilent')} />
+                </div>
+            </Card>
+
+            {renderActionButtons()}
+
+            <Card>
+                <h3 className="text-lg font-bold text-gray-800 mb-2 px-4 pt-2">{t('requestDetail.encouragementTitle')}</h3>
+                {encouragements.length > 0 ? (
+                    <div>{encouragements.map(offering => <EncouragementCard key={offering.id} offering={offering} />)}</div>
+                ) : (
+                    <div className="text-center text-gray-500 py-8 px-4">
+                        <Heart className="w-8 h-8 mx-auto text-gray-300 mb-2" />
+                        <p>{t('requestDetail.noEncouragement')}</p>
+                    </div>
+                )}
+            </Card>
+        </div>
+      </div>
+      
+      <Modal isOpen={isHelpModalOpen} onClose={() => setHelpModalOpen(false)} title={t('echoes.helpModal.titleHelp')}>
+        <>
+            <p className="text-gray-600 mb-4">{t('echoes.helpModal.bodyHelp')}</p>
+            <p className="text-center font-bold text-lg bg-gray-100 p-2 rounded-md">{t('echoes.helpModal.phoneNumber')}</p>
+            <p className="text-xs text-gray-400 text-center my-2">{t('echoes.helpModal.dummyPhone')}</p>
+        </>
+        <button onClick={handleInitiateHelp} className="w-full mt-4 bg-[#3A3A3A] text-white py-3 rounded-lg font-bold hover:bg-opacity-90">{t('echoes.helpModal.confirmHelp')}</button>
+      </Modal>
+
+      <Modal isOpen={isEncourageModalOpen} onClose={() => setEncourageModalOpen(false)} title={t('echoes.encourageModal.title')}>
+          <textarea 
+            value={encouragementMessage}
+            onChange={(e) => setEncouragementMessage(e.target.value)}
+            rows={4}
+            className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]"
+            placeholder={t('echoes.encourageModal.placeholder')}
+          />
+          <button onClick={handleSendEncouragement} className="w-full mt-4 bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90">{t('echoes.encourageModal.send')}</button>
+      </Modal>
+    </>
+  );
+};
+
+export default RequestDetail;

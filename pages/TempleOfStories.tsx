@@ -71,15 +71,15 @@ const ThreadCard: React.FC<{ thread: TapestryThread }> = ({ thread }) => {
                     </div>
                 </div>
                 
-                <p className="text-gray-700 italic mb-4">"{thread.story}"</p>
+                <p className="text-gray-700 italic mb-4 leading-relaxed">"{thread.story}"</p>
 
                 <div className="flex justify-between items-center text-sm text-gray-500 border-t pt-3 mt-4">
                     <div className="flex items-center" title={t('tapestry.livesTouched')}>
-                        <Zap className="w-4 h-4 ml-1 rtl:ml-0 rtl:mr-1 text-blue-400" />
+                        <Zap className="w-4 h-4 mr-1 rtl:mr-0 rtl:ml-1 text-blue-400" />
                         <span>{thread.rippleTag}</span>
                     </div>
-                    <button onClick={handleEcho} className="flex items-center hover:text-green-500 transition-colors" title="Echo this Story">
-                        <Wind className="w-4 h-4 ml-1 rtl:ml-0 rtl:mr-1" />
+                    <button onClick={handleEcho} className="flex items-center hover:text-green-500 transition-colors active:scale-95" title="Echo this Story">
+                        <Wind className="w-4 h-4 mr-1 rtl:mr-0 rtl:ml-1" />
                         <span>{t('tapestry.echoStory', { count: thread.echoes })}</span>
                     </button>
                 </div>
@@ -141,7 +141,7 @@ const HopeTapestry: React.FC = () => {
     ];
 
     return (
-        <div className="p-4">
+        <div className="p-4 pb-24">
             <header className="text-center my-6">
                 <BookOpen className="w-12 h-12 mx-auto text-[#D4AF37] mb-2"/>
                 <h1 className="text-3xl font-bold text-gray-800">{t('tapestry.title')}</h1>
@@ -168,30 +168,32 @@ const HopeTapestry: React.FC = () => {
                 </div>
             </Card>
 
-            <div className="flex justify-center flex-wrap gap-2 mb-6">
-                {filterOptions.map(opt => {
-                    const isActive = filter === opt.value;
-                    let activeClasses = '';
-                    if (isActive) {
-                        if (opt.value === 'All') {
-                            activeClasses = 'bg-[#3A3A3A] text-white border-transparent';
-                        } else {
-                            const colors = colorMap[opt.value];
-                            activeClasses = `${colors.bg} ${colors.text} ${colors.border}`;
+            <div className="mb-6">
+                <div className="flex space-x-2 rtl:space-x-reverse overflow-x-auto pb-2 -mx-4 px-4">
+                    {filterOptions.map(opt => {
+                        const isActive = filter === opt.value;
+                        let activeClasses = '';
+                        if (isActive) {
+                            if (opt.value === 'All') {
+                                activeClasses = 'bg-[#3A3A3A] text-white border-transparent';
+                            } else {
+                                const colors = colorMap[opt.value];
+                                activeClasses = `${colors.bg} ${colors.text} ${colors.border}`;
+                            }
                         }
-                    }
-                    const inactiveClasses = 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50';
+                        const inactiveClasses = 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50';
 
-                    return (
-                        <button
-                            key={opt.value}
-                            onClick={() => setFilter(opt.value)}
-                            className={`px-3 py-1 text-sm font-semibold rounded-full border-2 transition-colors ${isActive ? activeClasses : inactiveClasses}`}
-                        >
-                            {opt.label}
-                        </button>
-                    );
-                })}
+                        return (
+                            <button
+                                key={opt.value}
+                                onClick={() => setFilter(opt.value)}
+                                className={`px-4 py-2 text-sm font-semibold rounded-full border transition-colors whitespace-nowrap ${isActive ? activeClasses : inactiveClasses}`}
+                            >
+                                {opt.label}
+                            </button>
+                        );
+                    })}
+                </div>
             </div>
 
             <div className="space-y-6">
