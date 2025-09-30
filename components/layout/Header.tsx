@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Bell } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
@@ -9,12 +9,29 @@ const Header: React.FC = () => {
     const { user } = useAuth();
     const { getNotificationsForUser, markAsRead } = useData();
     const [showNotifications, setShowNotifications] = useState(false);
+    const notificationRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
 
     if (!user) return null;
 
     const notifications = getNotificationsForUser(user.id);
     const unreadCount = notifications.filter(n => !n.isRead).length;
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+                setShowNotifications(false);
+            }
+        };
+
+        if (showNotifications) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showNotifications]);
 
     const handleBellClick = () => {
         setShowNotifications(!showNotifications);
@@ -46,12 +63,12 @@ const Header: React.FC = () => {
     };
 
     return (
-        <header className="sticky top-0 bg-[#FBF9F4]/80 backdrop-blur-sm z-20 p-4 flex justify-between items-center border-b border-[#F1EADF]">
+        <header className="sticky top-0 bg-[#FBF9F4]/80 backdrop-blur-sm z-20 p-4 flex justify-between items-center border-b border-[#F1EADF] relative">
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <img src="/awardlogo.png" alt="Mitché Logo" className="h-8 w-8" />
                 <span className="text-lg font-bold text-[#3A3A3A]">Michy</span>
             </div>
-            <div className="relative">
+            <div className="relative" ref={notificationRef}>
                 <button onClick={handleBellClick} className="relative p-2 rounded-full hover:bg-gray-200/50">
                     <Bell className="w-6 h-6 text-gray-600" />
                     {unreadCount > 0 && (
@@ -61,7 +78,7 @@ const Header: React.FC = () => {
                     )}
                 </button>
                 {showNotifications && (
-                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-[#F1EADF] overflow-hidden animate-fade-in-down z-50">
+                    <div className="absolute left-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-xl border border-[#F1EADF] overflow-hidden animate-fade-in-down z-50">
                         <div className="p-3 font-bold text-gray-700 border-b">الإشعارات</div>
                         {notifications.length > 0 ? (
                            <ul className="max-h-96 overflow-y-auto">
@@ -76,6 +93,7 @@ const Header: React.FC = () => {
                         ) : (
                             <p className="p-4 text-sm text-center text-gray-500">لا توجد إشعارات جديدة.</p>
                         )}
+                        <div className="absolute top-[-8px] right-4 w-4 h-4 bg-white border-l border-t border-[#F1EADF] transform rotate-45"></div>
                     </div>
                 )}
             </div>
