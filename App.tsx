@@ -5,6 +5,7 @@ import { DataProvider } from './context/DataContext';
 import LanguageManager from './components/LanguageManager';
 import { Role } from './types';
 
+import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 import WallOfEchoes from './pages/WallOfEchoes';
 import TempleOfStories from './pages/TempleOfStories';
@@ -55,37 +56,49 @@ const ProtectedRoute: React.FC<{ children: ReactNode; roles: Role[] }> = ({ chil
 const Main: React.FC = () => {
   const { user } = useAuth();
 
+  if (!user) {
+    return (
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<Navigate to="/login" />} />
+      </Routes>
+    );
+  }
+
+  if (!user.hasCompletedOnboarding) {
+    return (
+      <Routes>
+        <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="*" element={<Navigate to="/onboarding" />} />
+      </Routes>
+    );
+  }
+
   return (
     <Routes>
-      {!user ? (
-        <>
-          <Route path="/login" element={<Login />} />
-          <Route path="*" element={<Navigate to="/login" />} />
-        </>
-      ) : (
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="echoes" element={<WallOfEchoes />} />
-          <Route path="echoes/:requestId" element={<RequestDetail />} />
-          <Route path="echoes/new" element={<CreateRequest />} />
-          <Route path="events" element={<CommunityEvents />} />
-          <Route path="events/new" element={
-            <ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]}>
-              <CreateEvent />
-            </ProtectedRoute>
-          } />
-          <Route path="leaderboard" element={<Leaderboard />} />
-          <Route path="tapestry" element={<TempleOfStories />} />
-          <Route path="nomination" element={<NominationResponse />} />
-          <Route path="scanner" element={<Scanner />} />
-          <Route path="admin" element={
-            <ProtectedRoute roles={[Role.Admin]}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Route>
-      )}
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="echoes" element={<WallOfEchoes />} />
+        <Route path="echoes/:requestId" element={<RequestDetail />} />
+        <Route path="echoes/new" element={<CreateRequest />} />
+        <Route path="events" element={<CommunityEvents />} />
+        <Route path="events/new" element={
+          <ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]}>
+            <CreateEvent />
+          </ProtectedRoute>
+        } />
+        <Route path="leaderboard" element={<Leaderboard />} />
+        <Route path="tapestry" element={<TempleOfStories />} />
+        <Route path="nomination" element={<NominationResponse />} />
+        <Route path="scanner" element={<Scanner />} />
+        <Route path="admin" element={
+          <ProtectedRoute roles={[Role.Admin]}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="onboarding" element={<Navigate to="/" />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Route>
     </Routes>
   );
 };

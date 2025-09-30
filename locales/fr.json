@@ -25,7 +25,7 @@
     "username": "Nom d'utilisateur",
     "password": "Mot de passe",
     "loginLoading": "Connexion en cours...",
-    "chooseSymbolicIdentity": "Choisissez Votre Identité Symbolique",
+    "chooseSymbolicIdentity": "Choisissez Votre Nom Symbolique",
     "selectName": "-- Choisissez un Nom --",
     "signupLoading": "Création du compte...",
     "symbolicNames": {
@@ -37,7 +37,42 @@
     },
     "errorInvalid": "Nom d'utilisateur ou mot de passe incorrect.",
     "errorExists": "Ce nom d'utilisateur existe déjà.",
-    "errorSymbolicName": "Veuillez choisir un nom symbolique."
+    "errorSymbolicName": "Veuillez choisir un nom symbolique.",
+    "identityChoiceInfo": "Vous choisirez votre identité symbolique après avoir créé votre compte."
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Bienvenue dans notre Sanctuaire",
+      "subtitle": "Avant de commencer, explorons les principes fondamentaux qui façonnent notre monde."
+    },
+    "concepts": {
+      "echoes": {
+        "title": "Échos : Appels d'Espoir",
+        "description": "Lorsque vous avez besoin d'aide, vous lancez un 'Écho'. C'est votre demande anonyme qui atteint la communauté."
+      },
+      "offerings": {
+        "title": "Offrandes : Graines de Compassion",
+        "description": "Vous pouvez répondre aux Échos avec des 'Offrandes' - une aide matérielle ou des mots d'encouragement."
+      },
+      "identity": {
+        "title": "Votre Identité : Un Porteur d'Espoir",
+        "description": "Ici, vous êtes connu par le nom et le symbole que vous avez choisis, garantissant la dignité et la sécurité pour tous."
+      }
+    },
+    "identity": {
+      "title": "Créez Votre Identité Symbolique",
+      "subtitle": "Choisissez le nom et le symbole qui représenteront votre lumière dans cette communauté. C'est le bouclier qui protège votre véritable identité.",
+      "chooseIcon": "Choisissez Votre Symbole"
+    },
+    "confirm": {
+      "title": "Vous Faites Maintenant Partie de la Tapisserie",
+      "subtitle": "Ceci est votre identité en tant que Porteur d'Espoir. Souvenez-vous, derrière chaque symbole se cache un cœur humain."
+    },
+    "buttons": {
+      "next": "Suivant",
+      "back": "Retour",
+      "complete": "Entrer dans le Sanctuaire"
+    }
   },
   "sanctuary": {
     "welcome": "Bienvenue, {{name}}",
