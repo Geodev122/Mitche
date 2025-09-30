@@ -59,14 +59,20 @@
     "filter": "Filtrer",
     "allCategories": "Toutes les catégories",
     "loading": "Chargement des échos...",
-    "timeSince": "il y a {{time}}",
     "time": {
-      "year": "an",
-      "month": "mois",
-      "day": "jour",
-      "hour": "heure",
-      "minute": "minute",
-      "second": "seconde"
+      "just_now": "à l'instant",
+      "seconds_ago_one": "il y a {{count}} seconde",
+      "seconds_ago_other": "il y a {{count}} secondes",
+      "minutes_ago_one": "il y a {{count}} minute",
+      "minutes_ago_other": "il y a {{count}} minutes",
+      "hours_ago_one": "il y a {{count}} heure",
+      "hours_ago_other": "il y a {{count}} heures",
+      "days_ago_one": "il y a {{count}} jour",
+      "days_ago_other": "il y a {{count}} jours",
+      "months_ago_one": "il y a {{count}} mois",
+      "months_ago_other": "il y a {{count}} mois",
+      "years_ago_one": "il y a {{count}} an",
+      "years_ago_other": "il y a {{count}} ans"
     },
     "card": {
       "provideHelp": "Apporter de l'aide",
@@ -153,7 +159,8 @@
       "noActivity": "Aucune activité récente à afficher.",
       "createdRequest": "Vous avez créé une demande : \"{{title}}\"",
       "helpedRequest": "Vous avez aidé avec une demande : \"{{title}}\"",
-      "sentEncouragement": "Vous avez envoyé un encouragement pour : \"{{title}}\""
+      "sentEncouragement": "Vous avez envoyé un encouragement pour : \"{{title}}\"",
+      "aRequest": "une demande"
     },
     "editProfile": {
       "title": "Modifier le Profil",
@@ -182,7 +189,11 @@
     "livesTouched": "Vies Touchées",
     "echoStory": "Écho ({{count}})",
     "emptyTitle": "Aucun fil dans cette section pour le moment.",
-    "emptySubtitle": "Mais la tapisserie grandit chaque jour, grâce à des gens comme vous."
+    "emptySubtitle": "Mais la tapisserie grandit chaque jour, grâce à des gens comme vous.",
+    "story": {
+      "revealed": "Une nouvelle histoire d'espoir, révélée au monde par le courage et la compassion.",
+      "anonymous": "L'éclat d'une étoile silencieuse, ressenti par beaucoup, connu de peu. Un témoignage de force tranquille."
+    }
   },
   "nomination": {
     "noNomination": "Aucune nomination active.",

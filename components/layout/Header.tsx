@@ -6,6 +6,7 @@ import { Notification } from '../../types';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../ui/LanguageSwitcher';
+import { timeSince } from '../../utils/time';
 
 const Header: React.FC = () => {
     const { user } = useAuth();
@@ -31,21 +32,6 @@ const Header: React.FC = () => {
         if (notification.type === 'Nomination') {
             navigate('/nomination');
         }
-    };
-    
-    const timeSince = (date: Date) => {
-        const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-        let interval = seconds / 31536000;
-        if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.year')}` });
-        interval = seconds / 2592000;
-        if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.month')}` });
-        interval = seconds / 86400;
-        if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.day')}` });
-        interval = seconds / 3600;
-        if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.hour')}` });
-        interval = seconds / 60;
-        if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.minute')}` });
-        return t('echoes.timeSince', { time: `${Math.floor(seconds)} ${t('echoes.time.second')}` });
     };
     
     const getNotificationMessage = (n: Notification): string => {
@@ -83,7 +69,7 @@ const Header: React.FC = () => {
                                        <li key={n.id} onClick={() => handleNotificationClick(n)}
                                         className={`p-3 border-b border-gray-100 cursor-pointer hover:bg-gray-50 ${!n.isRead ? 'bg-amber-50' : ''}`}>
                                            <p className="text-sm text-gray-800">{getNotificationMessage(n)}</p>
-                                           <p className="text-xs text-gray-400 mt-1">{timeSince(n.timestamp)}</p>
+                                           <p className="text-xs text-gray-400 mt-1">{timeSince(n.timestamp, t)}</p>
                                        </li>
                                    ))}
                                </ul>

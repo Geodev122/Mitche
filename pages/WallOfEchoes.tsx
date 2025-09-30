@@ -8,6 +8,7 @@ import SymbolIcon from '../components/ui/SymbolIcon';
 import { useAuth } from '../context/AuthContext';
 import Modal from '../components/ui/Modal';
 import { useTranslation } from 'react-i18next';
+import { timeSince } from '../utils/time';
 
 const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
   const { addOffering, initiateHelp, confirmReceipt, fulfillRequest } = useData();
@@ -18,21 +19,6 @@ const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
   const [encouragementMessage, setEncouragementMessage] = useState('');
 
   if (!user) return null;
-
-  const timeSince = (date: Date) => {
-    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-    let interval = seconds / 31536000;
-    if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.year')}` });
-    interval = seconds / 2592000;
-    if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.month')}` });
-    interval = seconds / 86400;
-    if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.day')}` });
-    interval = seconds / 3600;
-    if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.hour')}` });
-    interval = seconds / 60;
-    if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.minute')}` });
-    return t('echoes.timeSince', { time: `${Math.floor(seconds)} ${t('echoes.time.second')}` });
-  };
 
   const handleInitiateHelp = () => {
     initiateHelp(request.id, user.id);
@@ -112,7 +98,7 @@ const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
           <div className="flex-grow">
             <div className="flex justify-between items-center">
               <h3 className="font-bold text-gray-800">{request.userSymbolicName}</h3>
-              <span className="text-xs text-gray-400">{timeSince(request.timestamp)}</span>
+              <span className="text-xs text-gray-400">{timeSince(request.timestamp, t)}</span>
             </div>
             <span className="text-sm font-semibold text-[#D4AF37]">{t(`requestTypes.${request.type}`)} - {request.region}</span>
             <p className="text-gray-600 mt-2 text-md">{request.description}</p>
