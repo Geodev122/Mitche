@@ -25,7 +25,7 @@
     "username": "Username",
     "password": "Password",
     "loginLoading": "Logging in...",
-    "chooseSymbolicIdentity": "Choose Your Symbolic Identity",
+    "chooseSymbolicIdentity": "Choose Your Symbolic Name",
     "selectName": "-- Select a Name --",
     "signupLoading": "Creating Account...",
     "symbolicNames": {
@@ -37,7 +37,42 @@
     },
     "errorInvalid": "Incorrect username or password.",
     "errorExists": "Username already exists.",
-    "errorSymbolicName": "Please choose a symbolic name."
+    "errorSymbolicName": "Please choose a symbolic name.",
+    "identityChoiceInfo": "You will choose your symbolic identity after creating your account."
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Welcome to Our Sanctuary",
+      "subtitle": "Before you begin, let's explore the core principles that shape our world."
+    },
+    "concepts": {
+      "echoes": {
+        "title": "Echoes: Calls of Hope",
+        "description": "When you need help, you cast an 'Echo'. It is your anonymous request that reaches the community."
+      },
+      "offerings": {
+        "title": "Offerings: Seeds of Compassion",
+        "description": "You can respond to Echoes with 'Offerings' - either material help or words of encouragement."
+      },
+      "identity": {
+        "title": "Your Identity: A Hope Bearer",
+        "description": "Here, you are known by your chosen name and symbol, ensuring dignity and safety for all."
+      }
+    },
+    "identity": {
+      "title": "Forge Your Symbolic Identity",
+      "subtitle": "Choose the name and symbol that will represent your light in this community. This is the shield that protects your true identity.",
+      "chooseIcon": "Choose Your Symbol"
+    },
+    "confirm": {
+      "title": "You Are Now Part of the Tapestry",
+      "subtitle": "This is your identity as a Hope Bearer. Remember, behind every symbol lies a human heart."
+    },
+    "buttons": {
+      "next": "Next",
+      "back": "Back",
+      "complete": "Enter the Sanctuary"
+    }
   },
   "sanctuary": {
     "welcome": "Welcome, {{name}}",

@@ -5,7 +5,7 @@ import i18n from '../i18n';
 interface AuthContextType {
   user: User | null;
   login: (username: string, password: string) => Promise<{ success: boolean; message?: string }>;
-  signup: (username: string, password: string, symbolicName: string, symbolicIcon: string) => Promise<{ success: boolean; message?: string }>;
+  signup: (username: string, password: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   addHopePoints: (points: number, category: HopePointCategory) => void;
   updateUser: (updatedUserData: Partial<User>) => void;
@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return { success: false, message: i18n.t('auth.errorInvalid') };
   };
 
-  const signup = async (username: string, password: string, symbolicName: string, symbolicIcon: string): Promise<{ success: boolean; message?: string }> => {
+  const signup = async (username: string, password: string): Promise<{ success: boolean; message?: string }> => {
     const users = getUsers();
     
     if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
@@ -79,11 +79,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       id: `user_${Date.now()}`,
       username,
       password, // Storing plain text for demo purposes only
-      symbolicName,
-      symbolicIcon,
+      symbolicName: '',
+      symbolicIcon: '',
       role: userRole,
       hopePoints: 0,
       hopePointsBreakdown: {},
+      hasCompletedOnboarding: false,
     };
 
     users.push(newUser);

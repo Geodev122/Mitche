@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import Modal from '../ui/Modal';
-import SymbolIcon from '../ui/SymbolIcon';
 import { useTranslation } from 'react-i18next';
-
-const symbolicNameKeys = ["hopeBearer", "voiceOfLight", "helpingHand", "morningStar", "braveHeart"];
-const symbolicIcons = ["Star", "Lantern", "Flower"];
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -19,8 +15,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [symbolicName, setSymbolicName] = useState('');
-    const [symbolicIcon, setSymbolicIcon] = useState(symbolicIcons[0]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -39,26 +33,20 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (symbolicName.trim() === '') {
-            setError(t('auth.errorSymbolicName'));
-            return;
-        }
         setError('');
         setLoading(true);
-        const result = await signup(username, password, symbolicName, symbolicIcon);
+        const result = await signup(username, password);
         setLoading(false);
         if (result.success) {
             onClose();
         } else {
-            setError(t('auth.errorExists'));
+            setError(result.message || t('auth.errorExists'));
         }
     };
     
     const resetForm = () => {
         setUsername('');
         setPassword('');
-        setSymbolicName('');
-        setSymbolicIcon(symbolicIcons[0]);
         setError('');
     };
     
@@ -98,27 +86,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     <InputField id="signup-username" label={t('auth.username')} type="text" value={username} onChange={e => setUsername(e.target.value)} required />
                     <InputField id="signup-password" label={t('auth.password')} type="password" value={password} onChange={e => setPassword(e.target.value)} required />
                     
-                    <div className="bg-gray-50 p-4 rounded-lg border border-[#EAE2D6]">
-                        <label className="block text-sm font-medium text-gray-600 mb-2">{t('auth.chooseSymbolicIdentity')}</label>
-                        <div className="flex items-center gap-4">
-                            <div className="flex-grow">
-                                <select value={symbolicName} onChange={e => setSymbolicName(e.target.value)} required className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]">
-                                    <option value="" disabled>{t('auth.selectName')}</option>
-                                    {symbolicNameKeys.map(nameKey => <option key={nameKey} value={t(`auth.symbolicNames.${nameKey}`)}>{t(`auth.symbolicNames.${nameKey}`)}</option>)}
-                                </select>
-                            </div>
-                            <div className="flex-shrink-0">
-                                <div className="flex justify-around gap-2">
-                                    {symbolicIcons.map(icon => (
-                                        <button type="button" key={icon} onClick={() => setSymbolicIcon(icon)}
-                                            className={`p-2 rounded-full transition-all duration-200 transform hover:scale-110 ${symbolicIcon === icon ? 'bg-[#D4AF37] text-white ring-2 ring-offset-2 ring-[#D4AF37]' : 'text-gray-500 bg-white hover:bg-gray-100 border'}`}>
-                                            <SymbolIcon name={icon} className="w-7 h-7"/>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <p className="text-xs text-gray-500 text-center pt-2">{t('auth.identityChoiceInfo')}</p>
 
                     {error && <p className="text-red-500 text-xs">{error}</p>}
                     <button type="submit" disabled={loading} className="w-full mt-4 bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors disabled:bg-gray-400">

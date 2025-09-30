@@ -53,6 +53,7 @@ export interface User {
   location?: string;
   qrCodeUrl?: string;
   lastPointGivenTimestamp?: number;
+  hasCompletedOnboarding?: boolean;
 }
 
 export interface Request {
