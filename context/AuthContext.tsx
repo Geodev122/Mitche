@@ -1,10 +1,10 @@
-
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { User, Role, HopePointCategory } from '../types';
 
 interface AuthContextType {
   user: User | null;
-  login: (idNumber: string, symbolicName: string, symbolicIcon: string) => void;
+  login: (username: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  signup: (username: string, password: string, symbolicName: string, symbolicIcon: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   addHopePoints: (points: number, category: HopePointCategory) => void;
   updateUser: (updatedUserData: Partial<User>) => void;
@@ -19,12 +19,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const storedUser = localStorage.getItem('michyUser');
       if (storedUser) {
-        const parsedUser = JSON.parse(storedUser);
-        // Ensure old users have the new structure
-        if (!parsedUser.hopePointsBreakdown) {
-          parsedUser.hopePointsBreakdown = {};
-        }
-        setUser(parsedUser);
+        setUser(JSON.parse(storedUser));
       }
     } catch (error) {
       console.error("Failed to parse user from localStorage", error);
@@ -32,28 +27,65 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, []);
 
-  const login = (idNumber: string, symbolicName: string, symbolicIcon: string) => {
-    // In a real app, idNumber would be verified and role would come from the server.
-    // For demonstration, we'll assign roles based on the ID number string.
+  const getUsers = (): User[] => {
+    try {
+      const users = localStorage.getItem('mitcheUsers');
+      return users ? JSON.parse(users) : [];
+    } catch (error) {
+      console.error("Failed to parse users from localStorage", error);
+      return [];
+    }
+  };
+
+  const saveUsers = (users: User[]) => {
+    localStorage.setItem('mitcheUsers', JSON.stringify(users));
+  };
+
+  const login = async (username: string, password: string): Promise<{ success: boolean; message?: string }> => {
+    const users = getUsers();
+    const foundUser = users.find(u => u.username === username && u.password === password);
+    
+    if (foundUser) {
+      localStorage.setItem('michyUser', JSON.stringify(foundUser));
+      setUser(foundUser);
+      return { success: true };
+    }
+    
+    return { success: false, message: 'اسم المستخدم أو كلمة المرور غير صحيحة.' };
+  };
+
+  const signup = async (username: string, password: string, symbolicName: string, symbolicIcon: string): Promise<{ success: boolean; message?: string }> => {
+    const users = getUsers();
+    
+    if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
+      return { success: false, message: 'اسم المستخدم موجود بالفعل.' };
+    }
+
+    // For demo, assign role based on username
     let userRole: Role = Role.Citizen;
-    if (idNumber.toUpperCase().includes('NGO')) {
+    if (username.toUpperCase().includes('NGO')) {
         userRole = Role.NGO;
-    } else if (idNumber.toUpperCase().includes('GOV')) {
+    } else if (username.toUpperCase().includes('GOV')) {
         userRole = Role.PublicWorker;
-    } else if (idNumber.toUpperCase().includes('ADMIN')) {
+    } else if (username.toUpperCase().includes('ADMIN')) {
         userRole = Role.Admin;
     }
 
     const newUser: User = {
       id: `user_${Date.now()}`,
+      username,
+      password, // Storing plain text for demo purposes only
       symbolicName,
       symbolicIcon,
       role: userRole,
       hopePoints: 0,
       hopePointsBreakdown: {},
     };
-    localStorage.setItem('michyUser', JSON.stringify(newUser));
-    setUser(newUser);
+
+    users.push(newUser);
+    saveUsers(users);
+
+    return login(username, password);
   };
 
   const logout = () => {
@@ -61,33 +93,39 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setUser(null);
   };
 
-  const addHopePoints = (points: number, category: HopePointCategory) => {
-    setUser(currentUser => {
-      if (!currentUser) return null;
-      const updatedUser = {
-        ...currentUser,
-        hopePoints: currentUser.hopePoints + points,
-        hopePointsBreakdown: {
-          ...currentUser.hopePointsBreakdown,
-          [category]: (currentUser.hopePointsBreakdown[category] || 0) + points,
-        }
-      };
+  const updateUserState = (updatedUser: User) => {
+      setUser(updatedUser);
       localStorage.setItem('michyUser', JSON.stringify(updatedUser));
-      return updatedUser;
-    });
+
+      const users = getUsers();
+      const userIndex = users.findIndex(u => u.id === updatedUser.id);
+      if (userIndex !== -1) {
+          users[userIndex] = updatedUser;
+          saveUsers(users);
+      }
+  };
+
+  const addHopePoints = (points: number, category: HopePointCategory) => {
+    if (!user) return;
+    const updatedUser = {
+      ...user,
+      hopePoints: user.hopePoints + points,
+      hopePointsBreakdown: {
+        ...user.hopePointsBreakdown,
+        [category]: (user.hopePointsBreakdown[category] || 0) + points,
+      }
+    };
+    updateUserState(updatedUser);
   };
 
   const updateUser = (updatedUserData: Partial<User>) => {
-    setUser(currentUser => {
-      if (!currentUser) return null;
-      const updatedUser = { ...currentUser, ...updatedUserData };
-      localStorage.setItem('michyUser', JSON.stringify(updatedUser));
-      return updatedUser;
-    });
+    if (!user) return;
+    const updatedUser = { ...user, ...updatedUserData };
+    updateUserState(updatedUser as User);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, addHopePoints, updateUser }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, addHopePoints, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

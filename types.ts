@@ -12,6 +12,7 @@ export enum RequestType {
   Emotional = 'دعم نفسي',
   Legal = 'مساعدة قانونية',
   Employment = 'فرصة عمل',
+  Volunteering = 'عمل تطوعي',
 }
 
 export enum RequestMode {
@@ -34,6 +35,8 @@ export enum RequestStatus {
 
 export interface User {
   id: string;
+  username: string;
+  password: string; // In a real app, this would be a hash
   symbolicName: string;
   symbolicIcon: string;
   role: Role;

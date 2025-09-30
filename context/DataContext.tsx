@@ -23,6 +23,20 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 
 const MOCK_REQUESTS: Request[] = [
     {
+        id: 'req_4',
+        userId: 'user_ngo_1',
+        userSymbolicName: 'بناة_الغد',
+        userSymbolicIcon: 'Lantern',
+        title: 'فرصة تطوع لتنظيف الشاطئ',
+        description: 'ندعوكم للمشاركة في حملة تنظيف شاطئ الرملة البيضاء يوم السبت القادم. معاً نعيد لبيروت رونقها. نوفر الأدوات والمياه للمشاركين.',
+        type: RequestType.Volunteering,
+        mode: RequestMode.Loud,
+        timestamp: new Date(Date.now() - 86400000 * 0.5),
+        region: 'بيروت',
+        status: RequestStatus.Open,
+        isConfirmedByRequester: false,
+    },
+    {
         id: 'req_1',
         userId: 'user_123',
         userSymbolicName: 'Bearer_324',
@@ -183,11 +197,14 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const request = requests.find(r => r.id === requestId);
       const helper = user; // Assuming current user is the helper
       if(request && helper) {
+        const isVolunteering = request.type === RequestType.Volunteering;
         const newNotification: Notification = {
             id: `notif_${Date.now()}_help_offer`,
             userId: request.userId,
             requestId: request.id,
-            message: `مستخدم "${helper.symbolicName}" بدأ بمساعدتك في طلبك "${request.title.substring(0, 20)}...".`,
+            message: isVolunteering
+                ? `المستخدم "${helper.symbolicName}" يود المشاركة في فرصتك التطوعية "${request.title.substring(0, 20)}...".`
+                : `مستخدم "${helper.symbolicName}" بدأ بمساعدتك في طلبك "${request.title.substring(0, 20)}...".`,
             timestamp: new Date(),
             isRead: false,
             type: 'Generic',
@@ -200,11 +217,14 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setRequests(prev => prev.map(r => r.id === requestId ? {...r, isConfirmedByRequester: true} : r));
       const request = requests.find(r => r.id === requestId);
       if(request && request.helperId) {
+        const isVolunteering = request.type === RequestType.Volunteering;
         const newNotification: Notification = {
             id: `notif_${Date.now()}_help_confirm`,
             userId: request.helperId,
             requestId: request.id,
-            message: `صاحب الطلب "${request.title.substring(0, 20)}..." أكد استلام المساعدة. يمكنك الآن المطالبة بنقاط الأمل.`,
+            message: isVolunteering
+                ? `صاحب فرصة التطوع "${request.title.substring(0, 20)}..." أكد مشاركتك. يمكنك الآن المطالبة بنقاط المساهمة.`
+                : `صاحب الطلب "${request.title.substring(0, 20)}..." أكد استلام المساعدة. يمكنك الآن المطالبة بنقاط الأمل.`,
             timestamp: new Date(),
             isRead: false,
             type: 'Generic',
@@ -219,7 +239,12 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     setRequests(prev => prev.map(r => r.id === requestId ? {...r, status: RequestStatus.Fulfilled} : r));
     
-    const category = request.mode === RequestMode.Loud ? HopePointCategory.CommunityBuilder : HopePointCategory.SilentHero;
+    const isVolunteering = request.type === RequestType.Volunteering;
+    let category = request.mode === RequestMode.Loud ? HopePointCategory.CommunityBuilder : HopePointCategory.SilentHero;
+    if (isVolunteering) {
+        category = HopePointCategory.CommunityBuilder;
+    }
+    
     const pointsForHelp = 10;
     addHopePoints(pointsForHelp, category);
 
@@ -228,7 +253,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             id: `notif_${Date.now()}_fulfill`,
             userId: request.userId,
             requestId: request.id,
-            message: `تمت تلبية طلبك "${request.title.substring(0, 20)}..."! شكراً للمستخدم الذي ساعدك.`,
+            message: isVolunteering
+                ? `تم إتمام المشاركة في "${request.title.substring(0, 20)}...". شكراً لك على إتاحة هذه الفرصة.`
+                : `تمت تلبية طلبك "${request.title.substring(0, 20)}..."! شكراً للمستخدم الذي ساعدك.`,
             timestamp: new Date(),
             isRead: false,
             type: 'Generic',
