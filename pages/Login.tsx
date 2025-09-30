@@ -88,7 +88,7 @@ const Login: React.FC = () => {
         <div className="min-h-screen bg-[#FBF9F4] flex flex-col items-center justify-center p-4">
             <div className="max-w-md w-full text-center">
                 <img src="/awardlogo.png" alt="Mitché Logo" className="w-40 h-40 mx-auto mb-4 animate-fade-in-down" />
-                <h1 className="text-3xl font-bold text-[#3A3A3A]">مرحباً بك في Mitché</h1>
+                <h1 className="text-3xl font-bold text-[#3A3A3A]">مرحباً بك في Michy</h1>
                 <p className="text-gray-600 mt-2 mb-8">حيث يتردد صدى الأمل</p>
             </div>
             <div className="max-w-sm w-full bg-white p-8 rounded-2xl shadow-lg border border-[#F1EADF]">

@@ -8,7 +8,7 @@ const navItems = [
   { path: '/echoes', label: 'صدى', icon: MessageSquare },
   { path: '/offerings', label: 'عطاء', icon: Heart },
   { path: '/constellation', label: 'كوكبة', icon: Star },
-  { path: '/tapestry', label: 'نسيج الأمل', icon: BookOpen },
+  { path: '/tapestry', label: 'نسيج', icon: BookOpen },
 ];
 
 const BottomNav: React.FC = () => {

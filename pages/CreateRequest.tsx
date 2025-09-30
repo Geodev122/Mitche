@@ -70,6 +70,12 @@ const CreateRequest: React.FC = () => {
               <p className="text-xs px-2">يُرسل فقط للمنظمات والجهات المعنية</p>
             </button>
           </div>
+          <p className="text-xs text-gray-500 mt-2">
+            {mode === RequestMode.Loud ? 
+              'الطلبات العلنية تظهر للجميع وتمنح نقاط "باني المجتمع"' : 
+              'الطلبات الصامتة تُرسل للمختصين وتمنح نقاط "البطل الصامت"'
+            }
+          </p>
         </div>
 
         <button type="submit" className="w-full mt-6 bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors">
