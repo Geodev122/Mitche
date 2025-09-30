@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { Request, Offering, RequestType, RequestMode, Notification, HopePointCategory, RequestStatus, TapestryThread, TapestryThreadColor, TapestryThreadPattern, User, CommunityEvent, CommunityEventType, Role } from '../types';
 import { useAuth } from './AuthContext';
+import i18n from '../i18n';
 
 interface DataContextType {
   requests: Request[];
@@ -303,7 +304,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                  honoreeRealName: details.realName,
                  honoreePhotoUrl: details.photoUrl,
                  isAnonymous: false,
-                 story: "قصة أمل جديدة، كُشفت للعالم من خلال الشجاعة والرحمة.",
+                 story: i18n.t('tapestry.story.revealed'),
                  color: TapestryThreadColor.Gold, // Hope Bearer award
                  pattern: TapestryThreadPattern.Lines,
                  rippleTag: 5,
@@ -319,7 +320,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                  honoreeSymbolicName: user.symbolicName,
                  honoreeSymbolicIcon: user.symbolicIcon,
                  isAnonymous: true,
-                 story: "وهج نجم صامت، شعر به الكثيرون، وعرفه القليلون. شهادة على القوة الهادئة.",
+                 story: i18n.t('tapestry.story.anonymous'),
                  color: TapestryThreadColor.Blue, // Silent Hero
                  pattern: TapestryThreadPattern.Spirals,
                  rippleTag: 3,

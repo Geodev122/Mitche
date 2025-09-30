@@ -59,14 +59,38 @@
     "filter": "تصفية",
     "allCategories": "كل الفئات",
     "loading": "جاري تحميل الأصداء...",
-    "timeSince": "منذ {{time}}",
     "time": {
-      "year": "سنة",
-      "month": "شهر",
-      "day": "يوم",
-      "hour": "ساعة",
-      "minute": "دقيقة",
-      "second": "ثانية"
+      "just_now": "الآن",
+      "seconds_ago_one": "منذ ثانية واحدة",
+      "seconds_ago_two": "منذ ثانيتين",
+      "seconds_ago_few": "منذ {{count}} ثوان",
+      "seconds_ago_many": "منذ {{count}} ثانية",
+      "seconds_ago_other": "منذ {{count}} ثانية",
+      "minutes_ago_one": "منذ دقيقة واحدة",
+      "minutes_ago_two": "منذ دقيقتين",
+      "minutes_ago_few": "منذ {{count}} دقائق",
+      "minutes_ago_many": "منذ {{count}} دقيقة",
+      "minutes_ago_other": "منذ {{count}} دقيقة",
+      "hours_ago_one": "منذ ساعة واحدة",
+      "hours_ago_two": "منذ ساعتين",
+      "hours_ago_few": "منذ {{count}} ساعات",
+      "hours_ago_many": "منذ {{count}} ساعة",
+      "hours_ago_other": "منذ {{count}} ساعة",
+      "days_ago_one": "منذ يوم واحد",
+      "days_ago_two": "منذ يومين",
+      "days_ago_few": "منذ {{count}} أيام",
+      "days_ago_many": "منذ {{count}} يوماً",
+      "days_ago_other": "منذ {{count}} يوماً",
+      "months_ago_one": "منذ شهر واحد",
+      "months_ago_two": "منذ شهرين",
+      "months_ago_few": "منذ {{count}} أشهر",
+      "months_ago_many": "منذ {{count}} شهراً",
+      "months_ago_other": "منذ {{count}} شهراً",
+      "years_ago_one": "منذ سنة واحدة",
+      "years_ago_two": "منذ سنتين",
+      "years_ago_few": "منذ {{count}} سنوات",
+      "years_ago_many": "منذ {{count}} سنة",
+      "years_ago_other": "منذ {{count}} سنة"
     },
     "card": {
       "provideHelp": "تقديم مساعدة",
@@ -153,7 +177,8 @@
       "noActivity": "لا يوجد نشاط حديث لعرضه.",
       "createdRequest": "أنشأت طلباً: \"{{title}}\"",
       "helpedRequest": "ساعدت في طلب: \"{{title}}\"",
-      "sentEncouragement": "أرسلت تشجيعاً لـ: \"{{title}}\""
+      "sentEncouragement": "أرسلت تشجيعاً لـ: \"{{title}}\"",
+      "aRequest": "طلب"
     },
     "editProfile": {
       "title": "تعديل الملف الشخصي",
@@ -182,7 +207,11 @@
     "livesTouched": "أرواح تأثرت",
     "echoStory": "صدى ({count})",
     "emptyTitle": "لا توجد خيوط في هذا القسم بعد.",
-    "emptySubtitle": "لكن النسيج ينمو كل يوم بفضل أمثالك."
+    "emptySubtitle": "لكن النسيج ينمو كل يوم بفضل أمثالك.",
+    "story": {
+      "revealed": "قصة أمل جديدة، كُشفت للعالم من خلال الشجاعة والرحمة.",
+      "anonymous": "وهج نجم صامت، شعر به الكثيرون، وعرفه القليلون. شهادة على القوة الهادئة."
+    }
   },
   "nomination": {
     "noNomination": "لا يوجد ترشيح نشط.",

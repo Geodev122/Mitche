@@ -7,24 +7,10 @@ import { CommunityEvent, CommunityEventType, Role } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { timeSince } from '../utils/time';
 
 const EventCard: React.FC<{ event: CommunityEvent }> = ({ event }) => {
   const { t } = useTranslation();
-
-  const timeSince = (date: Date) => {
-    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-    let interval = seconds / 31536000;
-    if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.year')}` });
-    interval = seconds / 2592000;
-    if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.month')}` });
-    interval = seconds / 86400;
-    if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.day')}` });
-    interval = seconds / 3600;
-    if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.hour')}` });
-    interval = seconds / 60;
-    if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.minute')}` });
-    return t('echoes.timeSince', { time: `${Math.floor(seconds)} ${t('echoes.time.second')}` });
-  };
   
   const typeStyles = {
     [CommunityEventType.Volunteer]: { text: t(`communityEventTypes.${CommunityEventType.Volunteer}`), classes: 'bg-green-100 text-green-700' },
@@ -43,7 +29,7 @@ const EventCard: React.FC<{ event: CommunityEvent }> = ({ event }) => {
         <div className="flex-grow">
           <div className="flex justify-between items-center">
             <h3 className="font-bold text-gray-800">{event.organizerSymbolicName}</h3>
-            <span className="text-xs text-gray-400">{timeSince(event.timestamp)}</span>
+            <span className="text-xs text-gray-400">{timeSince(event.timestamp, t)}</span>
           </div>
           <span className="text-sm font-semibold text-gray-500">{t(`roles.${event.organizerRole}`)} - {event.region}</span>
           <h4 className="font-bold text-lg text-gray-800 mt-2">{event.title}</h4>

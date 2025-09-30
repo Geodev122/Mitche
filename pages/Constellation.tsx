@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import Modal from '../components/ui/Modal';
 import EditProfileModal from '../components/ui/EditProfileModal';
 import { useNavigate } from 'react-router-dom';
+import { timeSince } from '../utils/time';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -172,21 +173,6 @@ const Constellation: React.FC = () => {
   ];
 
   // --- RECENT ACTIVITY LOGIC ---
-  const timeSince = (date: Date) => {
-    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-    let interval = seconds / 31536000;
-    if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.year')}` });
-    interval = seconds / 2592000;
-    if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.month')}` });
-    interval = seconds / 86400;
-    if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.day')}` });
-    interval = seconds / 3600;
-    if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.hour')}` });
-    interval = seconds / 60;
-    if (interval > 1) return t('echoes.timeSince', { time: `${Math.floor(interval)} ${t('echoes.time.minute')}` });
-    return t('echoes.timeSince', { time: `${Math.floor(seconds)} ${t('echoes.time.second')}` });
-  };
-
   const allActivities: Activity[] = [
     ...userRequests.map(r => ({
         type: 'create_request' as const,
@@ -205,7 +191,7 @@ const Constellation: React.FC = () => {
         return {
             type: 'send_encouragement' as const,
             timestamp: o.timestamp,
-            description: t('constellation.activity.sentEncouragement', { title: relatedRequest?.title.substring(0, 30) || 'a request' }),
+            description: t('constellation.activity.sentEncouragement', { title: relatedRequest?.title.substring(0, 30) || t('constellation.activity.aRequest') }),
             icon: Heart,
         };
     }),
@@ -298,7 +284,7 @@ const Constellation: React.FC = () => {
                           </div>
                           <div>
                               <p className="text-sm text-gray-700">{act.description}...</p>
-                              <p className="text-xs text-gray-400">{timeSince(act.timestamp)}</p>
+                              <p className="text-xs text-gray-400">{timeSince(act.timestamp, t)}</p>
                           </div>
                       </li>
                   ))}
@@ -321,7 +307,7 @@ const Constellation: React.FC = () => {
                             </div>
                             <div>
                                 <p className="text-sm font-semibold text-gray-700">{event.title}</p>
-                                <p className="text-xs text-gray-400">{timeSince(event.timestamp)}</p>
+                                <p className="text-xs text-gray-400">{timeSince(event.timestamp, t)}</p>
                             </div>
                         </li>
                     ))}

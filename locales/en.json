@@ -59,14 +59,20 @@
     "filter": "Filter",
     "allCategories": "All Categories",
     "loading": "Loading echoes...",
-    "timeSince": "{{time}} ago",
     "time": {
-      "year": "year",
-      "month": "month",
-      "day": "day",
-      "hour": "hour",
-      "minute": "minute",
-      "second": "second"
+      "just_now": "just now",
+      "seconds_ago_one": "{{count}} second ago",
+      "seconds_ago_other": "{{count}} seconds ago",
+      "minutes_ago_one": "{{count}} minute ago",
+      "minutes_ago_other": "{{count}} minutes ago",
+      "hours_ago_one": "{{count}} hour ago",
+      "hours_ago_other": "{{count}} hours ago",
+      "days_ago_one": "{{count}} day ago",
+      "days_ago_other": "{{count}} days ago",
+      "months_ago_one": "{{count}} month ago",
+      "months_ago_other": "{{count}} months ago",
+      "years_ago_one": "{{count}} year ago",
+      "years_ago_other": "{{count}} years ago"
     },
     "card": {
       "provideHelp": "Provide Help",
@@ -153,7 +159,8 @@
       "noActivity": "No recent activity to show.",
       "createdRequest": "You created a request: \"{{title}}\"",
       "helpedRequest": "You helped with a request: \"{{title}}\"",
-      "sentEncouragement": "You sent encouragement for: \"{{title}}\""
+      "sentEncouragement": "You sent encouragement for: \"{{title}}\"",
+      "aRequest": "a request"
     },
     "editProfile": {
       "title": "Edit Profile",
@@ -182,7 +189,11 @@
     "livesTouched": "Lives Touched",
     "echoStory": "Echo ({{count}})",
     "emptyTitle": "No threads in this section yet.",
-    "emptySubtitle": "But the tapestry grows every day, thanks to people like you."
+    "emptySubtitle": "But the tapestry grows every day, thanks to people like you.",
+    "story": {
+      "revealed": "A new story of hope, revealed to the world through courage and compassion.",
+      "anonymous": "The glow of a silent star, felt by many, known by few. A testament to quiet strength."
+    }
   },
   "nomination": {
     "noNomination": "No active nomination.",

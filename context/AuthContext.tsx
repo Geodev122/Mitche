@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { User, Role, HopePointCategory } from '../types';
+import i18n from '../i18n';
 
 interface AuthContextType {
   user: User | null;
@@ -54,14 +55,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return { success: true };
     }
     
-    return { success: false, message: 'اسم المستخدم أو كلمة المرور غير صحيحة.' };
+    return { success: false, message: i18n.t('auth.errorInvalid') };
   };
 
   const signup = async (username: string, password: string, symbolicName: string, symbolicIcon: string): Promise<{ success: boolean; message?: string }> => {
     const users = getUsers();
     
     if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
-      return { success: false, message: 'اسم المستخدم موجود بالفعل.' };
+      return { success: false, message: i18n.t('auth.errorExists') };
     }
 
     // For demo, assign role based on username
