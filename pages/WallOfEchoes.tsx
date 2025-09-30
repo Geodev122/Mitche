@@ -17,6 +17,8 @@ const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
 
   if (!user) return null;
 
+  const isVolunteering = request.type === RequestType.Volunteering;
+
   const timeSince = (date: Date) => {
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
     let interval = seconds / 31536000;
@@ -63,7 +65,9 @@ const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
   const renderActionButtons = () => {
     if (isOwner) {
         if (request.status === RequestStatus.Pending && !request.isConfirmedByRequester) {
-            return <button onClick={() => confirmReceipt(request.id)} className="px-4 py-2 text-sm bg-green-500 text-white rounded-full hover:bg-green-600">تأكيد استلام المساعدة</button>;
+            return <button onClick={() => confirmReceipt(request.id)} className="px-4 py-2 text-sm bg-green-500 text-white rounded-full hover:bg-green-600">
+                {isVolunteering ? 'تأكيد المشاركة' : 'تأكيد استلام المساعدة'}
+            </button>;
         }
         return null; // Or show status message
     }
@@ -72,7 +76,9 @@ const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
     if (request.status === RequestStatus.Open) {
         return (
             <div className="flex space-x-2 rtl:space-x-reverse">
-              <button onClick={() => setHelpModalOpen(true)} className="px-4 py-2 text-sm bg-[#3A3A3A] text-white rounded-full hover:bg-opacity-80">تقديم مساعدة</button>
+              <button onClick={() => setHelpModalOpen(true)} className="px-4 py-2 text-sm bg-[#3A3A3A] text-white rounded-full hover:bg-opacity-80">
+                  {isVolunteering ? 'المشاركة' : 'تقديم مساعدة'}
+              </button>
               <button onClick={() => setEncourageModalOpen(true)} className="px-4 py-2 text-sm bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300">إرسال تشجيع</button>
             </div>
         );
@@ -80,9 +86,13 @@ const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
 
     if (request.status === RequestStatus.Pending && isHelper) {
         if (request.isConfirmedByRequester) {
-            return <button onClick={() => fulfillRequest(request.id, user.id)} className="px-4 py-2 text-sm bg-[#D4AF37] text-white rounded-full hover:bg-opacity-80">المطالبة بنقاط الأمل</button>;
+            return <button onClick={() => fulfillRequest(request.id, user.id)} className="px-4 py-2 text-sm bg-[#D4AF37] text-white rounded-full hover:bg-opacity-80">
+                {isVolunteering ? 'المطالبة بنقاط المساهمة' : 'المطالبة بنقاط الأمل'}
+            </button>;
         } else {
-            return <button className="px-4 py-2 text-sm bg-gray-300 text-gray-500 rounded-full cursor-not-allowed" disabled>بانتظار تأكيد الاستلام</button>;
+            return <button className="px-4 py-2 text-sm bg-gray-300 text-gray-500 rounded-full cursor-not-allowed" disabled>
+                {isVolunteering ? 'بانتظار تأكيد المشاركة' : 'بانتظار تأكيد الاستلام'}
+            </button>;
         }
     }
     
@@ -118,12 +128,21 @@ const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
         )}
       </Card>
       
-      <Modal isOpen={isHelpModalOpen} onClose={() => setHelpModalOpen(false)} title="تقديم مساعدة">
-        <p className="text-gray-600 mb-4">أنت على وشك بدء المساعدة في هذا الطلب. سيتم إخطار صاحب الطلب. الرجاء التواصل معه عبر الرقم أدناه للمتابعة.</p>
-        <p className="text-center font-bold text-lg bg-gray-100 p-2 rounded-md">📞 +961 71 123 456</p>
-        <p className="text-xs text-gray-400 text-center my-2">(هذا رقم وهمي لأغراض العرض)</p>
+      <Modal isOpen={isHelpModalOpen} onClose={() => setHelpModalOpen(false)} title={isVolunteering ? 'تأكيد المشاركة' : 'تقديم مساعدة'}>
+        {isVolunteering ? (
+          <>
+            <p className="text-gray-600 mb-4">أنت على وشك إبداء رغبتك بالمشاركة في هذه الفرصة التطوعية. سيتم إعلام صاحب الفرصة بطلبك، وبعد موافقته، ستتلقى إشعاراً بتفاصيل المشاركة.</p>
+            <p className="text-sm text-gray-500">شكراً لكونك جزءاً من التغيير الإيجابي.</p>
+          </>
+        ) : (
+          <>
+            <p className="text-gray-600 mb-4">أنت على وشك بدء المساعدة في هذا الطلب. سيتم إخطار صاحب الطلب. الرجاء التواصل معه عبر الرقم أدناه للمتابعة.</p>
+            <p className="text-center font-bold text-lg bg-gray-100 p-2 rounded-md">📞 +961 71 123 456</p>
+            <p className="text-xs text-gray-400 text-center my-2">(هذا رقم وهمي لأغراض العرض)</p>
+          </>
+        )}
         <button onClick={handleInitiateHelp} className="w-full mt-4 bg-[#3A3A3A] text-white py-2 rounded-lg font-bold hover:bg-opacity-90">
-            أؤكد، سأقوم بالمساعدة
+            {isVolunteering ? 'أؤكد رغبتي بالمشاركة' : 'أؤكد، سأقوم بالمساعدة'}
         </button>
       </Modal>
 
