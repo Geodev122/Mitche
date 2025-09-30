@@ -44,7 +44,7 @@ const Header: React.FC = () => {
 
 
     return (
-        <header className="sticky top-0 bg-[#FBF9F4]/80 backdrop-blur-sm z-20 p-2 sm:p-4 flex justify-between items-center border-b border-[#F1EADF]">
+        <header className="sticky top-0 bg-[#FBF9F4]/80 backdrop-blur-sm z-20 p-2 sm:p-4 flex justify-between items-center border-b border-[#F1EADF] relative">
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <img src="/awardlogo.png" alt="Mitché Logo" className="h-8 w-8" />
                 <span className="text-lg font-bold text-[#3A3A3A] hidden sm:inline">{t('appName')}</span>
@@ -61,7 +61,9 @@ const Header: React.FC = () => {
                         )}
                     </button>
                     {showNotifications && (
-                        <div className="absolute left-0 rtl:left-auto rtl:right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-[#F1EADF] overflow-hidden animate-fade-in-down">
+                        <div className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-80 max-w-[calc(100vw-1rem)] bg-white rounded-lg shadow-xl border border-[#F1EADF] overflow-hidden animate-fade-in-down z-50">
+                            {/* Arrow pointer */}
+                            <div className="absolute -top-2 right-4 rtl:right-auto rtl:left-4 w-4 h-4 bg-white border-l border-t border-[#F1EADF] transform rotate-45"></div>
                             <div className="p-3 font-bold text-gray-700 border-b">{t('notifications.title')}</div>
                             {notifications.length > 0 ? (
                                <ul className="max-h-96 overflow-y-auto">
@@ -80,6 +82,13 @@ const Header: React.FC = () => {
                     )}
                 </div>
             </div>
+            {/* Overlay to close notifications when clicking outside */}
+            {showNotifications && (
+                <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setShowNotifications(false)}
+                ></div>
+            )}
         </header>
     );
 };
