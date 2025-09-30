@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, MessageSquare, Heart, Star, BookOpen } from 'lucide-react';
+import { Hop as Home, MessageSquare, Heart, Star, BookOpen } from 'lucide-react';
 
 const navItems = [
   { path: '/', label: 'الملاذ', icon: Home },

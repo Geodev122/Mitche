@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
-import { PlusCircle, Filter } from 'lucide-react';
+import { CirclePlus as PlusCircle, ListFilter as Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Request, RequestType, RequestStatus } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
