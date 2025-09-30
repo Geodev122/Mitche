@@ -1,0 +1,305 @@
+
+{
+  "appName": "Mitché",
+  "appSlogan": "Où l'espoir résonne",
+  "nav": {
+    "sanctuary": "Sanctuaire",
+    "echoes": "Échos",
+    "events": "Événements",
+    "leaderboard": "Classement",
+    "constellation": "Constellation",
+    "tapestry": "Tapisserie de l'Espoir",
+    "admin": "Admin"
+  },
+  "login": {
+    "welcome": "Bienvenue à Mitché",
+    "startJourney": "Commencez Votre Voyage",
+    "safeHavenTitle": "Votre Havre de Paix",
+    "safeHavenDesc": "Mitché est un havre de paix pour donner et recevoir de l'aide tout en préservant l'anonymat. Ici, les demandes d'aide sont des 'Échos', et les offres de soutien sont des 'Offrandes'. Votre identité est protégée, permettant à la dignité et à la compassion de s'épanouir.",
+    "agreement": "En entrant, vous acceptez les principes de confidentialité et de respect mutuel sur lesquels notre plateforme est bâtie."
+  },
+  "auth": {
+    "modalTitle": "Entrer dans le Sanctuaire",
+    "login": "Connexion",
+    "signup": "Inscription",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "loginLoading": "Connexion en cours...",
+    "chooseSymbolicIdentity": "Choisissez Votre Identité Symbolique",
+    "selectName": "-- Choisissez un Nom --",
+    "signupLoading": "Création du compte...",
+    "symbolicNames": {
+      "hopeBearer": "Porteur_d'Espoir",
+      "voiceOfLight": "Voix_de_Lumière",
+      "helpingHand": "Main_Tendue",
+      "morningStar": "Étoile_du_Matin",
+      "braveHeart": "Cœur_Brave"
+    },
+    "errorInvalid": "Nom d'utilisateur ou mot de passe incorrect.",
+    "errorExists": "Ce nom d'utilisateur existe déjà.",
+    "errorSymbolicName": "Veuillez choisir un nom symbolique."
+  },
+  "sanctuary": {
+    "welcome": "Bienvenue, {{name}}",
+    "quote": "\"Que ta lumière soit un écho dans ce monde\"",
+    "tiles": {
+      "echoes": "Mur des Échos",
+      "echoesSub": "Demandez ou répondez aux appels",
+      "events": "Événements Communautaires",
+      "eventsSub": "Participez à des initiatives",
+      "tapestry": "Tapisserie de l'Espoir",
+      "tapestrySub": "Lisez des histoires de résilience",
+      "constellation": "Votre Constellation",
+      "constellationSub": "Votre registre d'espoir"
+    }
+  },
+  "echoes": {
+    "title": "Mur des Échos",
+    "subtitle": "Ici, les voix s'élèvent et les mains se rencontrent",
+    "filter": "Filtrer",
+    "allCategories": "Toutes les catégories",
+    "loading": "Chargement des échos...",
+    "timeSince": "il y a {{time}}",
+    "time": {
+      "year": "an",
+      "month": "mois",
+      "day": "jour",
+      "hour": "heure",
+      "minute": "minute",
+      "second": "seconde"
+    },
+    "card": {
+      "provideHelp": "Apporter de l'aide",
+      "sendEncouragement": "Envoyer un encouragement",
+      "confirmReceipt": "Confirmer la réception",
+      "claimHopePoints": "Réclamer des points d'espoir",
+      "waitingReceipt": "En attente de réception"
+    },
+    "helpModal": {
+      "titleHelp": "Apporter de l'Aide",
+      "bodyHelp": "Vous êtes sur le point de commencer à aider pour cette demande. Le demandeur sera notifié. Veuillez le contacter au numéro ci-dessous pour continuer.",
+      "dummyPhone": "(Ceci est un numéro fictif à des fins de démonstration)",
+      "confirmHelp": "Je confirme, je vais aider"
+    },
+    "encourageModal": {
+      "title": "Envoyer un Message d'Encouragement",
+      "placeholder": "Écrivez votre message ici... Vos mots pourraient être la lumière dont quelqu'un a besoin.",
+      "send": "Envoyer"
+    }
+  },
+  "createRequest": {
+    "title": "Lancez Votre Écho",
+    "subtitle": "Chaque demande est une graine d'espoir. Décrivez ce dont vous avez besoin avec sincérité.",
+    "form": {
+      "title": "Titre de la demande",
+      "titlePlaceholder": "Ex: Besoin de soutien émotionnel",
+      "category": "Catégorie de la demande",
+      "region": "Région",
+      "regionPlaceholder": "Ex: Beyrouth",
+      "description": "Description de la demande",
+      "descriptionPlaceholder": "Expliquez votre demande en détail...",
+      "mode": "Mode de la demande",
+      "modeLoud": "Fort (Public)",
+      "modeLoudDesc": "Apparaît sur le Mur des Échos pour tous",
+      "modeSilent": "Silencieux (Privé)",
+      "modeSilentDesc": "Envoyé uniquement aux organisations et entités concernées",
+      "submit": "Soumettre la demande"
+    },
+    "discardTitle": "Annuler la demande ?",
+    "discardConfirm": "Oui, annuler",
+    "discardCancel": "Retour",
+    "discardBody": "Êtes-vous sûr de vouloir annuler cette demande ? Vos modifications ne seront pas enregistrées."
+  },
+  "constellation": {
+    "starOfHope": "Une Étoile dans la Constellation de l'Espoir",
+    "totalHopePoints": "Total des Points d'Espoir",
+    "quote": "\"Chaque point est un témoignage de votre lumière\"",
+    "breakdownTitle": "Détail des Points d'Espoir",
+    "installApp": "Installer l'application",
+    "appInstalled": "Application installée",
+    "awardNominations": "Nominations aux prix",
+    "privacySettings": "Paramètres de confidentialité",
+    "logout": "Déconnexion",
+    "scanToGiveHope": "Scannez pour donner de l'espoir",
+    "yourEvents": "Vos Événements",
+    "noEvents": "Vous n'avez pas encore créé d'événements.",
+    "accolades": {
+      "title": "Distinctions & Badges"
+    },
+    "achievements": {
+      "firstEcho": {
+        "title": "Premier Écho",
+        "description": "Vous avez fait votre première demande d'aide."
+      },
+      "firstOffering": {
+        "title": "Première Offrande",
+        "description": "Vous avez offert de l'aide ou un encouragement pour la première fois."
+      },
+      "compassionateVoice": {
+        "title": "Voix Compatissante",
+        "description": "Vous avez envoyé 3 messages d'encouragement."
+      },
+      "communityPillar": {
+        "title": "Pilier de la Communauté",
+        "description": "Vous avez répondu à 2 demandes d'aide."
+      },
+      "beaconOfHope": {
+        "title": "Phare d'Espoir",
+        "description": "Votre histoire a reçu 10 échos."
+      }
+    },
+    "activity": {
+      "title": "Activité Récente",
+      "noActivity": "Aucune activité récente à afficher.",
+      "createdRequest": "Vous avez créé une demande : \"{{title}}\"",
+      "helpedRequest": "Vous avez aidé avec une demande : \"{{title}}\"",
+      "sentEncouragement": "Vous avez envoyé un encouragement pour : \"{{title}}\""
+    },
+    "editProfile": {
+      "title": "Modifier le Profil",
+      "location": "Lieu",
+      "locationPlaceholder": "Ex: Beyrouth, Liban",
+      "bio": "Bio",
+      "bioPlaceholder": "Dites-nous en un peu plus sur vous...",
+      "save": "Enregistrer les modifications"
+    },
+    "showQrCode": "Afficher le QR Code",
+    "qrCodeTitle": "Votre QR Code",
+    "qrCodeDesc": "Partagez ce code pour vous connecter avec {{name}}.",
+    "qrCodeMissing": "Enregistrez votre profil pour générer un code QR."
+  },
+  "tapestry": {
+    "title": "Tapisserie de l'Espoir",
+    "subtitle": "Une archive vivante de résilience et de transformation, tissée de fils de don",
+    "threads": "Fils",
+    "echoes": "Échos",
+    "souls": "Âmes",
+    "filterAll": "Tous",
+    "filterBuilders": "Bâtisseurs de Communauté",
+    "filterHeroes": "Héros Silencieux",
+    "filterVoices": "Voix de la Compassion",
+    "thread": "fil",
+    "livesTouched": "Vies Touchées",
+    "echoStory": "Écho ({{count}})",
+    "emptyTitle": "Aucun fil dans cette section pour le moment.",
+    "emptySubtitle": "Mais la tapisserie grandit chaque jour, grâce à des gens comme vous."
+  },
+  "nomination": {
+    "noNomination": "Aucune nomination active.",
+    "title": "Votre Lumière a Atteint le Temple",
+    "subtitle": "Vous avez été nominé pour le Prix du Porteur d'Espoir. Allez-vous vous avancer, ou rester une étoile silencieuse ?",
+    "revealIdentity": "Révéler l'Identité",
+    "stayAnonymous": "Rester Anonyme",
+    "confirmRevealTitle": "Confirmer la Révélation d'Identité",
+    "confirmRevealBody": "En choisissant de révéler votre identité, votre vrai nom et votre photo seront affichés publiquement sur le fil de votre histoire dans la 'Tapisserie de l'Espoir'. Cet acte puissant associe un visage à l'espoir que vous avez inspiré, permettant à la communauté de voir et de célébrer la personne derrière le symbole. Êtes-vous prêt à entrer dans la lumière ?",
+    "confirmRevealButton": "Oui, je confirme la révélation",
+    "back": "Retour",
+    "revealFormTitle": "Révéler Votre Identité",
+    "realName": "Vrai Nom",
+    "realNamePlaceholder": "Votre nom tel qu'il apparaîtra lors de la célébration",
+    "photo": "Photo de profil (Optionnel)",
+    "confirmAndContinue": "Confirmer et Continuer",
+    "confirmAnonymousTitle": "Confirmer le Maintien de l'Anonymat",
+    "confirmAnonymousBody": "En choisissant de rester anonyme, votre nom symbolique et votre icône continueront de vous représenter dans la 'Tapisserie de l'Espoir'. Votre histoire inspirera les autres tandis que votre identité restera un secret précieux. Est-ce le chemin que vous avez choisi ?",
+    "confirmAnonymousButton": "Oui, je confirme l'anonymat",
+    "finishedTitle": "Que votre nom soit connu ou non, votre héritage est éternel.",
+    "finishedSubtitle": "Votre choix sera honoré avec toute la révérence due.",
+    "viewTapestry": "Voir la Tapisserie de l'Espoir"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "Aucune nouvelle notification.",
+    "nomination": "Votre lumière a atteint le temple. Vous avez été nominé pour le prix du Porteur d'Espoir. Allez-vous vous avancer, ou rester une étoile silencieuse ?",
+    "encouragement": "Nouvel encouragement sur votre demande \"{{title}}...\"",
+    "helpOffer": "L'utilisateur \"{{name}}\" a commencé à aider avec votre demande \"{{title}}...\".",
+    "receiptConfirm": "Le demandeur de \"{{title}}...\" a confirmé la réception de l'aide. Vous pouvez maintenant réclamer vos points d'espoir.",
+    "fulfillment": "Votre demande \"{{title}}...\" a été satisfaite ! Merci à l'utilisateur qui vous a aidé."
+  },
+  "roles": {
+    "Citizen": "Citoyen",
+    "NGO": "ONG",
+    "PublicWorker": "Agent Public",
+    "Admin": "Admin"
+  },
+  "requestTypes": {
+    "Food": "Nourriture",
+    "Shelter": "Abri",
+    "Medical": "Soutien Médical",
+    "Emotional": "Soutien Émotionnel",
+    "Legal": "Aide Juridique",
+    "Employment": "Opportunité d'Emploi"
+  },
+  "hopePointCategories": {
+    "SilentHero": "Héros Silencieux",
+    "VoiceOfCompassion": "Voix de la Compassion",
+    "CommunityBuilder": "Bâtisseur de Communauté",
+    "CommunityGift": "Don de la Communauté"
+  },
+  "requestStatus": {
+    "Open": "Ouvert",
+    "Pending": "En attente",
+    "Fulfilled": "Rempli",
+    "Closed": "Fermé"
+  },
+  "scanner": {
+    "status": {
+      "scanning": "Recherche d'un code QR...",
+      "processing": "Traitement...",
+      "noCamera": "Impossible d'accéder à la caméra. Veuillez vérifier les autorisations."
+    },
+    "success": {
+      "giftSent": "Vous avez donné 1 Point d'Espoir à {{name}}. Vous avez aussi gagné 1 point !"
+    },
+    "error": {
+      "notLoggedIn": "Vous devez être connecté pour faire cela.",
+      "selfGift": "Vous ne pouvez pas vous donner de point à vous-même.",
+      "alreadyGiven": "Vous avez déjà donné votre point quotidien. Réessayez demain.",
+      "userNotFound": "Cet utilisateur n'a pas pu être trouvé.",
+      "invalidQR": "Ceci n'est pas un code QR d'utilisateur Mitché valide."
+    }
+  },
+  "events": {
+    "title": "Événements Communautaires",
+    "subtitle": "Opportunités de se connecter, donner et participer",
+    "emptyTitle": "Aucun événement pour le moment.",
+    "emptySubtitle": "Les organisations ajoutent constamment de nouveaux événements, revenez bientôt."
+  },
+  "createEvent": {
+    "title": "Créer un Nouvel Événement",
+    "subtitle": "Rassemblez la communauté autour d'une cause ou d'une activité.",
+    "form": {
+      "title": "Titre de l'événement",
+      "titlePlaceholder": "Ex: Nettoyage de la plage",
+      "category": "Type d'événement",
+      "region": "Région",
+      "regionPlaceholder": "Ex: Beyrouth",
+      "description": "Description de l'événement",
+      "descriptionPlaceholder": "Expliquez les détails de l'événement, l'heure, le lieu...",
+      "submit": "Publier l'événement"
+    },
+    "discardTitle": "Annuler l'événement ?",
+    "discardConfirm": "Oui, annuler",
+    "discardCancel": "Retour",
+    "discardBody": "Êtes-vous sûr de vouloir annuler cet événement ? Vos modifications ne seront pas enregistrées."
+  },
+  "communityEventTypes": {
+    "Volunteer": "Opportunité de bénévolat",
+    "Event": "Événement"
+  },
+  "admin": {
+    "title": "Tableau de Bord Admin",
+    "subtitle": "Un aperçu de l'activité de la plateforme",
+    "loading": "Chargement des statistiques...",
+    "totalUsers": "Utilisateurs totaux",
+    "totalRequests": "Demandes totales",
+    "totalEvents": "Événements totaux"
+  },
+  "leaderboard": {
+    "title": "Classement de l'Espoir",
+    "subtitle": "Célébration des porteurs d'espoir les plus actifs",
+    "rank": "Rang",
+    "bearer": "Porteur",
+    "points": "Points",
+    "yourPosition": "Votre Position"
+  }
+}

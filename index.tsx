@@ -1,7 +1,7 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import './i18n'; // Initialize i18next
 
 // Register Service Worker for PWA
 if ('serviceWorker' in navigator) {

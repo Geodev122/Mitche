@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import { Request, Offering, RequestType, RequestMode, Notification, HopePointCategory, RequestStatus, TapestryThread, TapestryThreadColor, TapestryThreadPattern, User } from '../types';
+import { Request, Offering, RequestType, RequestMode, Notification, HopePointCategory, RequestStatus, TapestryThread, TapestryThreadColor, TapestryThreadPattern, User, CommunityEvent, CommunityEventType, Role } from '../types';
 import { useAuth } from './AuthContext';
 
 interface DataContextType {
@@ -7,8 +7,10 @@ interface DataContextType {
   offerings: Offering[];
   notifications: Notification[];
   tapestryThreads: TapestryThread[];
+  communityEvents: CommunityEvent[];
   addRequest: (request: Omit<Request, 'id' | 'timestamp' | 'userId' | 'userSymbolicName' | 'userSymbolicIcon' | 'status' | 'helperId' | 'isConfirmedByRequester'>, user: User) => void;
   addOffering: (offering: Omit<Offering, 'id' | 'timestamp' | 'userId'>, userId: string) => void;
+  addCommunityEvent: (event: Omit<CommunityEvent, 'id' | 'timestamp' | 'organizerId' | 'organizerSymbolicName' | 'organizerSymbolicIcon' | 'organizerRole'>, user: User) => void;
   initiateHelp: (requestId: string, helperId: string) => void;
   confirmReceipt: (requestId: string) => void;
   fulfillRequest: (requestId: string, helperId: string) => void;
@@ -17,25 +19,12 @@ interface DataContextType {
   acceptNomination: (userId: string, choice: 'Reveal' | 'Anonymous', details?: { realName: string, photoUrl?: string }) => void;
   echoThread: (threadId: string) => void;
   loading: boolean;
+  giveDailyPoint: (receiverId: string) => Promise<{ success: boolean; messageKey: string; receiverName?: string }>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 const MOCK_REQUESTS: Request[] = [
-    {
-        id: 'req_4',
-        userId: 'user_ngo_1',
-        userSymbolicName: 'بناة_الغد',
-        userSymbolicIcon: 'Lantern',
-        title: 'فرصة تطوع لتنظيف الشاطئ',
-        description: 'ندعوكم للمشاركة في حملة تنظيف شاطئ الرملة البيضاء يوم السبت القادم. معاً نعيد لبيروت رونقها. نوفر الأدوات والمياه للمشاركين.',
-        type: RequestType.Volunteering,
-        mode: RequestMode.Loud,
-        timestamp: new Date(Date.now() - 86400000 * 0.5),
-        region: 'بيروت',
-        status: RequestStatus.Open,
-        isConfirmedByRequester: false,
-    },
     {
         id: 'req_1',
         userId: 'user_123',
@@ -82,6 +71,21 @@ const MOCK_REQUESTS: Request[] = [
     },
 ];
 
+const MOCK_EVENTS: CommunityEvent[] = [
+    {
+        id: 'evt_1',
+        organizerId: 'user_ngo_1',
+        organizerSymbolicName: 'بناة_الغد',
+        organizerSymbolicIcon: 'Lantern',
+        organizerRole: Role.NGO,
+        title: 'فرصة تطوع لتنظيف الشاطئ',
+        description: 'ندعوكم للمشاركة في حملة تنظيف شاطئ الرملة البيضاء يوم السبت القادم. معاً نعيد لبيروت رونقها. نوفر الأدوات والمياه للمشاركين.',
+        type: CommunityEventType.Volunteer,
+        timestamp: new Date(Date.now() - 86400000 * 0.5),
+        region: 'بيروت',
+    }
+];
+
 const MOCK_THREADS: TapestryThread[] = [
   {
     id: 'thread_1',
@@ -119,8 +123,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [offerings, setOfferings] = useState<Offering[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [tapestryThreads, setTapestryThreads] = useState<TapestryThread[]>([]);
+  const [communityEvents, setCommunityEvents] = useState<CommunityEvent[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user, addHopePoints, updateUser } = useAuth();
+  const { user, addHopePoints, updateUser, getUserById, updateAnyUser } = useAuth();
 
 
   useEffect(() => {
@@ -128,6 +133,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setTimeout(() => {
       setRequests(MOCK_REQUESTS);
       setTapestryThreads(MOCK_THREADS);
+      setCommunityEvents(MOCK_EVENTS);
       setLoading(false);
     }, 1000);
   }, []);
@@ -137,7 +143,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const nominationNotification: Notification = {
             id: `notif_nomination_${user.id}`,
             userId: user.id,
-            message: "لقد وصل نورك إلى المعبد. تم ترشيحك لجائزة حامل الأمل. هل تود أن تخطو إلى الأمام، أم تبقى نجماً صامتاً؟",
+            message: "DEPRECATED", // No longer used, will be translated from key
+            messageKey: 'notifications.nomination',
             timestamp: new Date(),
             isRead: false,
             type: 'Nomination',
@@ -164,6 +171,19 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setRequests(prev => [newRequest, ...prev]);
   };
 
+  const addCommunityEvent = (eventData: Omit<CommunityEvent, 'id' | 'timestamp' | 'organizerId' | 'organizerSymbolicName' | 'organizerSymbolicIcon' | 'organizerRole'>, user: User) => {
+    const newEvent: CommunityEvent = {
+        ...eventData,
+        id: `evt_${Date.now()}`,
+        timestamp: new Date(),
+        organizerId: user.id,
+        organizerSymbolicName: user.symbolicName,
+        organizerSymbolicIcon: user.symbolicIcon,
+        organizerRole: user.role,
+    };
+    setCommunityEvents(prev => [newEvent, ...prev]);
+  };
+
   const addOffering = (offeringData: Omit<Offering, 'id' | 'timestamp' | 'userId'>, userId: string) => {
     const newOffering: Offering = {
         ...offeringData,
@@ -183,7 +203,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             id: `notif_${Date.now()}`,
             userId: request.userId,
             requestId: request.id,
-            message: `رسالة تشجيع جديدة على طلبك "${request.title.substring(0, 20)}..."`,
+            message: "DEPRECATED",
+            messageKey: 'notifications.encouragement',
+            messageOptions: { title: request.title.substring(0, 20) },
             timestamp: new Date(),
             isRead: false,
             type: 'Generic'
@@ -197,14 +219,13 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const request = requests.find(r => r.id === requestId);
       const helper = user; // Assuming current user is the helper
       if(request && helper) {
-        const isVolunteering = request.type === RequestType.Volunteering;
         const newNotification: Notification = {
             id: `notif_${Date.now()}_help_offer`,
             userId: request.userId,
             requestId: request.id,
-            message: isVolunteering
-                ? `المستخدم "${helper.symbolicName}" يود المشاركة في فرصتك التطوعية "${request.title.substring(0, 20)}...".`
-                : `مستخدم "${helper.symbolicName}" بدأ بمساعدتك في طلبك "${request.title.substring(0, 20)}...".`,
+            message: "DEPRECATED",
+            messageKey: 'notifications.helpOffer',
+            messageOptions: { name: helper.symbolicName, title: request.title.substring(0, 20) },
             timestamp: new Date(),
             isRead: false,
             type: 'Generic',
@@ -217,14 +238,13 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setRequests(prev => prev.map(r => r.id === requestId ? {...r, isConfirmedByRequester: true} : r));
       const request = requests.find(r => r.id === requestId);
       if(request && request.helperId) {
-        const isVolunteering = request.type === RequestType.Volunteering;
         const newNotification: Notification = {
             id: `notif_${Date.now()}_help_confirm`,
             userId: request.helperId,
             requestId: request.id,
-            message: isVolunteering
-                ? `صاحب فرصة التطوع "${request.title.substring(0, 20)}..." أكد مشاركتك. يمكنك الآن المطالبة بنقاط المساهمة.`
-                : `صاحب الطلب "${request.title.substring(0, 20)}..." أكد استلام المساعدة. يمكنك الآن المطالبة بنقاط الأمل.`,
+            message: "DEPRECATED",
+            messageKey: 'notifications.receiptConfirm',
+            messageOptions: { title: request.title.substring(0, 20) },
             timestamp: new Date(),
             isRead: false,
             type: 'Generic',
@@ -239,11 +259,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     setRequests(prev => prev.map(r => r.id === requestId ? {...r, status: RequestStatus.Fulfilled} : r));
     
-    const isVolunteering = request.type === RequestType.Volunteering;
-    let category = request.mode === RequestMode.Loud ? HopePointCategory.CommunityBuilder : HopePointCategory.SilentHero;
-    if (isVolunteering) {
-        category = HopePointCategory.CommunityBuilder;
-    }
+    const category = request.mode === RequestMode.Loud ? HopePointCategory.CommunityBuilder : HopePointCategory.SilentHero;
     
     const pointsForHelp = 10;
     addHopePoints(pointsForHelp, category);
@@ -253,9 +269,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             id: `notif_${Date.now()}_fulfill`,
             userId: request.userId,
             requestId: request.id,
-            message: isVolunteering
-                ? `تم إتمام المشاركة في "${request.title.substring(0, 20)}...". شكراً لك على إتاحة هذه الفرصة.`
-                : `تمت تلبية طلبك "${request.title.substring(0, 20)}..."! شكراً للمستخدم الذي ساعدك.`,
+            message: "DEPRECATED",
+            messageKey: 'notifications.fulfillment',
+            messageOptions: { title: request.title.substring(0, 20) },
             timestamp: new Date(),
             isRead: false,
             type: 'Generic',
@@ -318,9 +334,54 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setTapestryThreads(prev => prev.map(t => t.id === threadId ? { ...t, echoes: t.echoes + 1 } : t));
     };
 
+    const giveDailyPoint = async (receiverId: string): Promise<{ success: boolean; messageKey: string; receiverName?: string }> => {
+        if (!user) {
+            return { success: false, messageKey: 'scanner.error.notLoggedIn' };
+        }
+        if (user.id === receiverId) {
+            return { success: false, messageKey: 'scanner.error.selfGift' };
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (user.lastPointGivenTimestamp && user.lastPointGivenTimestamp >= today.getTime()) {
+            return { success: false, messageKey: 'scanner.error.alreadyGiven' };
+        }
+
+        const receiver = getUserById(receiverId);
+        if (!receiver) {
+            return { success: false, messageKey: 'scanner.error.userNotFound' };
+        }
+
+        // Update receiver
+        const updatedReceiver = {
+            ...receiver,
+            hopePoints: receiver.hopePoints + 1,
+            hopePointsBreakdown: {
+                ...receiver.hopePointsBreakdown,
+                [HopePointCategory.CommunityGift]: (receiver.hopePointsBreakdown[HopePointCategory.CommunityGift] || 0) + 1,
+            }
+        };
+        updateAnyUser(updatedReceiver);
+
+        // Update giver (current user)
+        const updatedGiver = {
+            ...user,
+            hopePoints: user.hopePoints + 1,
+            hopePointsBreakdown: {
+                ...user.hopePointsBreakdown,
+                [HopePointCategory.CommunityGift]: (user.hopePointsBreakdown[HopePointCategory.CommunityGift] || 0) + 1,
+            },
+            lastPointGivenTimestamp: Date.now(),
+        };
+        updateUser(updatedGiver);
+
+        return { success: true, messageKey: 'scanner.success.giftSent', receiverName: receiver.symbolicName };
+    };
+
 
   return (
-    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt }}>
+    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, communityEvents, addCommunityEvent }}>
       {children}
     </DataContext.Provider>
   );

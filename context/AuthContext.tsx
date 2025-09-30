@@ -8,6 +8,9 @@ interface AuthContextType {
   logout: () => void;
   addHopePoints: (points: number, category: HopePointCategory) => void;
   updateUser: (updatedUserData: Partial<User>) => void;
+  getUserById: (userId: string) => User | undefined;
+  updateAnyUser: (updatedUser: User) => void;
+  getAllUsers: () => User[];
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -124,8 +127,30 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     updateUserState(updatedUser as User);
   };
 
+  const getUserById = (userId: string): User | undefined => {
+    const users = getUsers();
+    return users.find(u => u.id === userId);
+  };
+
+  const updateAnyUser = (updatedUser: User) => {
+    const users = getUsers();
+    const userIndex = users.findIndex(u => u.id === updatedUser.id);
+    if (userIndex !== -1) {
+        users[userIndex] = updatedUser;
+        saveUsers(users);
+        if (user && user.id === updatedUser.id) {
+            setUser(updatedUser);
+            localStorage.setItem('michyUser', JSON.stringify(updatedUser));
+        }
+    }
+  };
+
+  const getAllUsers = (): User[] => {
+    return getUsers();
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, addHopePoints, updateUser }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, addHopePoints, updateUser, getUserById, updateAnyUser, getAllUsers }}>
       {children}
     </AuthContext.Provider>
   );

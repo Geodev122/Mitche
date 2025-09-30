@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import Modal from '../ui/Modal';
 import SymbolIcon from '../ui/SymbolIcon';
+import { useTranslation } from 'react-i18next';
 
-const symbolicNames = ["حامل_الأمل", "صوت_النور", "يد_العون", "نجمة_الصباح", "قلب_شجاع"];
+const symbolicNameKeys = ["hopeBearer", "voiceOfLight", "helpingHand", "morningStar", "braveHeart"];
 const symbolicIcons = ["Star", "Lantern", "Flower"];
 
 interface AuthModalProps {
@@ -13,6 +14,7 @@ interface AuthModalProps {
 
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     const { login, signup } = useAuth();
+    const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
     
     const [username, setUsername] = useState('');
@@ -31,14 +33,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         if (result.success) {
             onClose();
         } else {
-            setError(result.message || 'حدث خطأ ما.');
+            setError(t('auth.errorInvalid'));
         }
     };
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         if (symbolicName.trim() === '') {
-            setError('الرجاء اختيار اسم رمزي.');
+            setError(t('auth.errorSymbolicName'));
             return;
         }
         setError('');
@@ -48,7 +50,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         if (result.success) {
             onClose();
         } else {
-            setError(result.message || 'حدث خطأ ما.');
+            setError(t('auth.errorExists'));
         }
     };
     
@@ -66,43 +68,43 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     }
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="الدخول إلى الملاذ">
+        <Modal isOpen={isOpen} onClose={onClose} title={t('auth.modalTitle')}>
             <div className="flex border-b mb-6">
                 <button
                     onClick={() => switchTab('login')}
                     className={`flex-1 py-2 font-semibold transition-colors duration-300 ${activeTab === 'login' ? 'border-b-2 border-[#D4AF37] text-[#3A3A3A]' : 'text-gray-400 hover:text-[#3A3A3A]'}`}
                 >
-                    تسجيل الدخول
+                    {t('auth.login')}
                 </button>
                 <button
                     onClick={() => switchTab('signup')}
                     className={`flex-1 py-2 font-semibold transition-colors duration-300 ${activeTab === 'signup' ? 'border-b-2 border-[#D4AF37] text-[#3A3A3A]' : 'text-gray-400 hover:text-[#3A3A3A]'}`}
                 >
-                    إنشاء حساب
+                    {t('auth.signup')}
                 </button>
             </div>
 
             {activeTab === 'login' ? (
                 <form onSubmit={handleLogin} className="space-y-4">
-                    <InputField id="login-username" label="اسم المستخدم" type="text" value={username} onChange={e => setUsername(e.target.value)} required />
-                    <InputField id="login-password" label="كلمة المرور" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+                    <InputField id="login-username" label={t('auth.username')} type="text" value={username} onChange={e => setUsername(e.target.value)} required />
+                    <InputField id="login-password" label={t('auth.password')} type="password" value={password} onChange={e => setPassword(e.target.value)} required />
                     {error && <p className="text-red-500 text-xs text-right">{error}</p>}
                     <button type="submit" disabled={loading} className="w-full mt-4 bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors disabled:bg-gray-400">
-                        {loading ? '...جاري الدخول' : 'دخول'}
+                        {loading ? t('auth.loginLoading') : t('auth.login')}
                     </button>
                 </form>
             ) : (
                 <form onSubmit={handleSignup} className="space-y-4">
-                    <InputField id="signup-username" label="اسم المستخدم" type="text" value={username} onChange={e => setUsername(e.target.value)} required />
-                    <InputField id="signup-password" label="كلمة المرور" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+                    <InputField id="signup-username" label={t('auth.username')} type="text" value={username} onChange={e => setUsername(e.target.value)} required />
+                    <InputField id="signup-password" label={t('auth.password')} type="password" value={password} onChange={e => setPassword(e.target.value)} required />
                     
                     <div className="bg-gray-50 p-4 rounded-lg border border-[#EAE2D6]">
-                        <label className="block text-sm font-medium text-gray-600 mb-2 text-right">اختر هويتك الرمزية</label>
+                        <label className="block text-sm font-medium text-gray-600 mb-2">{t('auth.chooseSymbolicIdentity')}</label>
                         <div className="flex items-center gap-4">
                             <div className="flex-grow">
-                                <select value={symbolicName} onChange={e => setSymbolicName(e.target.value)} required className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37] text-right">
-                                    <option value="" disabled>-- اختر اسماً --</option>
-                                    {symbolicNames.map(name => <option key={name} value={name}>{name}</option>)}
+                                <select value={symbolicName} onChange={e => setSymbolicName(e.target.value)} required className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]">
+                                    <option value="" disabled>{t('auth.selectName')}</option>
+                                    {symbolicNameKeys.map(nameKey => <option key={nameKey} value={t(`auth.symbolicNames.${nameKey}`)}>{t(`auth.symbolicNames.${nameKey}`)}</option>)}
                                 </select>
                             </div>
                             <div className="flex-shrink-0">
@@ -118,9 +120,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                         </div>
                     </div>
 
-                    {error && <p className="text-red-500 text-xs text-right">{error}</p>}
+                    {error && <p className="text-red-500 text-xs">{error}</p>}
                     <button type="submit" disabled={loading} className="w-full mt-4 bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors disabled:bg-gray-400">
-                        {loading ? '...جاري الإنشاء' : 'إنشاء حساب'}
+                        {loading ? t('auth.signupLoading') : t('auth.signup')}
                     </button>
                 </form>
             )}
@@ -131,9 +133,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 const InputField: React.FC<{id: string, label: string, type: string, value: string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, required?: boolean}> = 
 ({id, label, type, value, onChange, required}) => (
     <div>
-        <label htmlFor={id} className="block text-sm font-medium text-gray-600 mb-1 text-right">{label}</label>
+        <label htmlFor={id} className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
         <input id={id} type={type} value={value} onChange={onChange} required={required}
-            className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37] text-right" />
+            className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]" />
     </div>
 );
 

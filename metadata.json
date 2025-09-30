@@ -1,5 +1,7 @@
 {
   "name": "Mitché — منصة حامل الأمل",
   "description": "A poetic sanctuary where anonymous dignity meets communal action. Mitché is a living archive, a help network, and a gamified ritual of hope, inspired by the Mitché Flower and the identity of the Hope Bearer.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [
+    "camera"
+  ]
 }

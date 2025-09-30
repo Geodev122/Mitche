@@ -4,6 +4,7 @@ import Card from '../components/ui/Card';
 import { BookOpen, Zap, Wind, Users, Heart } from 'lucide-react';
 import SymbolIcon from '../components/ui/SymbolIcon';
 import { TapestryThread, TapestryThreadColor, TapestryThreadPattern } from '../types';
+import { useTranslation } from 'react-i18next';
 
 // A component to render the pattern visually
 const PatternVisual: React.FC<{ pattern: TapestryThreadPattern }> = ({ pattern }) => {
@@ -29,6 +30,7 @@ const colorMap: { [key in TapestryThreadColor]: { border: string, text: string, 
 
 const ThreadCard: React.FC<{ thread: TapestryThread }> = ({ thread }) => {
     const { echoThread } = useData();
+    const { t } = useTranslation();
     const [isPulsing, setIsPulsing] = useState(false);
     const colors = colorMap[thread.color];
 
@@ -61,24 +63,24 @@ const ThreadCard: React.FC<{ thread: TapestryThread }> = ({ thread }) => {
                         <img src={thread.honoreePhotoUrl || `https://api.dicebear.com/8.x/initials/svg?seed=${thread.honoreeRealName}`} alt={thread.honoreeRealName || ''} className="w-14 h-14 rounded-full object-cover flex-shrink-0" />
                     )}
                    
-                    <div className="mr-4 rtl:mr-0 rtl:ml-4">
+                    <div className="mx-4">
                         <h2 className="text-xl font-bold text-gray-800">
                             {thread.isAnonymous ? thread.honoreeSymbolicName : thread.honoreeRealName}
                         </h2>
-                        <p className={`text-sm font-semibold ${colors.text}`}>{thread.color} Thread</p>
+                        <p className={`text-sm font-semibold ${colors.text}`}>{thread.color} {t('tapestry.thread')}</p>
                     </div>
                 </div>
                 
                 <p className="text-gray-700 italic mb-4">"{thread.story}"</p>
 
                 <div className="flex justify-between items-center text-sm text-gray-500 border-t pt-3 mt-4">
-                    <div className="flex items-center" title="Lives Touched">
-                        <Zap className="w-4 h-4 ml-1 text-blue-400 rtl:ml-0 rtl:mr-1" />
+                    <div className="flex items-center" title={t('tapestry.livesTouched')}>
+                        <Zap className="w-4 h-4 ml-1 rtl:ml-0 rtl:mr-1 text-blue-400" />
                         <span>{thread.rippleTag}</span>
                     </div>
                     <button onClick={handleEcho} className="flex items-center hover:text-green-500 transition-colors" title="Echo this Story">
                         <Wind className="w-4 h-4 ml-1 rtl:ml-0 rtl:mr-1" />
-                        <span>صدى ({thread.echoes})</span>
+                        <span>{t('tapestry.echoStory', { count: thread.echoes })}</span>
                     </button>
                 </div>
             </div>
@@ -86,8 +88,39 @@ const ThreadCard: React.FC<{ thread: TapestryThread }> = ({ thread }) => {
     );
 }
 
+const Skeleton: React.FC<{ className?: string }> = ({ className }) => (
+  <div className={`bg-gray-200 rounded animate-pulse ${className}`}></div>
+);
+
+const ThreadCardSkeleton: React.FC = () => (
+    <Card className="relative overflow-hidden border-2 border-gray-200">
+         <div className="relative z-10">
+            <div className="flex items-center mb-4">
+                <Skeleton className="w-14 h-14 rounded-full flex-shrink-0" />
+                <div className="mx-4 flex-grow space-y-2">
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                </div>
+            </div>
+            
+            <div className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-5/6" />
+            </div>
+
+            <div className="flex justify-between items-center border-t border-gray-200 pt-3 mt-4">
+                <Skeleton className="h-5 w-12" />
+                <Skeleton className="h-5 w-24" />
+            </div>
+        </div>
+    </Card>
+);
+
+
 const HopeTapestry: React.FC = () => {
-    const { tapestryThreads } = useData();
+    const { tapestryThreads, loading } = useData();
+    const { t } = useTranslation();
     const [filter, setFilter] = useState<'All' | TapestryThreadColor>('All');
 
     const totalThreads = tapestryThreads.length;
@@ -101,18 +134,18 @@ const HopeTapestry: React.FC = () => {
         : sortedThreads.filter(t => t.color === filter);
 
     const filterOptions: { label: string; value: 'All' | TapestryThreadColor; }[] = [
-        { label: 'الكل', value: 'All' },
-        { label: 'بناة المجتمع', value: TapestryThreadColor.Gold },
-        { label: 'أبطال صامتون', value: TapestryThreadColor.Blue },
-        { label: 'أصوات التعاطف', value: TapestryThreadColor.Amber },
+        { label: t('tapestry.filterAll'), value: 'All' },
+        { label: t('tapestry.filterBuilders'), value: TapestryThreadColor.Gold },
+        { label: t('tapestry.filterHeroes'), value: TapestryThreadColor.Blue },
+        { label: t('tapestry.filterVoices'), value: TapestryThreadColor.Amber },
     ];
 
     return (
         <div className="p-4">
             <header className="text-center my-6">
                 <BookOpen className="w-12 h-12 mx-auto text-[#D4AF37] mb-2"/>
-                <h1 className="text-3xl font-bold text-gray-800">نسيج الأمل</h1>
-                <p className="text-md text-gray-500 mt-1">أرشيف حي للصمود والتحول، منسوج من خيوط العطاء</p>
+                <h1 className="text-3xl font-bold text-gray-800">{t('tapestry.title')}</h1>
+                <p className="text-md text-gray-500 mt-1">{t('tapestry.subtitle')}</p>
             </header>
             
             <Card className="mb-6">
@@ -120,17 +153,17 @@ const HopeTapestry: React.FC = () => {
                     <div className="flex flex-col items-center">
                         <Users className="w-6 h-6 text-gray-500 mb-1" />
                         <span className="font-bold text-lg">{totalThreads}</span>
-                        <span className="text-xs text-gray-500">خيوط</span>
+                        <span className="text-xs text-gray-500">{t('tapestry.threads')}</span>
                     </div>
                     <div className="flex flex-col items-center">
                         <Heart className="w-6 h-6 text-gray-500 mb-1" />
                         <span className="font-bold text-lg">{totalEchoes}</span>
-                        <span className="text-xs text-gray-500">أصداء</span>
+                        <span className="text-xs text-gray-500">{t('tapestry.echoes')}</span>
                     </div>
                     <div className="flex flex-col items-center">
                         <Zap className="w-6 h-6 text-gray-500 mb-1" />
                         <span className="font-bold text-lg">{totalRipples}</span>
-                        <span className="text-xs text-gray-500">أرواح</span>
+                        <span className="text-xs text-gray-500">{t('tapestry.souls')}</span>
                     </div>
                 </div>
             </Card>
@@ -162,15 +195,20 @@ const HopeTapestry: React.FC = () => {
             </div>
 
             <div className="space-y-6">
-                {filteredThreads.length > 0 ? (
+                {loading ? (
+                    <>
+                        <ThreadCardSkeleton />
+                        <ThreadCardSkeleton />
+                    </>
+                ) : filteredThreads.length > 0 ? (
                     filteredThreads.map((thread) => (
                         <ThreadCard key={thread.id} thread={thread} />
                     ))
                 ) : (
                      <div className="text-center text-gray-500 py-16">
                         <BookOpen size={48} className="mx-auto text-gray-300 mb-4" />
-                        <p className="font-semibold">لا توجد خيوط في هذا القسم بعد.</p>
-                        <p className="text-sm">لكن النسيج ينمو كل يوم بفضل أمثالك.</p>
+                        <p className="font-semibold">{t('tapestry.emptyTitle')}</p>
+                        <p className="text-sm">{t('tapestry.emptySubtitle')}</p>
                     </div>
                 )}
             </div>
