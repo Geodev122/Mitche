@@ -90,7 +90,10 @@ const Constellation: React.FC = () => {
       </Card>
       
       <div className="space-y-2 text-sm">
-        <button className="w-full flex items-center justify-center py-3 px-4 bg-white border rounded-lg text-gray-700">
+        <button 
+            onClick={() => navigate('/nomination')}
+            className="w-full flex items-center justify-center py-3 px-4 bg-white border rounded-lg text-gray-700 hover:bg-gray-50"
+        >
             <Award className="w-5 h-5 ml-2" /> ترشيحات الجوائز
         </button>
         <button className="w-full flex items-center justify-center py-3 px-4 bg-white border rounded-lg text-gray-700">

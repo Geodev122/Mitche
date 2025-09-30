@@ -11,7 +11,7 @@ const Sanctuary: React.FC = () => {
   const navTiles = [
     { title: 'جدار الصدى', subtitle: 'اطلب أو استجب للنداءات', path: '/echoes', icon: MessageSquare },
     { title: 'عطاياك', subtitle: 'شاهد أثر عطائك', path: '/offerings', icon: Heart },
-    { title: 'معبد القصص', subtitle: 'اقرأ قصص الأمل', path: '/temple', icon: BookOpen },
+    { title: 'نسيج الأمل', subtitle: 'اقرأ قصص الأمل', path: '/tapestry', icon: BookOpen },
     { title: 'كوكبتك', subtitle: 'سجل الأمل الخاص بك', path: '/constellation', icon: Star },
   ];
 

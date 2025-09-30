@@ -65,6 +65,12 @@ const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
         if (request.status === RequestStatus.Pending && !request.isConfirmedByRequester) {
             return <button onClick={() => confirmReceipt(request.id)} className="px-4 py-2 text-sm bg-green-500 text-white rounded-full hover:bg-green-600">تأكيد استلام المساعدة</button>;
         }
+        if (request.status === RequestStatus.Open) {
+            return <div className="text-sm text-gray-500">طلبك مفتوح للاستجابة</div>;
+        }
+        if (request.status === RequestStatus.Fulfilled) {
+            return <div className="text-sm text-green-600">تمت المساعدة بنجاح</div>;
+        }
         return null; // Or show status message
     }
 
@@ -84,6 +90,10 @@ const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
         } else {
             return <button className="px-4 py-2 text-sm bg-gray-300 text-gray-500 rounded-full cursor-not-allowed" disabled>بانتظار تأكيد الاستلام</button>;
         }
+    }
+    
+    if (request.status === RequestStatus.Fulfilled) {
+        return <div className="text-sm text-green-600">تمت المساعدة</div>;
     }
     
     return null;

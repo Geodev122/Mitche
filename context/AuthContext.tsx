@@ -52,6 +52,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       hopePoints: 0,
       hopePointsBreakdown: {},
     };
+    
+    // Add welcome points for new users
+    newUser.hopePoints = 5;
+    newUser.hopePointsBreakdown = {
+      [HopePointCategory.CommunityBuilder]: 5
+    };
+    
     localStorage.setItem('michyUser', JSON.stringify(newUser));
     setUser(newUser);
   };

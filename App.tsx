@@ -45,6 +45,7 @@ const Main: React.FC = () => {
           <Route path="constellation" element={<Constellation />} />
           <Route path="tapestry" element={<TempleOfStories />} />
           <Route path="nomination" element={<NominationResponse />} />
+          <Route path="temple" element={<TempleOfStories />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Route>
       )}

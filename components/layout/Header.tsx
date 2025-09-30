@@ -49,7 +49,7 @@ const Header: React.FC = () => {
         <header className="sticky top-0 bg-[#FBF9F4]/80 backdrop-blur-sm z-20 p-4 flex justify-between items-center border-b border-[#F1EADF]">
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <img src="/awardlogo.png" alt="Mitché Logo" className="h-8 w-8" />
-                <span className="text-lg font-bold text-[#3A3A3A]">Mitché</span>
+                <span className="text-lg font-bold text-[#3A3A3A]">Michy</span>
             </div>
             <div className="relative">
                 <button onClick={handleBellClick} className="relative p-2 rounded-full hover:bg-gray-200/50">
@@ -61,7 +61,7 @@ const Header: React.FC = () => {
                     )}
                 </button>
                 {showNotifications && (
-                    <div className="absolute left-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-[#F1EADF] overflow-hidden animate-fade-in-down">
+                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-[#F1EADF] overflow-hidden animate-fade-in-down z-50">
                         <div className="p-3 font-bold text-gray-700 border-b">الإشعارات</div>
                         {notifications.length > 0 ? (
                            <ul className="max-h-96 overflow-y-auto">

@@ -15,7 +15,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md animate-fade-in-down" onClick={e => e.stopPropagation()}>
         <div className="p-5 border-b flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-800">{title}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600" aria-label="Close modal">&times;</button>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl leading-none" aria-label="Close modal">&times;</button>
         </div>
         <div className="p-6">
           {children}
