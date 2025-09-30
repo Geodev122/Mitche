@@ -7,7 +7,7 @@ const Layout: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FBF9F4] flex flex-col">
       <Header />
-      <main className="flex-grow pb-20">
+      <main className="flex-grow">
         <Outlet />
       </main>
       <BottomNav />

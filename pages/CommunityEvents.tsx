@@ -75,7 +75,7 @@ const CommunityEvents: React.FC = () => {
   const canCreateEvent = user && [Role.NGO, Role.PublicWorker, Role.Admin].includes(user.role);
 
   return (
-    <div className="p-4">
+    <div className="p-4 pb-24">
       <header className="text-center my-6">
         <h1 className="text-3xl font-bold text-gray-800">{t('events.title')}</h1>
         <p className="text-md text-gray-500 mt-1">{t('events.subtitle')}</p>
@@ -91,9 +91,9 @@ const CommunityEvents: React.FC = () => {
           {communityEvents.map(event => <EventCard key={event.id} event={event} />)}
         </div>
       ) : (
-        <div className="text-center mt-20 text-gray-500">
+        <div className="text-center py-16 text-gray-500">
             <Users size={48} className="mx-auto text-gray-300 mb-4" />
-            <p>{t('events.emptyTitle')}</p>
+            <p className="font-semibold">{t('events.emptyTitle')}</p>
             <p className="text-sm">{t('events.emptySubtitle')}</p>
         </div>
       )}

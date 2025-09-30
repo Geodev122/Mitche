@@ -1,10 +1,10 @@
 import React from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { MessageSquare, Calendar, BookOpen, Star } from 'lucide-react';
+import { MessageSquare, Calendar, BookOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-const Sanctuary: React.FC = () => {
+const CitizenDashboard: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -13,7 +13,6 @@ const Sanctuary: React.FC = () => {
     { title: t('sanctuary.tiles.echoes'), subtitle: t('sanctuary.tiles.echoesSub'), path: '/echoes', icon: MessageSquare },
     { title: t('sanctuary.tiles.events'), subtitle: t('sanctuary.tiles.eventsSub'), path: '/events', icon: Calendar },
     { title: t('sanctuary.tiles.tapestry'), subtitle: t('sanctuary.tiles.tapestrySub'), path: '/tapestry', icon: BookOpen },
-    { title: t('sanctuary.tiles.constellation'), subtitle: t('sanctuary.tiles.constellationSub'), path: '/constellation', icon: Star },
   ];
 
   return (
@@ -44,4 +43,4 @@ const Sanctuary: React.FC = () => {
   );
 };
 
-export default Sanctuary;
+export default CitizenDashboard;

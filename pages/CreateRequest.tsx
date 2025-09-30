@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { RequestType, RequestMode } from '../types';
-import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Eye, Shield } from 'lucide-react';
 import ConfirmationModal from '../components/ui/ConfirmationModal';
 import { useTranslation } from 'react-i18next';
 
@@ -40,7 +40,7 @@ const CreateRequest: React.FC = () => {
 
   return (
     <>
-      <div className="p-4">
+      <div className="p-4 pb-32">
         <header className="flex items-center my-6">
           <button onClick={handleBackNavigation} className="p-2">
               <BackArrow size={24} className="text-gray-700" />
@@ -74,21 +74,25 @@ const CreateRequest: React.FC = () => {
           
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-2">{t('createRequest.form.mode')}</label>
-            <div className="flex space-x-4 rtl:space-x-reverse">
-              <button type="button" onClick={() => setMode(RequestMode.Loud)} className={`flex-1 py-3 rounded-lg text-sm transition-colors ${mode === RequestMode.Loud ? 'bg-[#3A3A3A] text-white' : 'bg-white border'}`}>
-                <p className="font-bold">{t('createRequest.form.modeLoud')}</p>
-                <p className="text-xs px-2">{t('createRequest.form.modeLoudDesc')}</p>
+            <div className="grid grid-cols-2 gap-2">
+              <button type="button" onClick={() => setMode(RequestMode.Loud)} className={`p-4 rounded-lg text-center transition-all duration-200 border-2 ${mode === RequestMode.Loud ? 'bg-amber-50 border-[#D4AF37]' : 'bg-white border-gray-200'}`}>
+                <Eye className={`w-6 h-6 mx-auto mb-2 ${mode === RequestMode.Loud ? 'text-[#D4AF37]' : 'text-gray-400'}`} />
+                <p className="font-bold text-sm">{t('createRequest.form.modeLoud')}</p>
+                <p className="text-xs text-gray-500 mt-1">{t('createRequest.form.modeLoudDesc')}</p>
               </button>
-              <button type="button" onClick={() => setMode(RequestMode.Silent)} className={`flex-1 py-3 rounded-lg text-sm transition-colors ${mode === RequestMode.Silent ? 'bg-[#3A3A3A] text-white' : 'bg-white border'}`}>
-                <p className="font-bold">{t('createRequest.form.modeSilent')}</p>
-                <p className="text-xs px-2">{t('createRequest.form.modeSilentDesc')}</p>
+              <button type="button" onClick={() => setMode(RequestMode.Silent)} className={`p-4 rounded-lg text-center transition-all duration-200 border-2 ${mode === RequestMode.Silent ? 'bg-amber-50 border-[#D4AF37]' : 'bg-white border-gray-200'}`}>
+                <Shield className={`w-6 h-6 mx-auto mb-2 ${mode === RequestMode.Silent ? 'text-[#D4AF37]' : 'text-gray-400'}`} />
+                <p className="font-bold text-sm">{t('createRequest.form.modeSilent')}</p>
+                <p className="text-xs text-gray-500 mt-1">{t('createRequest.form.modeSilentDesc')}</p>
               </button>
             </div>
           </div>
 
-          <button type="submit" className="w-full mt-6 bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors">
-            {t('createRequest.form.submit')}
-          </button>
+          <div className="fixed bottom-16 left-0 right-0 bg-[#FBF9F4]/80 backdrop-blur-sm p-4 border-t border-[#F1EADF]">
+            <button type="submit" className="w-full bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors">
+              {t('createRequest.form.submit')}
+            </button>
+          </div>
         </form>
       </div>
       <ConfirmationModal

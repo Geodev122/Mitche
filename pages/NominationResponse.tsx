@@ -146,7 +146,7 @@ const NominationResponse: React.FC = () => {
   }
 
   return (
-    <div className="p-4 max-w-lg mx-auto mt-8">
+    <div className="p-4 max-w-lg mx-auto mt-8 pb-24">
       {renderStep()}
     </div>
   );

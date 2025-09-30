@@ -39,7 +39,7 @@ const CreateEvent: React.FC = () => {
 
   return (
     <>
-      <div className="p-4">
+      <div className="p-4 pb-32">
         <header className="flex items-center my-6">
           <button onClick={handleBackNavigation} className="p-2">
               <BackArrow size={24} className="text-gray-700" />
@@ -71,9 +71,11 @@ const CreateEvent: React.FC = () => {
             <textarea value={description} onChange={e => setDescription(e.target.value)} required rows={5} className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]" placeholder={t('createEvent.form.descriptionPlaceholder')}></textarea>
           </div>
 
-          <button type="submit" className="w-full mt-6 bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors">
-            {t('createEvent.form.submit')}
-          </button>
+          <div className="fixed bottom-16 left-0 right-0 bg-[#FBF9F4]/80 backdrop-blur-sm p-4 border-t border-[#F1EADF]">
+            <button type="submit" className="w-full bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors">
+              {t('createEvent.form.submit')}
+            </button>
+          </div>
         </form>
       </div>
       <ConfirmationModal

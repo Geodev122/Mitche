@@ -3,11 +3,11 @@
   "appName": "Mitché",
   "appSlogan": "Où l'espoir résonne",
   "nav": {
-    "sanctuary": "Sanctuaire",
+    "home": "Accueil",
     "echoes": "Échos",
     "events": "Événements",
     "leaderboard": "Classement",
-    "constellation": "Constellation",
+    "constellation": "Profil",
     "tapestry": "Tapisserie de l'Espoir",
     "admin": "Admin"
   },
@@ -29,11 +29,11 @@
     "selectName": "-- Choisissez un Nom --",
     "signupLoading": "Création du compte...",
     "symbolicNames": {
-      "hopeBearer": "Porteur_d'Espoir",
-      "voiceOfLight": "Voix_de_Lumière",
-      "helpingHand": "Main_Tendue",
-      "morningStar": "Étoile_du_Matin",
-      "braveHeart": "Cœur_Brave"
+      "hopeBearer": "Porteur d'Espoir",
+      "voiceOfLight": "Voix de Lumière",
+      "helpingHand": "Main Tendue",
+      "morningStar": "Étoile du Matin",
+      "braveHeart": "Cœur Brave"
     },
     "errorInvalid": "Nom d'utilisateur ou mot de passe incorrect.",
     "errorExists": "Ce nom d'utilisateur existe déjà.",
@@ -48,9 +48,7 @@
       "events": "Événements Communautaires",
       "eventsSub": "Participez à des initiatives",
       "tapestry": "Tapisserie de l'Espoir",
-      "tapestrySub": "Lisez des histoires de résilience",
-      "constellation": "Votre Constellation",
-      "constellationSub": "Votre registre d'espoir"
+      "tapestrySub": "Lisez des histoires de résilience"
     }
   },
   "echoes": {
@@ -59,6 +57,8 @@
     "filter": "Filtrer",
     "allCategories": "Toutes les catégories",
     "loading": "Chargement des échos...",
+    "emptyTitle": "Le Mur est un Sanctuaire de Paix",
+    "emptySubtitle": "Son silence est un signe que, pour l'instant, les besoins sont comblés. De nouveaux échos apparaîtront dès qu'ils seront lancés par la communauté.",
     "time": {
       "just_now": "à l'instant",
       "seconds_ago_one": "il y a {{count}} seconde",
@@ -84,6 +84,7 @@
     "helpModal": {
       "titleHelp": "Apporter de l'Aide",
       "bodyHelp": "Vous êtes sur le point de commencer à aider pour cette demande. Le demandeur sera notifié. Veuillez le contacter au numéro ci-dessous pour continuer.",
+      "phoneNumber": "📞 +961 71 123 456",
       "dummyPhone": "(Ceci est un numéro fictif à des fins de démonstration)",
       "confirmHelp": "Je confirme, je vais aider"
     },
@@ -170,10 +171,17 @@
       "bioPlaceholder": "Dites-nous en un peu plus sur vous...",
       "save": "Enregistrer les modifications"
     },
-    "showQrCode": "Afficher le QR Code",
+    "showQrCode": "QR Code",
     "qrCodeTitle": "Votre QR Code",
     "qrCodeDesc": "Partagez ce code pour vous connecter avec {{name}}.",
-    "qrCodeMissing": "Enregistrez votre profil pour générer un code QR."
+    "qrCodeMissing": "Enregistrez votre profil pour générer un code QR.",
+    "notifications": {
+      "enable": "Activer les notifications push",
+      "disable": "Désactiver les notifications push",
+      "loading": "Chargement...",
+      "testTitle": "Envoyer une notification test",
+      "unsupported": "Les notifications push ne sont pas prises en charge sur ce navigateur."
+    }
   },
   "tapestry": {
     "title": "Tapisserie de l'Espoir",
@@ -247,6 +255,7 @@
     "CommunityGift": "Don de la Communauté"
   },
   "requestStatus": {
+    "title": "Statut",
     "Open": "Ouvert",
     "Pending": "En attente",
     "Fulfilled": "Rempli",
@@ -272,8 +281,8 @@
   "events": {
     "title": "Événements Communautaires",
     "subtitle": "Opportunités de se connecter, donner et participer",
-    "emptyTitle": "Aucun événement pour le moment.",
-    "emptySubtitle": "Les organisations ajoutent constamment de nouveaux événements, revenez bientôt."
+    "emptyTitle": "Soyez l'Étincelle de la Connexion",
+    "emptySubtitle": "Aucun événement n'est encore programmé. C'est votre chance de rassembler les gens. Créez un événement et renforcez nos liens communautaires."
   },
   "createEvent": {
     "title": "Créer un Nouvel Événement",
@@ -312,5 +321,37 @@
     "bearer": "Porteur",
     "points": "Points",
     "yourPosition": "Votre Position"
+  },
+  "requestDetail": {
+    "title": "Détails de la Demande",
+    "notFound": "Demande non trouvée.",
+    "backToWall": "Retour au Mur des Échos",
+    "requester": "Demandeur",
+    "helper": "Aidée par",
+    "postedOn": "Posté",
+    "encouragementTitle": "Mots d'Encouragement",
+    "noEncouragement": "Soyez le premier à envoyer un mot d'encouragement.",
+    "detailsTitle": "Détails"
+  },
+  "orgDashboard": {
+    "subtitle": "Votre pôle central pour l'action et le soutien communautaire.",
+    "metrics": {
+      "openRequests": "Demandes Ouvertes",
+      "silentRequests": "Murmures Silencieux",
+      "eventsOrganized": "Événements Organisés"
+    },
+    "silentWhispers": {
+      "title": "Murmures Silencieux",
+      "subtitle": "Demandes confidentielles nécessitant votre attention.",
+      "empty": "Aucune demande silencieuse pour le moment."
+    },
+    "echoes": {
+      "title": "Aperçu du Mur des Échos"
+    },
+    "events": {
+      "title": "Vos Événements Communautaires"
+    },
+    "viewAll": "Voir Tout",
+    "createEvent": "Créer un Nouvel Événement"
   }
 }

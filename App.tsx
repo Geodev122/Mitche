@@ -5,12 +5,12 @@ import { DataProvider } from './context/DataContext';
 import LanguageManager from './components/LanguageManager';
 import { Role } from './types';
 
-import Sanctuary from './pages/Sanctuary';
+import Dashboard from './pages/Dashboard';
 import WallOfEchoes from './pages/WallOfEchoes';
-import Constellation from './pages/Constellation';
 import TempleOfStories from './pages/TempleOfStories';
 import Login from './pages/Login';
 import Layout from './components/layout/Layout';
+import RequestDetail from './pages/RequestDetail';
 import CreateRequest from './pages/CreateRequest';
 import NominationResponse from './pages/NominationResponse';
 import Scanner from './pages/Scanner';
@@ -64,8 +64,9 @@ const Main: React.FC = () => {
         </>
       ) : (
         <Route path="/" element={<Layout />}>
-          <Route index element={<Sanctuary />} />
+          <Route index element={<Dashboard />} />
           <Route path="echoes" element={<WallOfEchoes />} />
+          <Route path="echoes/:requestId" element={<RequestDetail />} />
           <Route path="echoes/new" element={<CreateRequest />} />
           <Route path="events" element={<CommunityEvents />} />
           <Route path="events/new" element={
@@ -74,7 +75,6 @@ const Main: React.FC = () => {
             </ProtectedRoute>
           } />
           <Route path="leaderboard" element={<Leaderboard />} />
-          <Route path="constellation" element={<Constellation />} />
           <Route path="tapestry" element={<TempleOfStories />} />
           <Route path="nomination" element={<NominationResponse />} />
           <Route path="scanner" element={<Scanner />} />
