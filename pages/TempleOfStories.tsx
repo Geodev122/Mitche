@@ -86,7 +86,7 @@ const ThreadCard: React.FC<{ thread: TapestryThread }> = ({ thread }) => {
     );
 }
 
-const TempleOfStories: React.FC = () => {
+const HopeTapestry: React.FC = () => {
     const { tapestryThreads } = useData();
     const [filter, setFilter] = useState<'All' | TapestryThreadColor>('All');
 
@@ -178,4 +178,4 @@ const TempleOfStories: React.FC = () => {
     );
 };
 
-export default TempleOfStories;
+export default HopeTapestry;

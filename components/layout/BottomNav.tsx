@@ -1,14 +1,14 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Hop as Home, MessageSquare, Heart, Star, BookOpen } from 'lucide-react';
+import { Home, MessageSquare, Heart, Star, BookOpen } from 'lucide-react';
 
 const navItems = [
   { path: '/', label: 'الملاذ', icon: Home },
   { path: '/echoes', label: 'صدى', icon: MessageSquare },
   { path: '/offerings', label: 'عطاء', icon: Heart },
   { path: '/constellation', label: 'كوكبة', icon: Star },
-  { path: '/tapestry', label: 'نسيج', icon: BookOpen },
+  { path: '/tapestry', label: 'نسيج الأمل', icon: BookOpen },
 ];
 
 const BottomNav: React.FC = () => {
