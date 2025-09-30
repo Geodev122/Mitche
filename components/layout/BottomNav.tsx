@@ -1,17 +1,26 @@
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, MessageSquare, Heart, Star, BookOpen } from 'lucide-react';
-
-const navItems = [
-  { path: '/', label: 'الملاذ', icon: Home },
-  { path: '/echoes', label: 'صدى', icon: MessageSquare },
-  { path: '/offerings', label: 'عطاء', icon: Heart },
-  { path: '/constellation', label: 'كوكبة', icon: Star },
-  { path: '/tapestry', label: 'نسيج الأمل', icon: BookOpen },
-];
+import { Home, MessageSquare, Calendar, Star, BookOpen, Shield, Trophy } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../context/AuthContext';
+import { Role } from '../../types';
 
 const BottomNav: React.FC = () => {
+  const { t } = useTranslation();
+  const { user } = useAuth();
+
+  const navItems = [
+    { path: '/', label: t('nav.sanctuary'), icon: Home, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
+    { path: '/echoes', label: t('nav.echoes'), icon: MessageSquare, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
+    { path: '/events', label: t('nav.events'), icon: Calendar, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
+    { path: '/leaderboard', label: t('nav.leaderboard'), icon: Trophy, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
+    { path: '/constellation', label: t('nav.constellation'), icon: Star, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
+    { path: '/tapestry', label: t('nav.tapestry'), icon: BookOpen, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
+    { path: '/admin', label: t('nav.admin'), icon: Shield, roles: [Role.Admin] },
+  ];
+  
+  const accessibleNavItems = navItems.filter(item => user && item.roles.includes(user.role));
+
   const activeLinkStyle = {
     color: '#D4AF37', // A gold-like color for active state
   };
@@ -19,7 +28,7 @@ const BottomNav: React.FC = () => {
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-[#FFFDF9] border-t border-[#EAE2D6] shadow-md z-10">
       <div className="flex justify-around max-w-lg mx-auto">
-        {navItems.map(({ path, label, icon: Icon }) => (
+        {accessibleNavItems.map(({ path, label, icon: Icon }) => (
           <NavLink
             key={path}
             to={path}

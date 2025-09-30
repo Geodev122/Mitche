@@ -1,0 +1,305 @@
+
+{
+  "appName": "Mitché",
+  "appSlogan": "حيث يتردد صدى الأمل",
+  "nav": {
+    "sanctuary": "الملاذ",
+    "echoes": "صدى",
+    "events": "فعاليات",
+    "leaderboard": "المتصدرون",
+    "constellation": "كوكبة",
+    "tapestry": "نسيج الأمل",
+    "admin": "الإدارة"
+  },
+  "login": {
+    "welcome": "مرحباً بك في Mitché",
+    "startJourney": "ابدأ رحلتك",
+    "safeHavenTitle": "ملاذك الآمن",
+    "safeHavenDesc": "Mitché هو ملاذ آمن لتقديم وتلقي المساعدة مع الحفاظ على سرية الهوية. هنا، طلبات المساعدة هي 'أصداء'، وعروض الدعم هي 'عطايا'. هويتك محمية، مما يسمح للكرامة والرحمة بالازدهار.",
+    "agreement": "بالدخول، أنت توافق على مبدأ السرية والاحترام المتبادل الذي تقوم عليه منصتنا."
+  },
+  "auth": {
+    "modalTitle": "الدخول إلى الملاذ",
+    "login": "تسجيل الدخول",
+    "signup": "إنشاء حساب",
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "loginLoading": "...جاري الدخول",
+    "chooseSymbolicIdentity": "اختر هويتك الرمزية",
+    "selectName": "-- اختر اسماً --",
+    "signupLoading": "...جاري الإنشاء",
+    "symbolicNames": {
+      "hopeBearer": "حامل_الأمل",
+      "voiceOfLight": "صوت_النور",
+      "helpingHand": "يد_العون",
+      "morningStar": "نجمة_الصباح",
+      "braveHeart": "قلب_شجاع"
+    },
+    "errorInvalid": "اسم المستخدم أو كلمة المرور غير صحيحة.",
+    "errorExists": "اسم المستخدم موجود بالفعل.",
+    "errorSymbolicName": "الرجاء اختيار اسم رمزي."
+  },
+  "sanctuary": {
+    "welcome": "أهلاً بك، {{name}}",
+    "quote": "\"ليكن نورك صدى في هذا العالم\"",
+    "tiles": {
+      "echoes": "جدار الصدى",
+      "echoesSub": "اطلب أو استجب للنداءات",
+      "events": "الفعاليات المجتمعية",
+      "eventsSub": "شارك في المبادرات المجتمعية",
+      "tapestry": "نسيج الأمل",
+      "tapestrySub": "اقرأ قصص الصمود",
+      "constellation": "كوكبتك",
+      "constellationSub": "سجل الأمل الخاص بك"
+    }
+  },
+  "echoes": {
+    "title": "جدار الصدى",
+    "subtitle": "هنا ترتفع الأصوات وتتلاقى الأيادي",
+    "filter": "تصفية",
+    "allCategories": "كل الفئات",
+    "loading": "جاري تحميل الأصداء...",
+    "timeSince": "منذ {{time}}",
+    "time": {
+      "year": "سنة",
+      "month": "شهر",
+      "day": "يوم",
+      "hour": "ساعة",
+      "minute": "دقيقة",
+      "second": "ثانية"
+    },
+    "card": {
+      "provideHelp": "تقديم مساعدة",
+      "sendEncouragement": "إرسال تشجيع",
+      "confirmReceipt": "تأكيد استلام المساعدة",
+      "claimHopePoints": "المطالبة بنقاط الأمل",
+      "waitingReceipt": "بانتظار تأكيد الاستلام"
+    },
+    "helpModal": {
+      "titleHelp": "تقديم مساعدة",
+      "bodyHelp": "أنت على وشك بدء المساعدة في هذا الطلب. سيتم إخطار صاحب الطلب. الرجاء التواصل معه عبر الرقم أدناه للمتابعة.",
+      "dummyPhone": "(هذا رقم وهمي لأغراض العرض)",
+      "confirmHelp": "أؤكد، سأقوم بالمساعدة"
+    },
+    "encourageModal": {
+      "title": "إرسال رسالة تشجيع",
+      "placeholder": "اكتب رسالتك هنا... كلماتك قد تكون الضوء الذي يحتاجه أحدهم.",
+      "send": "إرسال"
+    }
+  },
+  "createRequest": {
+    "title": "اطلق نداءك",
+    "subtitle": "كل طلب هو بذرة أمل. صف ما تحتاجه بصدق.",
+    "form": {
+      "title": "عنوان الطلب",
+      "titlePlaceholder": "مثال: بحاجة إلى دعم نفسي",
+      "category": "فئة الطلب",
+      "region": "المنطقة",
+      "regionPlaceholder": "مثال: بيروت",
+      "description": "وصف الطلب",
+      "descriptionPlaceholder": "اشرح طلبك بالتفصيل...",
+      "mode": "نوع الطلب",
+      "modeLoud": "طلب عالي (علني)",
+      "modeLoudDesc": "يظهر على جدار الصدى للجميع",
+      "modeSilent": "طلب صامت (خاص)",
+      "modeSilentDesc": "يُرسل فقط للمنظمات والجهات المعنية",
+      "submit": "إرسال الطلب"
+    },
+    "discardTitle": "تجاهل الطلب؟",
+    "discardConfirm": "نعم، تجاهل",
+    "discardCancel": "إلغاء",
+    "discardBody": "هل أنت متأكد أنك تريد تجاهل هذا الطلب؟ لن يتم حفظ التغييرات التي قمت بها."
+  },
+  "constellation": {
+    "starOfHope": "نجم في كوكبة الأمل",
+    "totalHopePoints": "مجموع نقاط الأمل",
+    "quote": "\"كل نقطة هي شهادة على نورك\"",
+    "breakdownTitle": "تفصيل نقاط الأمل",
+    "installApp": "تثبيت التطبيق",
+    "appInstalled": "تم تثبيت التطبيق",
+    "awardNominations": "ترشيحات الجوائز",
+    "privacySettings": "إعدادات الخصوصية",
+    "logout": "تسجيل الخروج",
+    "scanToGiveHope": "امسح لتهدي نقطة أمل",
+    "yourEvents": "فعالياتك",
+    "noEvents": "لم تقم بإنشاء أي فعاليات بعد.",
+    "accolades": {
+      "title": "الأوسمة والشارات"
+    },
+    "achievements": {
+      "firstEcho": {
+        "title": "الصدى الأول",
+        "description": "قمت بأول طلب مساعدة لك."
+      },
+      "firstOffering": {
+        "title": "العطاء الأول",
+        "description": "قدمت أول مساعدة أو تشجيع."
+      },
+      "compassionateVoice": {
+        "title": "صوت رحيم",
+        "description": "أرسلت 3 رسائل تشجيع."
+      },
+      "communityPillar": {
+        "title": "عمود المجتمع",
+        "description": "أكملت مساعدة طلبين."
+      },
+      "beaconOfHope": {
+        "title": "منارة أمل",
+        "description": "حصلت قصتك على 10 أصداء."
+      }
+    },
+    "activity": {
+      "title": "النشاط الأخير",
+      "noActivity": "لا يوجد نشاط حديث لعرضه.",
+      "createdRequest": "أنشأت طلباً: \"{{title}}\"",
+      "helpedRequest": "ساعدت في طلب: \"{{title}}\"",
+      "sentEncouragement": "أرسلت تشجيعاً لـ: \"{{title}}\""
+    },
+    "editProfile": {
+      "title": "تعديل الملف الشخصي",
+      "location": "الموقع",
+      "locationPlaceholder": "مثال: بيروت، لبنان",
+      "bio": "نبذة تعريفية",
+      "bioPlaceholder": "أخبرنا القليل عن نفسك...",
+      "save": "حفظ التغييرات"
+    },
+    "showQrCode": "إظهار رمز QR",
+    "qrCodeTitle": "رمز QR الخاص بك",
+    "qrCodeDesc": "شارك هذا الرمز للتواصل مع {{name}}.",
+    "qrCodeMissing": "احفظ ملفك الشخصي لإنشاء رمز QR."
+  },
+  "tapestry": {
+    "title": "نسيج الأمل",
+    "subtitle": "أرشيف حي للصمود والتحول، منسوج من خيوط العطاء",
+    "threads": "خيوط",
+    "echoes": "أصداء",
+    "souls": "أرواح",
+    "filterAll": "الكل",
+    "filterBuilders": "بناة المجتمع",
+    "filterHeroes": "أبطال صامتون",
+    "filterVoices": "أصوات التعاطف",
+    "thread": "خيط",
+    "livesTouched": "أرواح تأثرت",
+    "echoStory": "صدى ({count})",
+    "emptyTitle": "لا توجد خيوط في هذا القسم بعد.",
+    "emptySubtitle": "لكن النسيج ينمو كل يوم بفضل أمثالك."
+  },
+  "nomination": {
+    "noNomination": "لا يوجد ترشيح نشط.",
+    "title": "لقد وصل نورك إلى المعبد",
+    "subtitle": "تم ترشيحك لجائزة حامل الأمل. هل تود أن تخطو إلى الأمام، أم تبقى نجماً صامتاً؟",
+    "revealIdentity": "كشف الهوية",
+    "stayAnonymous": "البقاء مجهولاً",
+    "confirmRevealTitle": "تأكيد كشف الهوية",
+    "confirmRevealBody": "باختيارك كشف هويتك، سيتم عرض اسمك الحقيقي وصورتك بشكل علني على خيط قصتك في \"نسيج الأمل\". هذا العمل القوي يربط وجهاً بالأمل الذي ألهمته، مما يسمح للمجتمع برؤية الشخص خلف الاسم الرمزي والاحتفاء به. هل أنت مستعد للخطو نحو النور؟",
+    "confirmRevealButton": "نعم، أؤكد الكشف",
+    "back": "العودة",
+    "revealFormTitle": "الكشف عن هويتك",
+    "realName": "الاسم الحقيقي",
+    "realNamePlaceholder": "اسمك الذي سيظهر في الاحتفال",
+    "photo": "صورة شخصية (اختياري)",
+    "confirmAndContinue": "تأكيد ومتابعة",
+    "confirmAnonymousTitle": "تأكيد البقاء مجهولاً",
+    "confirmAnonymousBody": "باختيارك البقاء مجهولاً، سيستمر اسمك وأيقونتك الرمزية في تمثيلك في \"نسيج الأمل\". ستلهم قصتك الآخرين بينما تظل هويتك سراً ثميناً. هل هذا هو طريقك المختار؟",
+    "confirmAnonymousButton": "نعم، أؤكد إخفاء الهوية",
+    "finishedTitle": "سواء كان اسمك معروفاً أم لا، فإن إرثك خالد.",
+    "finishedSubtitle": "سيتم تكريم اختيارك بكل تبجيل واحترام.",
+    "viewTapestry": "شاهد نسيج الأمل"
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "empty": "لا توجد إشعارات جديدة.",
+    "nomination": "لقد وصل نورك إلى المعبد. تم ترشيحك لجائزة حامل الأمل. هل تود أن تخطو إلى الأمام، أم تبقى نجماً صامتاً؟",
+    "encouragement": "رسالة تشجيع جديدة على طلبك \"{{title}}...\"",
+    "helpOffer": "مستخدم \"{{name}}\" بدأ بمساعدتك في طلبك \"{{title}}...\".",
+    "receiptConfirm": "صاحب الطلب \"{{title}}...\" أكد استلام المساعدة. يمكنك الآن المطالبة بنقاط الأمل.",
+    "fulfillment": "تمت تلبية طلبك \"{{title}}...\"! شكراً للمستخدم الذي ساعدك."
+  },
+  "roles": {
+    "Citizen": "مواطن",
+    "NGO": "منظمة غير حكومية",
+    "PublicWorker": "عامل في القطاع العام",
+    "Admin": "مدير"
+  },
+  "requestTypes": {
+    "Food": "طعام",
+    "Shelter": "مأوى",
+    "Medical": "دعم طبي",
+    "Emotional": "دعم نفسي",
+    "Legal": "مساعدة قانونية",
+    "Employment": "فرصة عمل"
+  },
+  "hopePointCategories": {
+    "SilentHero": "بطل صامت",
+    "VoiceOfCompassion": "صوت التعاطف",
+    "CommunityBuilder": "باني المجتمع",
+    "CommunityGift": "هدية مجتمعية"
+  },
+  "requestStatus": {
+    "Open": "مفتوح",
+    "Pending": "قيد المراجعة",
+    "Fulfilled": "تمت المساعدة",
+    "Closed": "مغلق"
+  },
+  "scanner": {
+    "status": {
+      "scanning": "ابحث عن رمز QR...",
+      "processing": "جاري المعالجة...",
+      "noCamera": "لا يمكن الوصول إلى الكاميرا. يرجى التحقق من الأذونات."
+    },
+    "success": {
+      "giftSent": "لقد أهديت نقطة أمل إلى {{name}}. لقد ربحت أيضاً نقطة واحدة!"
+    },
+    "error": {
+      "notLoggedIn": "يجب عليك تسجيل الدخول للقيام بذلك.",
+      "selfGift": "لا يمكنك إعطاء نقطة لنفسك.",
+      "alreadyGiven": "لقد أهديت نقطتك اليومية بالفعل. حاول مرة أخرى غداً.",
+      "userNotFound": "لم يتم العثور على هذا المستخدم.",
+      "invalidQR": "هذا ليس رمز QR صالح لمستخدم Mitché."
+    }
+  },
+  "events": {
+    "title": "فعاليات المجتمع",
+    "subtitle": "فرص للتواصل والعطاء والمشاركة",
+    "emptyTitle": "لا توجد فعاليات حالياً.",
+    "emptySubtitle": "تقوم المنظمات بإضافة فعاليات جديدة باستمرار، تفقد مجدداً قريباً."
+  },
+  "createEvent": {
+    "title": "إنشاء فعالية جديدة",
+    "subtitle": "اجمع المجتمع حول قضية أو نشاط.",
+    "form": {
+      "title": "عنوان الفعالية",
+      "titlePlaceholder": "مثال: حملة تنظيف الشاطئ",
+      "category": "نوع الفعالية",
+      "region": "المنطقة",
+      "regionPlaceholder": "مثال: بيروت",
+      "description": "وصف الفعالية",
+      "descriptionPlaceholder": "اشرح تفاصيل الفعالية، الزمان، المكان...",
+      "submit": "نشر الفعالية"
+    },
+    "discardTitle": "تجاهل الفعالية؟",
+    "discardConfirm": "نعم، تجاهل",
+    "discardCancel": "إلغاء",
+    "discardBody": "هل أنت متأكد أنك تريد تجاهل هذه الفعالية؟ لن يتم حفظ التغييرات التي قمت بها."
+  },
+  "communityEventTypes": {
+    "Volunteer": "فرصة تطوع",
+    "Event": "فعالية"
+  },
+  "admin": {
+    "title": "لوحة تحكم المدير",
+    "subtitle": "نظرة عامة على نشاط المنصة",
+    "loading": "جاري تحميل الإحصائيات...",
+    "totalUsers": "إجمالي المستخدمين",
+    "totalRequests": "إجمالي الطلبات",
+    "totalEvents": "إجمالي الفعاليات"
+  },
+  "leaderboard": {
+    "title": "قائمة المتصدرين للأمل",
+    "subtitle": "تكريم حاملي الأمل الأكثر نشاطاً",
+    "rank": "الترتيب",
+    "bearer": "الحامل",
+    "points": "النقاط",
+    "yourPosition": "ترتيبك"
+  }
+}

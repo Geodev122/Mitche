@@ -1,0 +1,305 @@
+
+{
+  "appName": "Mitché",
+  "appSlogan": "Where Hope Echoes",
+  "nav": {
+    "sanctuary": "Sanctuary",
+    "echoes": "Echoes",
+    "events": "Events",
+    "leaderboard": "Leaderboard",
+    "constellation": "Constellation",
+    "tapestry": "Hope Tapestry",
+    "admin": "Admin"
+  },
+  "login": {
+    "welcome": "Welcome to Mitché",
+    "startJourney": "Start Your Journey",
+    "safeHavenTitle": "Your Safe Haven",
+    "safeHavenDesc": "Mitché is a safe haven for giving and receiving help while maintaining anonymity. Here, requests for help are 'Echoes', and offers of support are 'Offerings'. Your identity is protected, allowing dignity and compassion to flourish.",
+    "agreement": "By entering, you agree to the principles of confidentiality and mutual respect that our platform is built upon."
+  },
+  "auth": {
+    "modalTitle": "Enter the Sanctuary",
+    "login": "Log In",
+    "signup": "Sign Up",
+    "username": "Username",
+    "password": "Password",
+    "loginLoading": "Logging in...",
+    "chooseSymbolicIdentity": "Choose Your Symbolic Identity",
+    "selectName": "-- Select a Name --",
+    "signupLoading": "Creating Account...",
+    "symbolicNames": {
+      "hopeBearer": "Hope_Bearer",
+      "voiceOfLight": "Voice_of_Light",
+      "helpingHand": "Helping_Hand",
+      "morningStar": "Morning_Star",
+      "braveHeart": "Brave_Heart"
+    },
+    "errorInvalid": "Incorrect username or password.",
+    "errorExists": "Username already exists.",
+    "errorSymbolicName": "Please choose a symbolic name."
+  },
+  "sanctuary": {
+    "welcome": "Welcome, {{name}}",
+    "quote": "\"May your light be an echo in this world\"",
+    "tiles": {
+      "echoes": "Wall of Echoes",
+      "echoesSub": "Request or respond to calls",
+      "events": "Community Events",
+      "eventsSub": "Join initiatives and gatherings",
+      "tapestry": "Hope Tapestry",
+      "tapestrySub": "Read stories of resilience",
+      "constellation": "Your Constellation",
+      "constellationSub": "Your record of hope"
+    }
+  },
+  "echoes": {
+    "title": "Wall of Echoes",
+    "subtitle": "Here, voices rise and hands meet",
+    "filter": "Filter",
+    "allCategories": "All Categories",
+    "loading": "Loading echoes...",
+    "timeSince": "{{time}} ago",
+    "time": {
+      "year": "year",
+      "month": "month",
+      "day": "day",
+      "hour": "hour",
+      "minute": "minute",
+      "second": "second"
+    },
+    "card": {
+      "provideHelp": "Provide Help",
+      "sendEncouragement": "Send Encouragement",
+      "confirmReceipt": "Confirm Receipt",
+      "claimHopePoints": "Claim Hope Points",
+      "waitingReceipt": "Awaiting Receipt"
+    },
+    "helpModal": {
+      "titleHelp": "Provide Help",
+      "bodyHelp": "You are about to start helping with this request. The requester will be notified. Please contact them at the number below to proceed.",
+      "dummyPhone": "(This is a dummy number for demonstration purposes)",
+      "confirmHelp": "I Confirm, I Will Help"
+    },
+    "encourageModal": {
+      "title": "Send a Message of Encouragement",
+      "placeholder": "Write your message here... Your words might be the light someone needs.",
+      "send": "Send"
+    }
+  },
+  "createRequest": {
+    "title": "Launch Your Echo",
+    "subtitle": "Every request is a seed of hope. Describe what you need with sincerity.",
+    "form": {
+      "title": "Request Title",
+      "titlePlaceholder": "e.g., In need of emotional support",
+      "category": "Request Category",
+      "region": "Region",
+      "regionPlaceholder": "e.g., Beirut",
+      "description": "Request Description",
+      "descriptionPlaceholder": "Explain your request in detail...",
+      "mode": "Request Mode",
+      "modeLoud": "Loud (Public)",
+      "modeLoudDesc": "Appears on the Wall of Echoes for everyone",
+      "modeSilent": "Silent (Private)",
+      "modeSilentDesc": "Sent only to relevant organizations and entities",
+      "submit": "Submit Request"
+    },
+    "discardTitle": "Discard Request?",
+    "discardConfirm": "Yes, Discard",
+    "discardCancel": "Cancel",
+    "discardBody": "Are you sure you want to discard this request? Your changes will not be saved."
+  },
+  "constellation": {
+    "starOfHope": "A Star in the Constellation of Hope",
+    "totalHopePoints": "Total Hope Points",
+    "quote": "\"Every point is a testament to your light\"",
+    "breakdownTitle": "Hope Points Breakdown",
+    "installApp": "Install App",
+    "appInstalled": "App is installed",
+    "awardNominations": "Award Nominations",
+    "privacySettings": "Privacy Settings",
+    "logout": "Log Out",
+    "scanToGiveHope": "Scan to Give Hope",
+    "yourEvents": "Your Events",
+    "noEvents": "You have not created any events yet.",
+    "accolades": {
+      "title": "Accolades & Badges"
+    },
+    "achievements": {
+      "firstEcho": {
+        "title": "First Echo",
+        "description": "Made your first request for help."
+      },
+      "firstOffering": {
+        "title": "First Offering",
+        "description": "Made your first offering of help or encouragement."
+      },
+      "compassionateVoice": {
+        "title": "Compassionate Voice",
+        "description": "Sent 3 messages of encouragement."
+      },
+      "communityPillar": {
+        "title": "Community Pillar",
+        "description": "Fulfilled 2 requests for help."
+      },
+      "beaconOfHope": {
+        "title": "Beacon of Hope",
+        "description": "Your story received 10 echoes."
+      }
+    },
+    "activity": {
+      "title": "Recent Activity",
+      "noActivity": "No recent activity to show.",
+      "createdRequest": "You created a request: \"{{title}}\"",
+      "helpedRequest": "You helped with a request: \"{{title}}\"",
+      "sentEncouragement": "You sent encouragement for: \"{{title}}\""
+    },
+    "editProfile": {
+      "title": "Edit Profile",
+      "location": "Location",
+      "locationPlaceholder": "e.g., Beirut, Lebanon",
+      "bio": "Bio",
+      "bioPlaceholder": "Tell us a little about yourself...",
+      "save": "Save Changes"
+    },
+    "showQrCode": "Show QR Code",
+    "qrCodeTitle": "Your QR Code",
+    "qrCodeDesc": "Share this code to connect with {{name}}.",
+    "qrCodeMissing": "Save your profile to generate a QR code."
+  },
+  "tapestry": {
+    "title": "Hope Tapestry",
+    "subtitle": "A living archive of resilience and transformation, woven from threads of giving",
+    "threads": "Threads",
+    "echoes": "Echoes",
+    "souls": "Souls",
+    "filterAll": "All",
+    "filterBuilders": "Community Builders",
+    "filterHeroes": "Silent Heroes",
+    "filterVoices": "Voices of Compassion",
+    "thread": "Thread",
+    "livesTouched": "Lives Touched",
+    "echoStory": "Echo ({{count}})",
+    "emptyTitle": "No threads in this section yet.",
+    "emptySubtitle": "But the tapestry grows every day, thanks to people like you."
+  },
+  "nomination": {
+    "noNomination": "No active nomination.",
+    "title": "Your Light Has Reached the Temple",
+    "subtitle": "You have been nominated for the Hope Bearer Award. Will you step forward, or remain a silent star?",
+    "revealIdentity": "Reveal Identity",
+    "stayAnonymous": "Stay Anonymous",
+    "confirmRevealTitle": "Confirm Identity Reveal",
+    "confirmRevealBody": "By choosing to reveal your identity, your real name and photo will be publicly displayed on your story's thread in the 'Hope Tapestry'. This powerful act connects a face to the hope you've inspired, allowing the community to see and celebrate the person behind the symbol. Are you ready to step into the light?",
+    "confirmRevealButton": "Yes, I Confirm Reveal",
+    "back": "Go Back",
+    "revealFormTitle": "Reveal Your Identity",
+    "realName": "Real Name",
+    "realNamePlaceholder": "Your name as it will appear in celebration",
+    "photo": "Profile Picture (Optional)",
+    "confirmAndContinue": "Confirm and Continue",
+    "confirmAnonymousTitle": "Confirm Remaining Anonymous",
+    "confirmAnonymousBody": "By choosing to remain anonymous, your symbolic name and icon will continue to represent you in the 'Hope Tapestry'. Your story will inspire others while your identity remains a cherished secret. Is this your chosen path?",
+    "confirmAnonymousButton": "Yes, I Confirm Anonymity",
+    "finishedTitle": "Whether your name is known or not, your legacy is eternal.",
+    "finishedSubtitle": "Your choice will be honored with all due reverence.",
+    "viewTapestry": "View the Hope Tapestry"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No new notifications.",
+    "nomination": "Your light has reached the temple. You've been nominated for the Hope Bearer award. Will you step forward, or remain a silent star?",
+    "encouragement": "New encouragement on your request \"{{title}}...\"",
+    "helpOffer": "User \"{{name}}\" has started helping with your request \"{{title}}...\".",
+    "receiptConfirm": "The requester of \"{{title}}...\" confirmed receipt of help. You can now claim your hope points.",
+    "fulfillment": "Your request \"{{title}}...\" has been fulfilled! Thanks to the user who helped you."
+  },
+  "roles": {
+    "Citizen": "Citizen",
+    "NGO": "NGO",
+    "PublicWorker": "Public Worker",
+    "Admin": "Admin"
+  },
+  "requestTypes": {
+    "Food": "Food",
+    "Shelter": "Shelter",
+    "Medical": "Medical Support",
+    "Emotional": "Emotional Support",
+    "Legal": "Legal Aid",
+    "Employment": "Job Opportunity"
+  },
+  "hopePointCategories": {
+    "SilentHero": "Silent Hero",
+    "VoiceOfCompassion": "Voice of Compassion",
+    "CommunityBuilder": "Community Builder",
+    "CommunityGift": "Community Gift"
+  },
+  "requestStatus": {
+    "Open": "Open",
+    "Pending": "Pending",
+    "Fulfilled": "Fulfilled",
+    "Closed": "Closed"
+  },
+  "scanner": {
+    "status": {
+      "scanning": "Looking for a QR code...",
+      "processing": "Processing...",
+      "noCamera": "Could not access camera. Please check permissions."
+    },
+    "success": {
+      "giftSent": "You gave 1 Hope Point to {{name}}. You also earned 1 point!"
+    },
+    "error": {
+      "notLoggedIn": "You must be logged in to do this.",
+      "selfGift": "You cannot give a point to yourself.",
+      "alreadyGiven": "You have already given your daily point. Try again tomorrow.",
+      "userNotFound": "This user could not be found.",
+      "invalidQR": "This is not a valid Mitché user QR code."
+    }
+  },
+  "events": {
+    "title": "Community Events",
+    "subtitle": "Opportunities to connect, give, and participate",
+    "emptyTitle": "No events right now.",
+    "emptySubtitle": "Organizations are always adding new events, check back soon."
+  },
+  "createEvent": {
+    "title": "Create a New Event",
+    "subtitle": "Bring the community together around a cause or activity.",
+    "form": {
+      "title": "Event Title",
+      "titlePlaceholder": "e.g., Beach Cleanup Drive",
+      "category": "Event Type",
+      "region": "Region",
+      "regionPlaceholder": "e.g., Beirut",
+      "description": "Event Description",
+      "descriptionPlaceholder": "Explain the details of the event, time, location...",
+      "submit": "Publish Event"
+    },
+    "discardTitle": "Discard Event?",
+    "discardConfirm": "Yes, Discard",
+    "discardCancel": "Cancel",
+    "discardBody": "Are you sure you want to discard this event? Your changes will not be saved."
+  },
+  "communityEventTypes": {
+    "Volunteer": "Volunteering Opportunity",
+    "Event": "Event"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "subtitle": "An overview of platform activity",
+    "loading": "Loading stats...",
+    "totalUsers": "Total Users",
+    "totalRequests": "Total Requests",
+    "totalEvents": "Total Events"
+  },
+  "leaderboard": {
+    "title": "Hope Leaderboard",
+    "subtitle": "Celebrating the most active bearers of hope",
+    "rank": "Rank",
+    "bearer": "Bearer",
+    "points": "Points",
+    "yourPosition": "Your Position"
+  }
+}

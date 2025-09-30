@@ -1,24 +1,26 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { MessageSquare, Heart, BookOpen, Star } from 'lucide-react';
+import { MessageSquare, Calendar, BookOpen, Star } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Sanctuary: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const navTiles = [
-    { title: 'جدار الصدى', subtitle: 'اطلب أو استجب للنداءات', path: '/echoes', icon: MessageSquare },
-    { title: 'عطاياك', subtitle: 'شاهد أثر عطائك', path: '/offerings', icon: Heart },
-    { title: 'نسيج الأمل', subtitle: 'اقرأ قصص الصمود', path: '/tapestry', icon: BookOpen },
-    { title: 'كوكبتك', subtitle: 'سجل الأمل الخاص بك', path: '/constellation', icon: Star },
+    { title: t('sanctuary.tiles.echoes'), subtitle: t('sanctuary.tiles.echoesSub'), path: '/echoes', icon: MessageSquare },
+    { title: t('sanctuary.tiles.events'), subtitle: t('sanctuary.tiles.eventsSub'), path: '/events', icon: Calendar },
+    { title: t('sanctuary.tiles.tapestry'), subtitle: t('sanctuary.tiles.tapestrySub'), path: '/tapestry', icon: BookOpen },
+    { title: t('sanctuary.tiles.constellation'), subtitle: t('sanctuary.tiles.constellationSub'), path: '/constellation', icon: Star },
   ];
 
   return (
     <div className="p-6">
       <header className="text-center my-8">
-        <h1 className="text-2xl text-gray-700">أهلاً بك، <span className="font-bold text-[#D4AF37]">{user?.symbolicName}</span></h1>
-        <p className="text-md text-gray-500 mt-2">"ليكن نورك صدى في هذا العالم"</p>
+        <h1 className="text-2xl text-gray-700">{t('sanctuary.welcome', { name: user?.symbolicName })}</h1>
+        <p className="text-md text-gray-500 mt-2">"{t('sanctuary.quote')}"</p>
       </header>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
