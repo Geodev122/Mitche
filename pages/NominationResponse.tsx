@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 import { useNavigate } from 'react-router-dom';
 import Card from '../components/ui/Card';
-import { Shield, UserCheck, CheckCircle, ArrowRight } from 'lucide-react';
+import { Shield, UserCheck, CircleCheck as CheckCircle, ArrowRight } from 'lucide-react';
 
 const NominationResponse: React.FC = () => {
   const { user } = useAuth();
