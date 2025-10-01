@@ -1,9 +1,9 @@
-import React, { FC, useState, useEffect, ElementType } from 'react';
+import * as React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import Card from '../ui/Card';
 import SymbolIcon from '../ui/SymbolIcon';
-import { Award, ShieldCheck, LogOut, Download, Pencil, MapPin, QrCode, ScanLine, Bell, BellOff, Send, ChevronRight, X, Info } from 'lucide-react';
+import { Award, ShieldCheck, LogOut, Download, Pencil, MapPin, QrCode, ScanLine, Bell, BellOff, Send, ChevronRight, X, Info, Camera } from 'lucide-react';
 import { HopePointCategory, Role } from '../../types';
 import { useTranslation } from 'react-i18next';
 import Modal from '../ui/Modal';
@@ -22,7 +22,7 @@ interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
 }
 
-const SettingsButton: FC<{icon: ElementType, label: string, onClick?: () => void, isDestructive?: boolean}> = ({icon: Icon, label, onClick, isDestructive}) => (
+const SettingsButton: React.FC<{icon: React.ElementType, label: string, onClick?: () => void, isDestructive?: boolean}> = ({icon: Icon, label, onClick, isDestructive}) => (
     <button onClick={onClick} className={`w-full flex items-center justify-between text-left p-3 rounded-lg bg-gray-50/50 hover:bg-gray-100 transition-colors duration-200 active:bg-gray-200 ${isDestructive ? 'text-red-600' : 'text-gray-700'}`}>
         <div className="flex items-center">
             <Icon className={`w-5 h-5 mr-3 rtl:mr-0 rtl:ml-3 ${isDestructive ? 'text-red-500' : 'text-gray-500'}`} />
@@ -37,20 +37,20 @@ interface ProfilePanelProps {
   onClose: () => void;
 }
 
-const ProfilePanel: FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
+const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
   const { user, logout } = useAuth();
   const { t } = useTranslation();
   const navigate = ReactRouterDOM.useNavigate();
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [isAppInstalled, setIsAppInstalled] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = React.useState<BeforeInstallPromptEvent | null>(null);
+  const [isAppInstalled, setIsAppInstalled] = React.useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const [isQrModalOpen, setIsQrModalOpen] = React.useState(false);
   
-  const [isPushSupportedState, setIsPushSupportedState] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [isSubscriptionLoading, setSubscriptionLoading] = useState(true);
+  const [isPushSupportedState, setIsPushSupportedState] = React.useState(false);
+  const [isSubscribed, setIsSubscribed] = React.useState(false);
+  const [isSubscriptionLoading, setSubscriptionLoading] = React.useState(true);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
     if (isStandalone) setIsAppInstalled(true);
 
@@ -73,7 +73,7 @@ const ProfilePanel: FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
     };
   }, []);
   
-  useEffect(() => {
+  React.useEffect(() => {
     if (isPushSupported()) {
         setIsPushSupportedState(true);
         getSubscription().then(sub => {
@@ -104,6 +104,22 @@ const ProfilePanel: FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
         }
     }
     setSubscriptionLoading(false);
+  };
+  
+  const handleCameraAccess = async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert(t('constellation.cameraNotSupported'));
+        return;
+    }
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        alert(t('constellation.cameraAccessGranted'));
+        // Stop the stream tracks immediately after getting permission
+        stream.getTracks().forEach(track => track.stop());
+    } catch (err) {
+        console.error("Camera access denied:", err);
+        alert(t('constellation.cameraAccessDenied'));
+    }
   };
 
   const handleSendTestNotification = () => {
@@ -216,6 +232,7 @@ const ProfilePanel: FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
                              />
                         )}
                         {showInstallButton && <SettingsButton icon={Download} label={t('constellation.installApp')} onClick={handleInstallClick} />}
+                        <SettingsButton icon={Camera} label={t('constellation.accessCamera')} onClick={handleCameraAccess} />
                         <SettingsButton icon={LogOut} label={t('constellation.logout')} onClick={logout} isDestructive />
                     </div>
                 </Card>

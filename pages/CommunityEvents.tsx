@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
 import { PlusCircle, Calendar, Users, ShieldCheck } from 'lucide-react';

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Star, Sun, Flower, Anchor } from 'lucide-react';
 
 interface SymbolIconProps {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Request, Offering, RequestType, RequestMode, Notification, HopePointCategory, RequestStatus, TapestryThread, TapestryThreadColor, TapestryThreadPattern, User, CommunityEvent, CommunityEventType, Role, Resource, ResourceCategory, CommendationType } from '../types';
 import { useAuth } from './AuthContext';
 import i18n from '../i18n';

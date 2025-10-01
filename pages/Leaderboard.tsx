@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { User } from '../types';

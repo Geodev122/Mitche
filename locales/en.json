@@ -49,37 +49,38 @@
     "refreshUsernames": "Refresh names"
   },
   "onboarding": {
-    "welcome": {
-      "title": "Welcome to Our Sanctuary",
-      "subtitle": "Before you begin, let's explore the core principles that shape our world."
+    "step1": {
+        "title": "Welcome to Mitché",
+        "subtitle": "A sanctuary where hope echoes. Let's walk through the core principles that shape our world."
     },
-    "concepts": {
-      "echoes": {
+    "step2": {
         "title": "Echoes: Calls of Hope",
-        "description": "When you need help, you cast an 'Echo'. It is your anonymous request that reaches the community."
-      },
-      "offerings": {
+        "description": "When you need help, you cast an 'Echo'. It is your anonymous request that reaches the community, like a ripple in a quiet pond."
+    },
+    "step3": {
         "title": "Offerings: Seeds of Compassion",
-        "description": "You can respond to Echoes with 'Offerings' - either material help or words of encouragement."
-      },
-      "identity": {
+        "description": "You can respond to Echoes with 'Offerings' — either material help or words of encouragement. Each offering is a light in the darkness."
+    },
+    "step4": {
         "title": "Your Identity: A Hope Bearer",
-        "description": "Here, you are known by your chosen name and symbol, ensuring dignity and safety for all."
-      }
+        "description": "Here, you are known by your chosen name and symbol, ensuring dignity and safety for all. This is the shield that protects your true identity."
     },
-    "identity": {
-      "title": "Forge Your Symbolic Identity",
-      "subtitle": "Choose the name and symbol that will represent your light in this community. This is the shield that protects your true identity.",
-      "chooseIcon": "Choose Your Symbol"
+    "step5": {
+        "title": "Forge Your Symbolic Identity",
+        "subtitle": "Choose the name and symbol that will represent your light in this community.",
+        "chooseName": "Choose Your Name",
+        "chooseIcon": "Choose Your Symbol"
     },
-    "confirm": {
-      "title": "You Are Now Part of the Tapestry",
-      "subtitle": "This is your identity as a Hope Bearer. Remember, behind every symbol lies a human heart."
+    "step6": {
+        "title": "You Are Now Part of the Tapestry",
+        "subtitle": "This is your identity as a Hope Bearer. Remember, behind every symbol lies a human heart."
     },
     "buttons": {
-      "next": "Next",
-      "back": "Back",
-      "complete": "Enter the Sanctuary"
+        "begin": "Begin",
+        "next": "Next",
+        "back": "Back",
+        "createIdentity": "Create Your Identity",
+        "complete": "Enter the Sanctuary"
     }
   },
   "sanctuary": {
@@ -171,6 +172,10 @@
     "privacySettings": "Privacy Settings",
     "logout": "Log Out",
     "scanToGiveHope": "Scan to Give Hope",
+    "accessCamera": "Access Camera",
+    "cameraAccessGranted": "Camera access granted!",
+    "cameraAccessDenied": "Camera access denied. Please check your browser permissions.",
+    "cameraNotSupported": "Camera access is not supported on this browser.",
     "yourEvents": "Your Events",
     "noEvents": "You have not created any events yet.",
     "accolades": {

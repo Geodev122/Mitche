@@ -49,37 +49,38 @@
     "refreshUsernames": "Rafraîchir les noms"
   },
   "onboarding": {
-    "welcome": {
-      "title": "Bienvenue dans notre Sanctuaire",
-      "subtitle": "Avant de commencer, explorons les principes fondamentaux qui façonnent notre monde."
+    "step1": {
+        "title": "Bienvenue à Mitché",
+        "subtitle": "Un sanctuaire où l'espoir résonne. Parcourons les principes fondamentaux qui façonnent notre monde."
     },
-    "concepts": {
-      "echoes": {
+    "step2": {
         "title": "Échos : Appels d'Espoir",
-        "description": "Lorsque vous avez besoin d'aide, vous lancez un 'Écho'. C'est votre demande anonyme qui atteint la communauté."
-      },
-      "offerings": {
+        "description": "Lorsque vous avez besoin d'aide, vous lancez un 'Écho'. C'est votre demande anonyme qui atteint la communauté, comme une onde dans un étang tranquille."
+    },
+    "step3": {
         "title": "Offrandes : Graines de Compassion",
-        "description": "Vous pouvez répondre aux Échos avec des 'Offrandes' - une aide matérielle ou des mots d'encouragement."
-      },
-      "identity": {
+        "description": "Vous pouvez répondre aux Échos avec des 'Offrandes' - une aide matérielle ou des mots d'encouragement. Chaque offrande est une lumière dans l'obscurité."
+    },
+    "step4": {
         "title": "Votre Identité : Un Porteur d'Espoir",
-        "description": "Ici, vous êtes connu par le nom et le symbole que vous avez choisis, garantissant la dignité et la sécurité pour tous."
-      }
+        "description": "Ici, vous êtes connu par le nom et le symbole que vous avez choisis, garantissant la dignité et la sécurité pour tous. C'est le bouclier qui protège votre véritable identité."
     },
-    "identity": {
-      "title": "Créez Votre Identité Symbolique",
-      "subtitle": "Choisissez le nom et le symbole qui représenteront votre lumière dans cette communauté. C'est le bouclier qui protège votre véritable identité.",
-      "chooseIcon": "Choisissez Votre Symbole"
+    "step5": {
+        "title": "Créez Votre Identité Symbolique",
+        "subtitle": "Choisissez le nom et le symbole qui représenteront votre lumière dans cette communauté.",
+        "chooseName": "Choisissez Votre Nom",
+        "chooseIcon": "Choisissez Votre Symbole"
     },
-    "confirm": {
-      "title": "Vous Faites Maintenant Partie de la Tapisserie",
-      "subtitle": "Ceci est votre identité en tant que Porteur d'Espoir. Souvenez-vous, derrière chaque symbole se cache un cœur humain."
+    "step6": {
+        "title": "Vous Faites Maintenant Partie de la Tapisserie",
+        "subtitle": "Ceci est votre identité en tant que Porteur d'Espoir. Souvenez-vous, derrière chaque symbole se cache un cœur humain."
     },
     "buttons": {
-      "next": "Suivant",
-      "back": "Retour",
-      "complete": "Entrer dans le Sanctuaire"
+        "begin": "Commencer",
+        "next": "Suivant",
+        "back": "Retour",
+        "createIdentity": "Créez Votre Identité",
+        "complete": "Entrer dans le Sanctuaire"
     }
   },
   "sanctuary": {
@@ -171,6 +172,10 @@
     "privacySettings": "Paramètres de confidentialité",
     "logout": "Déconnexion",
     "scanToGiveHope": "Scannez pour donner de l'espoir",
+    "accessCamera": "Accéder à la caméra",
+    "cameraAccessGranted": "Accès à la caméra autorisé !",
+    "cameraAccessDenied": "Accès à la caméra refusé. Veuillez vérifier les autorisations de votre navigateur.",
+    "cameraNotSupported": "L'accès à la caméra n'est pas pris en charge par votre navigateur.",
     "yourEvents": "Vos Événements",
     "noEvents": "Vous n'avez pas encore créé d'événements.",
     "accolades": {

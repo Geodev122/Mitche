@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Bell, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';

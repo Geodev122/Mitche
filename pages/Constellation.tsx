@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 
 // This component's functionality has been moved to the ProfilePanel.
