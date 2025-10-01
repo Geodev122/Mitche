@@ -19,10 +19,13 @@ const getPodiumClass = (rank: number) => {
     }
 };
 
-const PodiumCard: React.FC<{ user: User; rank: number }> = ({ user, rank }) => {
+const PodiumCard: React.FC<{ user: User; rank: number; isCurrentUser: boolean }> = ({ user, rank, isCurrentUser }) => {
+    const highlightClass = isCurrentUser ? 'ring-2 ring-offset-2 ring-[#D4AF37]' : '';
     return (
-        <div className={`text-center p-4 rounded-xl border-2 ${getPodiumClass(rank)}`}>
+        <div className={`text-center p-4 rounded-xl border-2 ${getPodiumClass(rank)} ${highlightClass}`}>
             {rank === 1 && <Crown className="w-8 h-8 mx-auto text-yellow-500 -mt-8 mb-2" />}
+            {rank === 2 && <Trophy className="w-6 h-6 mx-auto text-gray-400 -mt-7 mb-1" />}
+            {rank === 3 && <Trophy className="w-6 h-6 mx-auto text-amber-500 -mt-7 mb-1" />}
             <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-2 border-2 ${getPodiumClass(rank)} bg-white`}>
                 <SymbolIcon name={user.symbolicIcon} className="w-8 h-8 text-gray-700" />
             </div>
@@ -59,15 +62,15 @@ const Leaderboard: React.FC = () => {
                     <div className="grid grid-cols-3 gap-2 items-end">
                         {/* 2nd Place */}
                         <div className="mt-4">
-                            {topThree[1] && <PodiumCard user={topThree[1]} rank={2} />}
+                            {topThree[1] && <PodiumCard user={topThree[1]} rank={2} isCurrentUser={topThree[1].id === currentUser.id} />}
                         </div>
                          {/* 1st Place */}
                         <div>
-                             {topThree[0] && <PodiumCard user={topThree[0]} rank={1} />}
+                             {topThree[0] && <PodiumCard user={topThree[0]} rank={1} isCurrentUser={topThree[0].id === currentUser.id} />}
                         </div>
                          {/* 3rd Place */}
                         <div className="mt-4">
-                            {topThree[2] && <PodiumCard user={topThree[2]} rank={3} />}
+                            {topThree[2] && <PodiumCard user={topThree[2]} rank={3} isCurrentUser={topThree[2].id === currentUser.id} />}
                         </div>
                     </div>
                 </Card>

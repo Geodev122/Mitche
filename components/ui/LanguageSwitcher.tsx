@@ -11,7 +11,7 @@ const LanguageSwitcher: React.FC = () => {
   const { i18n } = useTranslation();
 
   return (
-    <div className="flex items-center space-x-1 rtl:space-x-reverse bg-gray-100 rounded-full p-1">
+    <div className="flex items-center justify-center space-x-1 rtl:space-x-reverse bg-gray-100 rounded-full p-1">
       {Object.keys(languages).map((lng) => (
         <button
           key={lng}

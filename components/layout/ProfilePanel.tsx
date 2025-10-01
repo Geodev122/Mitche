@@ -11,6 +11,7 @@ import EditProfileModal from '../ui/EditProfileModal';
 import { useNavigate } from 'react-router-dom';
 import { timeSince } from '../../utils/time';
 import { isPushSupported, subscribeUser, unsubscribeUser, getSubscription } from '../../utils/notifications';
+import LanguageSwitcher from '../ui/LanguageSwitcher';
 
 
 interface BeforeInstallPromptEvent extends Event {
@@ -325,6 +326,10 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
             <button onClick={() => handleNavigate('/scanner')} className="w-full flex items-center justify-center py-3 px-4 bg-[#D4AF37] text-white rounded-lg font-bold hover:bg-opacity-90 transition-colors text-lg shadow-md active:scale-95">
                 <ScanLine className="w-6 h-6 mx-2" /> {t('constellation.scanToGiveHope')}
             </button>
+
+            <Card>
+                <LanguageSwitcher />
+            </Card>
 
             <Card className="!p-2">
                 <div className="space-y-2">
