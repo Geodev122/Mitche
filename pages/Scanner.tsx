@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState, useCallback, useEffect } from 'react';
+import * as React from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import jsQR from 'jsqr';
 import { useData } from '../context/DataContext';
@@ -7,17 +7,17 @@ import { ArrowLeft, ArrowRight, CheckCircle, XCircle, Zap, CameraOff } from 'luc
 
 type ScanStatus = 'scanning' | 'processing' | 'success' | 'error' | 'no-camera';
 
-const Scanner: FC = () => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+const Scanner: React.FC = () => {
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const navigate = ReactRouterDOM.useNavigate();
   const { giveDailyPoint } = useData();
   const { t, i18n } = useTranslation();
 
-  const [status, setStatus] = useState<ScanStatus>('scanning');
-  const [message, setMessage] = useState('');
+  const [status, setStatus] = React.useState<ScanStatus>('scanning');
+  const [message, setMessage] = React.useState('');
 
-  const handleQrCode = useCallback(async (data: string) => {
+  const handleQrCode = React.useCallback(async (data: string) => {
     setStatus('processing'); 
 
     // Improved validation
@@ -33,7 +33,7 @@ const Scanner: FC = () => {
     if (result.success) {
         setMessage(t(result.messageKey, { name: result.receiverName }));
         setStatus('success');
-        setTimeout(() => navigate('/constellation'), 2500);
+        setTimeout(() => navigate('/'), 2500);
     } else {
         setMessage(t(result.messageKey));
         setStatus('error');
@@ -41,7 +41,7 @@ const Scanner: FC = () => {
     }
   }, [giveDailyPoint, t, navigate]);
   
-  useEffect(() => {
+  React.useEffect(() => {
     // If we're not in the scanning state, don't run the camera logic.
     if (status !== 'scanning') {
       return;

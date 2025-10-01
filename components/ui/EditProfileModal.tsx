@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, FormEvent } from 'react';
+import * as React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { User } from '../../types';
 import Modal from './Modal';
@@ -10,20 +10,20 @@ interface EditProfileModalProps {
   user: User;
 }
 
-const EditProfileModal: FC<EditProfileModalProps> = ({ isOpen, onClose, user }) => {
+const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, user }) => {
   const { updateUser } = useAuth();
   const { t } = useTranslation();
-  const [bio, setBio] = useState('');
-  const [location, setLocation] = useState('');
+  const [bio, setBio] = React.useState('');
+  const [location, setLocation] = React.useState('');
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (user) {
       setBio(user.bio || '');
       setLocation(user.location || '');
     }
   }, [user, isOpen]);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${user.id}`;
     updateUser({ bio, location, qrCodeUrl });

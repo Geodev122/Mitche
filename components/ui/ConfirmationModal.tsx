@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import * as React from 'react';
 import Modal from './Modal';
 
 interface ConfirmationModalProps {
@@ -6,12 +6,12 @@ interface ConfirmationModalProps {
   onClose: () => void;
   onConfirm: () => void;
   title: string;
-  children: ReactNode;
+  children: React.ReactNode;
   confirmText?: string;
   cancelText?: string;
 }
 
-const ConfirmationModal: FC<ConfirmationModalProps> = ({
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   isOpen,
   onClose,
   onConfirm,

@@ -1,4 +1,4 @@
-import React, { StrictMode } from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './i18n'; // Initialize i18next
@@ -24,7 +24,7 @@ if (!rootElement) {
 
 const root = ReactDOM.createRoot(rootElement);
 root.render(
-  <StrictMode>
+  <React.StrictMode>
     <App />
-  </StrictMode>
+  </React.StrictMode>
 );

@@ -1,11 +1,11 @@
-import React, { FC } from 'react';
+import * as React from 'react';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import Card from '../components/ui/Card';
 import { Heart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-const Offerings: FC = () => {
+const Offerings: React.FC = () => {
   const { offerings } = useData();
   const { user } = useAuth();
   const { t } = useTranslation();

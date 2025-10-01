@@ -1,10 +1,10 @@
-import React, { FC } from 'react';
+import * as React from 'react';
 import { useAuth } from '../context/AuthContext';
 import * as ReactRouterDOM from 'react-router-dom';
 import { MessageSquare, Calendar, BookOpen, Star } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-const Sanctuary: FC = () => {
+const Sanctuary: React.FC = () => {
   const { user } = useAuth();
   const navigate = ReactRouterDOM.useNavigate();
   const { t } = useTranslation();

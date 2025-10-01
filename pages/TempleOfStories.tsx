@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import * as React from 'react';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
 import { BookOpen, Zap, Wind, Users, Heart } from 'lucide-react';
@@ -7,7 +7,7 @@ import { TapestryThread, TapestryThreadColor, TapestryThreadPattern } from '../t
 import { useTranslation } from 'react-i18next';
 
 // A component to render the pattern visually
-const PatternVisual: FC<{ pattern: TapestryThreadPattern }> = ({ pattern }) => {
+const PatternVisual: React.FC<{ pattern: TapestryThreadPattern }> = ({ pattern }) => {
     const commonClasses = "absolute inset-0 opacity-5";
     if (pattern === TapestryThreadPattern.Spirals) {
         return <div className={`${commonClasses} bg-[radial-gradient(#3A3A3A_1px,transparent_1px)] [background-size:20px_20px]`}></div>;
@@ -28,10 +28,10 @@ const colorMap: { [key in TapestryThreadColor]: { border: string, text: string, 
 };
 
 
-const ThreadCard: FC<{ thread: TapestryThread }> = ({ thread }) => {
+const ThreadCard: React.FC<{ thread: TapestryThread }> = ({ thread }) => {
     const { echoThread } = useData();
     const { t } = useTranslation();
-    const [isPulsing, setIsPulsing] = useState(false);
+    const [isPulsing, setIsPulsing] = React.useState(false);
     const colors = colorMap[thread.color];
 
     const handleEcho = () => {
@@ -88,11 +88,11 @@ const ThreadCard: FC<{ thread: TapestryThread }> = ({ thread }) => {
     );
 }
 
-const Skeleton: FC<{ className?: string }> = ({ className }) => (
+const Skeleton: React.FC<{ className?: string }> = ({ className }) => (
   <div className={`bg-gray-200 rounded animate-pulse ${className}`}></div>
 );
 
-const ThreadCardSkeleton: FC = () => (
+const ThreadCardSkeleton: React.FC = () => (
     <Card className="relative overflow-hidden border-2 border-gray-200">
          <div className="relative z-10">
             <div className="flex items-center mb-4">
@@ -118,10 +118,10 @@ const ThreadCardSkeleton: FC = () => (
 );
 
 
-const HopeTapestry: FC = () => {
+const HopeTapestry: React.FC = () => {
     const { tapestryThreads, loading } = useData();
     const { t } = useTranslation();
-    const [filter, setFilter] = useState<'All' | TapestryThreadColor>('All');
+    const [filter, setFilter] = React.useState<'All' | TapestryThreadColor>('All');
 
     const totalThreads = tapestryThreads.length;
     const totalEchoes = tapestryThreads.reduce((sum, t) => sum + t.echoes, 0);

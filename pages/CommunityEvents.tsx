@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import * as React from 'react';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
 import { PlusCircle, Calendar, Users, ShieldCheck } from 'lucide-react';
@@ -9,7 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { timeSince } from '../utils/time';
 
-const EventCard: FC<{ event: CommunityEvent }> = ({ event }) => {
+const EventCard: React.FC<{ event: CommunityEvent }> = ({ event }) => {
   const { t } = useTranslation();
   
   const typeStyles = {
@@ -46,11 +46,11 @@ const EventCard: FC<{ event: CommunityEvent }> = ({ event }) => {
   );
 };
 
-const Skeleton: FC<{ className?: string }> = ({ className }) => (
+const Skeleton: React.FC<{ className?: string }> = ({ className }) => (
   <div className={`bg-gray-200 rounded animate-pulse ${className}`}></div>
 );
 
-const EventCardSkeleton: FC = () => (
+const EventCardSkeleton: React.FC = () => (
   <Card className="mb-4">
     <div className="flex items-start">
       <div className="ml-4 rtl:mr-0 rtl:ml-4 flex-shrink-0">
@@ -70,7 +70,7 @@ const EventCardSkeleton: FC = () => (
   </Card>
 );
 
-const CommunityEvents: FC = () => {
+const CommunityEvents: React.FC = () => {
   const { communityEvents, loading } = useData();
   const { user } = useAuth();
   const { t } = useTranslation();

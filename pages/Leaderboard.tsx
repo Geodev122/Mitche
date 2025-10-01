@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import * as React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { User } from '../types';
@@ -19,7 +19,7 @@ const getPodiumClass = (rank: number) => {
     }
 };
 
-const PodiumCard: FC<{ user: User; rank: number; isCurrentUser: boolean }> = ({ user, rank, isCurrentUser }) => {
+const PodiumCard: React.FC<{ user: User; rank: number; isCurrentUser: boolean }> = ({ user, rank, isCurrentUser }) => {
     const { t } = useTranslation();
     const highlightClass = isCurrentUser ? 'ring-2 ring-offset-2 ring-[#D4AF37]' : '';
     return (
@@ -39,7 +39,7 @@ const PodiumCard: FC<{ user: User; rank: number; isCurrentUser: boolean }> = ({ 
     );
 };
 
-const Leaderboard: FC = () => {
+const Leaderboard: React.FC = () => {
     const { getAllUsers, user: currentUser } = useAuth();
     const { t } = useTranslation();
 

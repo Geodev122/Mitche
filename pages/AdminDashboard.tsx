@@ -1,4 +1,4 @@
-import React, { FC, useState, useCallback, useEffect, ElementType } from 'react';
+import * as React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { User, Role, VerificationStatus } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
 
-const StatCard: FC<{ icon: ElementType, value: number, label: string }> = ({ icon: Icon, value, label }) => (
+const StatCard: React.FC<{ icon: React.ElementType, value: number, label: string }> = ({ icon: Icon, value, label }) => (
     <Card className="flex items-center p-4">
         <div className="p-3 bg-gray-100 rounded-full mr-4 rtl:mr-0 rtl:ml-4">
             <Icon className="w-6 h-6 text-[#D4AF37]" />
@@ -19,7 +19,7 @@ const StatCard: FC<{ icon: ElementType, value: number, label: string }> = ({ ico
     </Card>
 );
 
-const VerificationStatusBadge: FC<{ status?: VerificationStatus }> = ({ status }) => {
+const VerificationStatusBadge: React.FC<{ status?: VerificationStatus }> = ({ status }) => {
     const { t } = useTranslation();
     if (!status || status === 'NotRequested') return null;
 
@@ -37,7 +37,7 @@ const VerificationStatusBadge: FC<{ status?: VerificationStatus }> = ({ status }
 };
 
 
-const UserRow: FC<{ user: User }> = ({ user }) => {
+const UserRow: React.FC<{ user: User }> = ({ user }) => {
     const { t } = useTranslation();
     return (
         <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
@@ -57,17 +57,17 @@ const UserRow: FC<{ user: User }> = ({ user }) => {
 };
 
 
-const AdminDashboard: FC = () => {
+const AdminDashboard: React.FC = () => {
     const { getAllUsers, user, updateVerificationStatus } = useAuth();
     const { requests, communityEvents, loading } = useData();
     const { t } = useTranslation();
-    const [users, setUsers] = useState<User[]>([]);
+    const [users, setUsers] = React.useState<User[]>([]);
 
-    const refreshUsers = useCallback(() => {
+    const refreshUsers = React.useCallback(() => {
         setUsers(getAllUsers());
     }, [getAllUsers]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         refreshUsers();
     }, [refreshUsers]);
 

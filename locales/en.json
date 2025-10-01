@@ -2,6 +2,9 @@
 {
   "appName": "Mitché",
   "appSlogan": "Where Hope Echoes",
+  "modal": {
+    "close": "Close modal"
+  },
   "nav": {
     "home": "Home",
     "echoes": "Echoes",
