@@ -250,19 +250,29 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
             </Card>
             
             {isCitizen && (
-                <Card>
+              <Card>
                 <h2 className="text-xl font-bold text-gray-800 mb-4">{t('constellation.accolades.title')}</h2>
-                <div className="grid grid-cols-3 sm:grid-cols-5 gap-4 text-center">
-                    {achievements.map(ach => (
-                        <div key={ach.id} className="flex flex-col items-center" title={ach.description}>
-                            <div className={`w-16 h-16 rounded-full flex items-center justify-center border-2 transition-all duration-300 transform ${ach.isUnlocked ? 'bg-gradient-to-br from-yellow-100 to-amber-200 border-yellow-400 shadow-md scale-105' : 'bg-gray-100 border-gray-200'}`}>
-                                <ach.icon className={`w-8 h-8 ${ach.isUnlocked ? 'text-amber-600' : 'text-gray-400'}`} />
-                            </div>
-                            <p className={`mt-2 text-xs font-semibold ${ach.isUnlocked ? 'text-gray-700' : 'text-gray-500'}`}>{ach.title}</p>
-                        </div>
-                    ))}
+                <div className="grid grid-cols-3 gap-x-2 gap-y-4 text-center">
+                  {achievements.map(ach => (
+                    <div key={ach.id} className="relative group flex flex-col items-center">
+                      <div className={`w-16 h-16 rounded-full flex items-center justify-center border-2 transition-all duration-300 transform ${ach.isUnlocked ? 'bg-gradient-to-br from-yellow-100 to-amber-200 border-yellow-400 shadow-lg shadow-yellow-400/30 scale-105' : 'bg-gray-100 border-gray-200 filter grayscale'}`}>
+                        <ach.icon className={`w-8 h-8 ${ach.isUnlocked ? 'text-amber-600' : 'text-gray-400'}`} />
+                      </div>
+                      <div className="mt-2 text-center" style={{ minHeight: '50px' }}>
+                        <p className={`text-xs font-semibold ${ach.isUnlocked ? 'text-gray-700' : 'text-gray-500'}`}>{ach.title}</p>
+                        {ach.isUnlocked && (
+                          <p className="mt-1 text-[10px] leading-tight text-gray-500 px-1">{ach.description}</p>
+                        )}
+                      </div>
+                       {!ach.isUnlocked && (
+                          <div className="absolute bottom-full mb-2 w-max max-w-[150px] px-3 py-1.5 text-xs text-white bg-gray-900 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none text-center z-10">
+                              {ach.description}
+                          </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
-                </Card>
+              </Card>
             )}
             
             {isCitizen && (
