@@ -38,7 +38,11 @@
     "errorInvalid": "اسم المستخدم أو كلمة المرور غير صحيحة.",
     "errorExists": "اسم المستخدم موجود بالفعل.",
     "errorSymbolicName": "الرجاء اختيار اسم رمزي.",
-    "identityChoiceInfo": "ستختار هويتك الرمزية بعد إنشاء حسابك."
+    "identityChoiceInfo": "ستختار هويتك الرمزية بعد إنشاء حسابك.",
+    "errorUsernameNotSelected": "الرجاء اختيار اسم مستخدم.",
+    "generatingUsernames": "جاري إنشاء أسماء فريدة...",
+    "chooseUsername": "اختر اسم المستخدم الخاص بك",
+    "refreshUsernames": "تحديث الأسماء"
   },
   "onboarding": {
     "welcome": {

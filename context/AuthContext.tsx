@@ -12,9 +12,13 @@ interface AuthContextType {
   getUserById: (userId: string) => User | undefined;
   updateAnyUser: (updatedUser: User) => void;
   getAllUsers: () => User[];
+  generateUniqueUsernames: () => string[];
 }
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
+
+const ADJECTIVES = ['Silent', 'Hopeful', 'Golden', 'Brave', 'Kind', 'Guiding', 'Gentle', 'First', 'Last', 'Shining'];
+const NOUNS = ['Star', 'Echo', 'River', 'Guardian', 'Light', 'Flower', 'Stone', 'Heart', 'Voice', 'Hand'];
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = React.useState<User | null>(null);
@@ -150,9 +154,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getAllUsers = (): User[] => {
     return getUsers();
   };
+  
+  const generateUniqueUsernames = (): string[] => {
+    const users = getUsers();
+    const existingUsernames = new Set(users.map(u => u.username.toLowerCase()));
+    const generatedUsernames = new Set<string>();
+
+    while (generatedUsernames.size < 5) {
+      const adj = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
+      const noun = NOUNS[Math.floor(Math.random() * NOUNS.length)];
+      const num = Math.floor(100 + Math.random() * 900); // 3-digit number
+      const newUsername = `${adj}${noun}_${num}`;
+      
+      if (!existingUsernames.has(newUsername.toLowerCase())) {
+        generatedUsernames.add(newUsername);
+      }
+    }
+
+    return Array.from(generatedUsernames);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, addHopePoints, updateUser, getUserById, updateAnyUser, getAllUsers }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, addHopePoints, updateUser, getUserById, updateAnyUser, getAllUsers, generateUniqueUsernames }}>
       {children}
     </AuthContext.Provider>
   );
