@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC, useState } from 'react';
 import { Bell, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
@@ -10,11 +10,11 @@ import SymbolIcon from '../ui/SymbolIcon';
 import ProfilePanel from './ProfilePanel';
 
 
-const Header: React.FC = () => {
+const Header: FC = () => {
     const { user } = useAuth();
     const { getNotificationsForUser, markAsRead } = useData();
-    const [showNotifications, setShowNotifications] = React.useState(false);
-    const [isProfileOpen, setProfileOpen] = React.useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const [isProfileOpen, setProfileOpen] = useState(false);
     const navigate = ReactRouterDOM.useNavigate();
     const { t } = useTranslation();
 

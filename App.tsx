@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC, Suspense, ReactNode } from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
@@ -21,8 +21,10 @@ import CreateEvent from './pages/CreateEvent';
 import AdminDashboard from './pages/AdminDashboard';
 import Leaderboard from './pages/Leaderboard';
 import Constellation from './pages/Constellation';
+import ResourceHub from './pages/ResourceHub';
+import CreateResource from './pages/CreateResource';
 
-const LoadingFallback: React.FC = () => (
+const LoadingFallback: FC = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-[#FBF9F4]">
     <div className="flex flex-col items-center text-center">
       <img src="/awardlogo.png" alt="Mitché Logo" className="w-24 h-24 mx-auto mb-4 animate-pulse" />
@@ -31,16 +33,16 @@ const LoadingFallback: React.FC = () => (
   </div>
 );
 
-const App: React.FC = () => {
+const App: FC = () => {
   return (
     <AuthProvider>
       <DataProvider>
         <ReactRouterDOM.HashRouter>
           <LanguageManager>
-            <React.Suspense fallback={<LoadingFallback />}>
+            <Suspense fallback={<LoadingFallback />}>
               <GlobalLanguageSwitcher />
               <Main />
-            </React.Suspense>
+            </Suspense>
           </LanguageManager>
         </ReactRouterDOM.HashRouter>
       </DataProvider>
@@ -48,15 +50,18 @@ const App: React.FC = () => {
   );
 };
 
-const ProtectedRoute: React.FC<{ children: React.ReactNode; roles: Role[] }> = ({ children, roles }) => {
+const ProtectedRoute: FC<{ children: ReactNode; roles: Role[]; verifiedOnly?: boolean }> = ({ children, roles, verifiedOnly = false }) => {
   const { user } = useAuth();
   if (!user || !roles.includes(user.role)) {
+    return <ReactRouterDOM.Navigate to="/" />;
+  }
+  if (verifiedOnly && !user.isVerified) {
     return <ReactRouterDOM.Navigate to="/" />;
   }
   return <>{children}</>;
 };
 
-const Main: React.FC = () => {
+const Main: FC = () => {
   const { user } = useAuth();
 
   if (!user) {
@@ -83,25 +88,17 @@ const Main: React.FC = () => {
         <ReactRouterDOM.Route index element={<Dashboard />} />
         <ReactRouterDOM.Route path="echoes" element={<WallOfEchoes />} />
         <ReactRouterDOM.Route path="echoes/:requestId" element={<RequestDetail />} />
-        <ReactRouterDOM.Route path="echoes/new" element={<CreateRequest />} />
-        <ReactRouterDOM.Route path="events" element={<CommunityEvents />} />
-        <ReactRouterDOM.Route path="events/new" element={
-          <ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]}>
-            <CreateEvent />
-          </ProtectedRoute>
-        } />
-        <ReactRouterDOM.Route path="leaderboard" element={<Leaderboard />} />
+        <ReactRouterDOM.Route path="echoes/new" element={<ProtectedRoute roles={[Role.Citizen]}><CreateRequest /></ProtectedRoute>} />
         <ReactRouterDOM.Route path="tapestry" element={<TempleOfStories />} />
-        <ReactRouterDOM.Route path="constellation" element={<Constellation />} />
         <ReactRouterDOM.Route path="nomination" element={<NominationResponse />} />
         <ReactRouterDOM.Route path="scanner" element={<Scanner />} />
-        <ReactRouterDOM.Route path="admin" element={
-          <ProtectedRoute roles={[Role.Admin]}>
-            <AdminDashboard />
-          </ProtectedRoute>
-        } />
-        <ReactRouterDOM.Route path="onboarding" element={<ReactRouterDOM.Navigate to="/" />} />
-        <ReactRouterDOM.Route path="*" element={<ReactRouterDOM.Navigate to="/" />} />
+        <ReactRouterDOM.Route path="events" element={<CommunityEvents />} />
+        <ReactRouterDOM.Route path="events/new" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]}><CreateEvent /></ProtectedRoute>} />
+        <ReactRouterDOM.Route path="leaderboard" element={<Leaderboard />} />
+        <ReactRouterDOM.Route path="constellation" element={<Constellation />} />
+        <ReactRouterDOM.Route path="resources" element={<ResourceHub />} />
+        <ReactRouterDOM.Route path="resources/new" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]} verifiedOnly={true}><CreateResource /></ProtectedRoute>} />
+        <ReactRouterDOM.Route path="admin" element={<ProtectedRoute roles={[Role.Admin]}><AdminDashboard /></ProtectedRoute>} />
       </ReactRouterDOM.Route>
     </ReactRouterDOM.Routes>
   );

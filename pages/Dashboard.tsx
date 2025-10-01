@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { FC } from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Role } from '../types';
 import CitizenDashboard from './dashboards/CitizenDashboard';
 import OrganizationDashboard from './dashboards/OrganizationDashboard';
 
-const Dashboard: React.FC = () => {
+const Dashboard: FC = () => {
   const { user } = useAuth();
 
   if (!user) {

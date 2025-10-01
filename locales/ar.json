@@ -5,6 +5,7 @@
   "nav": {
     "home": "الرئيسية",
     "echoes": "صدى",
+    "resources": "موارد",
     "events": "فعاليات",
     "leaderboard": "المتصدرون",
     "constellation": "الملف الشخصي",
@@ -369,7 +370,12 @@
     "loading": "جاري تحميل الإحصائيات...",
     "totalUsers": "إجمالي المستخدمين",
     "totalRequests": "إجمالي الطلبات",
-    "totalEvents": "إجمالي الفعاليات"
+    "totalEvents": "إجمالي الفعاليات",
+    "userManagement": "إدارة المستخدمين",
+    "verificationRequests": "طلبات التوثيق",
+    "approve": "موافقة",
+    "reject": "رفض",
+    "noPendingRequests": "لا توجد طلبات توثيق معلقة."
   },
   "leaderboard": {
     "title": "قائمة المتصدرين للأمل",
@@ -410,5 +416,59 @@
     },
     "viewAll": "عرض الكل",
     "createEvent": "إنشاء فعالية جديدة"
+  },
+  "resources": {
+    "title": "مركز الموارد",
+    "subtitle": "ابحث عن دعم وخدمات مستمرة من شركائنا في المجتمع.",
+    "emptyTitle": "المركز ينمو",
+    "emptySubtitle": "ستقوم المنظمات الموثوقة بنشر مواردها المستمرة هنا قريباً."
+  },
+  "createResource": {
+    "title": "نشر مورد جديد",
+    "subtitle": "شارك بالخدمات المستمرة التي تقدمها منظمتك.",
+    "form": {
+      "title": "عنوان المورد",
+      "titlePlaceholder": "مثال: مطبخ مجتمعي أسبوعي",
+      "category": "الفئة",
+      "region": "المنطقة",
+      "regionPlaceholder": "مثال: بيروت",
+      "description": "الوصف",
+      "descriptionPlaceholder": "اشرح ما هو المورد، لمن هو موجه، وأي متطلبات.",
+      "schedule": "الجدول الزمني / الساعات",
+      "schedulePlaceholder": "مثال: كل ثلاثاء، 10 صباحاً - 1 ظهراً",
+      "contact": "معلومات الاتصال (اختياري)",
+      "contactPlaceholder": "مثال: رقم هاتف أو بريد إلكتروني",
+      "submit": "نشر المورد"
+    }
+  },
+  "resourceCategories": {
+    "Food": "طعام",
+    "Health": "صحة",
+    "Legal": "مساعدة قانونية",
+    "Education": "تعليم",
+    "Shelter": "مأوى"
+  },
+  "commendations": {
+    "title": "الثناءات المستلمة",
+    "leaveTitle": "اترك ثناء",
+    "leaveSubtitle": "كيف كانت تجربتك مع {{name}}؟",
+    "leaveButton": "اترك ثناء",
+    "submit": "إرسال الثناء",
+    "types": {
+      "Kind": "لطيف وعطوف",
+      "Punctual": "دقيق وموثوق",
+      "Respectful": "محترم ومراعي للخصوصية"
+    },
+    "praisedFor": "أُثني عليه لكونه {{type}} {{count}} مرات"
+  },
+  "verifiedOrg": "منظمة موثوقة",
+  "verificationStatus": {
+    "Pending": "قيد المراجعة",
+    "Approved": "موثق",
+    "Rejected": "مرفوض"
+  },
+  "profile": {
+    "verificationPending": "حسابك قيد المراجعة للتوثيق. سيتم إعلامك عند اكتمال المراجعة.",
+    "verificationRejected": "تم رفض طلب توثيق حسابك. يرجى الاتصال بالدعم إذا كنت تعتقد أن هذا خطأ."
   }
 }

@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import * as ReactRouterDOM from 'react-router-dom';
 import { MessageSquare, Calendar, BookOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-const CitizenDashboard: React.FC = () => {
+const CitizenDashboard: FC = () => {
   const { user } = useAuth();
   const navigate = ReactRouterDOM.useNavigate();
   const { t } = useTranslation();

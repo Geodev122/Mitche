@@ -5,6 +5,7 @@
   "nav": {
     "home": "Home",
     "echoes": "Echoes",
+    "resources": "Resources",
     "events": "Events",
     "leaderboard": "Leaderboard",
     "constellation": "Profile",
@@ -351,7 +352,12 @@
     "loading": "Loading stats...",
     "totalUsers": "Total Users",
     "totalRequests": "Total Requests",
-    "totalEvents": "Total Events"
+    "totalEvents": "Total Events",
+    "userManagement": "All Users",
+    "verificationRequests": "Verification Requests",
+    "approve": "Approve",
+    "reject": "Reject",
+    "noPendingRequests": "No pending verification requests."
   },
   "leaderboard": {
     "title": "Hope Leaderboard",
@@ -392,5 +398,59 @@
     },
     "viewAll": "View All",
     "createEvent": "Create New Event"
+  },
+   "resources": {
+    "title": "Resource Hub",
+    "subtitle": "Find continuous support and services from our community partners.",
+    "emptyTitle": "The Hub is Growing",
+    "emptySubtitle": "Verified organizations will post their ongoing resources here soon."
+  },
+  "createResource": {
+    "title": "Post a New Resource",
+    "subtitle": "Share ongoing services your organization provides.",
+    "form": {
+      "title": "Resource Title",
+      "titlePlaceholder": "e.g., Weekly Community Kitchen",
+      "category": "Category",
+      "region": "Region",
+      "regionPlaceholder": "e.g., Beirut",
+      "description": "Description",
+      "descriptionPlaceholder": "Explain what the resource is, who it's for, and any requirements.",
+      "schedule": "Schedule / Hours",
+      "schedulePlaceholder": "e.g., Tuesdays, 10 AM - 1 PM",
+      "contact": "Contact Info (Optional)",
+      "contactPlaceholder": "e.g., Phone number or email",
+      "submit": "Publish Resource"
+    }
+  },
+  "resourceCategories": {
+    "Food": "Food",
+    "Health": "Health",
+    "Legal": "Legal Aid",
+    "Education": "Education",
+    "Shelter": "Shelter"
+  },
+  "commendations": {
+    "title": "Commendations Received",
+    "leaveTitle": "Leave a Commendation",
+    "leaveSubtitle": "How was your experience with {{name}}?",
+    "leaveButton": "Leave Commendation",
+    "submit": "Send Commendation",
+    "types": {
+      "Kind": "Kind & Compassionate",
+      "Punctual": "Punctual & Reliable",
+      "Respectful": "Respectful & Discreet"
+    },
+    "praisedFor": "Praised for being {{type}} {{count}} times"
+  },
+  "verifiedOrg": "Verified Organization",
+  "verificationStatus": {
+    "Pending": "Pending",
+    "Approved": "Approved",
+    "Rejected": "Rejected"
+  },
+  "profile": {
+    "verificationPending": "Your account is pending verification. You will be notified when the review is complete.",
+    "verificationRejected": "Your account verification was rejected. Please contact support if you believe this is a mistake."
   }
 }

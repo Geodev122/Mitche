@@ -1,5 +1,5 @@
-import React from 'react';
-import { Request, Offering, RequestType, RequestMode, Notification, HopePointCategory, RequestStatus, TapestryThread, TapestryThreadColor, TapestryThreadPattern, User, CommunityEvent, CommunityEventType, Role } from '../types';
+import React, { createContext, FC, ReactNode, useState, useEffect, useContext } from 'react';
+import { Request, Offering, RequestType, RequestMode, Notification, HopePointCategory, RequestStatus, TapestryThread, TapestryThreadColor, TapestryThreadPattern, User, CommunityEvent, CommunityEventType, Role, Resource, ResourceCategory, CommendationType } from '../types';
 import { useAuth } from './AuthContext';
 import i18n from '../i18n';
 
@@ -9,9 +9,11 @@ interface DataContextType {
   notifications: Notification[];
   tapestryThreads: TapestryThread[];
   communityEvents: CommunityEvent[];
-  addRequest: (request: Omit<Request, 'id' | 'timestamp' | 'userId' | 'userSymbolicName' | 'userSymbolicIcon' | 'status' | 'helperId' | 'isConfirmedByRequester'>, user: User) => void;
+  resources: Resource[];
+  addRequest: (request: Omit<Request, 'id' | 'timestamp' | 'userId' | 'userSymbolicName' | 'userSymbolicIcon' | 'status' | 'helperId' | 'isConfirmedByRequester'| 'requesterCommended' | 'helperCommended'>, user: User) => void;
   addOffering: (offering: Omit<Offering, 'id' | 'timestamp' | 'userId'>, userId: string) => void;
-  addCommunityEvent: (event: Omit<CommunityEvent, 'id' | 'timestamp' | 'organizerId' | 'organizerSymbolicName' | 'organizerSymbolicIcon' | 'organizerRole'>, user: User) => void;
+  addCommunityEvent: (event: Omit<CommunityEvent, 'id' | 'timestamp' | 'organizerId' | 'organizerSymbolicName' | 'organizerSymbolicIcon' | 'organizerRole' | 'organizerIsVerified'>, user: User) => void;
+  addResource: (resource: Omit<Resource, 'id' | 'timestamp' | 'organizerId' | 'organizerSymbolicName' | 'organizerSymbolicIcon' | 'organizerIsVerified'>, user: User) => void;
   initiateHelp: (requestId: string, helperId: string) => void;
   confirmReceipt: (requestId: string) => void;
   fulfillRequest: (requestId: string, helperId: string) => void;
@@ -23,9 +25,10 @@ interface DataContextType {
   giveDailyPoint: (receiverId: string) => Promise<{ success: boolean; messageKey: string; receiverName?: string }>;
   getRequestById: (requestId: string) => Request | undefined;
   getOfferingsForRequest: (requestId: string) => Offering[];
+  leaveCommendation: (requestId: string, fromRole: 'requester' | 'helper', commendations: CommendationType[]) => void;
 }
 
-const DataContext = React.createContext<DataContextType | undefined>(undefined);
+const DataContext = createContext<DataContextType | undefined>(undefined);
 
 const MOCK_REQUESTS: Request[] = [
     {
@@ -41,6 +44,8 @@ const MOCK_REQUESTS: Request[] = [
         region: 'بيروت',
         status: RequestStatus.Open,
         isConfirmedByRequester: false,
+        requesterCommended: false,
+        helperCommended: false,
     },
     {
         id: 'req_2',
@@ -56,6 +61,8 @@ const MOCK_REQUESTS: Request[] = [
         status: RequestStatus.Fulfilled,
         helperId: 'user_789',
         isConfirmedByRequester: true,
+        requesterCommended: false,
+        helperCommended: false,
     },
      {
         id: 'req_3',
@@ -71,6 +78,8 @@ const MOCK_REQUESTS: Request[] = [
         status: RequestStatus.Pending,
         helperId: 'user_123',
         isConfirmedByRequester: false,
+        requesterCommended: false,
+        helperCommended: false,
     },
 ];
 
@@ -107,8 +116,41 @@ const MOCK_EVENTS: CommunityEvent[] = [
         type: CommunityEventType.Volunteer,
         timestamp: new Date(Date.now() - 86400000 * 0.5),
         region: 'بيروت',
+        organizerIsVerified: true,
     }
 ];
+
+const MOCK_RESOURCES: Resource[] = [
+    {
+        id: 'res_1',
+        organizerId: 'user_ngo_1',
+        organizerSymbolicName: 'بناة_الغد',
+        organizerSymbolicIcon: 'Lantern',
+        organizerIsVerified: true,
+        title: 'مطبخ مجتمعي أسبوعي',
+        description: 'نقدم وجبات ساخنة ومغذية كل يوم ثلاثاء وخميس للمحتاجين. لا حاجة للتسجيل المسبق.',
+        category: ResourceCategory.Food,
+        region: 'بيروت',
+        schedule: 'الثلاثاء والخميس، 12:00 ظهراً - 2:00 عصراً',
+        contactInfo: 'اتصل على 01-555-123 لمزيد من المعلومات',
+        timestamp: new Date(Date.now() - 86400000 * 7),
+    },
+     {
+        id: 'res_2',
+        organizerId: 'user_gov_1',
+        organizerSymbolicName: 'دعم_وطن',
+        organizerSymbolicIcon: 'Anchor',
+        organizerIsVerified: true,
+        title: 'استشارات قانونية مجانية',
+        description: 'يقدم محامون متطوعون استشارات قانونية مجانية في قضايا الأحوال الشخصية والعمل أول جمعة من كل شهر.',
+        category: ResourceCategory.Legal,
+        region: 'كل المحافظات',
+        schedule: 'أول جمعة من كل شهر، 9:00 صباحاً - 1:00 ظهراً',
+        contactInfo: 'احجز موعدك عبر موقعنا الإلكتروني',
+        timestamp: new Date(Date.now() - 86400000 * 14),
+    }
+];
+
 
 const MOCK_THREADS: TapestryThread[] = [
   {
@@ -142,28 +184,30 @@ const MOCK_THREADS: TapestryThread[] = [
 ];
 
 
-export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [requests, setRequests] = React.useState<Request[]>([]);
-  const [offerings, setOfferings] = React.useState<Offering[]>([]);
-  const [notifications, setNotifications] = React.useState<Notification[]>([]);
-  const [tapestryThreads, setTapestryThreads] = React.useState<TapestryThread[]>([]);
-  const [communityEvents, setCommunityEvents] = React.useState<CommunityEvent[]>([]);
-  const [loading, setLoading] = React.useState(true);
+export const DataProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [requests, setRequests] = useState<Request[]>([]);
+  const [offerings, setOfferings] = useState<Offering[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [tapestryThreads, setTapestryThreads] = useState<TapestryThread[]>([]);
+  const [communityEvents, setCommunityEvents] = useState<CommunityEvent[]>([]);
+  const [resources, setResources] = useState<Resource[]>([]);
+  const [loading, setLoading] = useState(true);
   const { user, addHopePoints, updateUser, getUserById, updateAnyUser } = useAuth();
 
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Simulate API fetch
     setTimeout(() => {
       setRequests(MOCK_REQUESTS);
       setOfferings(MOCK_OFFERINGS);
       setTapestryThreads(MOCK_THREADS);
       setCommunityEvents(MOCK_EVENTS);
+      setResources(MOCK_RESOURCES);
       setLoading(false);
     }, 1000);
   }, []);
   
-  React.useEffect(() => {
+  useEffect(() => {
      if (user && !user.nominationStatus) {
         const nominationNotification: Notification = {
             id: `notif_nomination_${user.id}`,
@@ -182,7 +226,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user]);
 
-  const addRequest = (requestData: Omit<Request, 'id' | 'timestamp' | 'userId' | 'userSymbolicName' | 'userSymbolicIcon' | 'status' | 'helperId' | 'isConfirmedByRequester'>, user: User) => {
+  const addRequest = (requestData: Omit<Request, 'id' | 'timestamp' | 'userId' | 'userSymbolicName' | 'userSymbolicIcon' | 'status' | 'helperId' | 'isConfirmedByRequester' | 'requesterCommended' | 'helperCommended'>, user: User) => {
     const newRequest: Request = {
         ...requestData,
         id: `req_${Date.now()}`,
@@ -192,11 +236,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         userSymbolicIcon: user.symbolicIcon,
         status: RequestStatus.Open,
         isConfirmedByRequester: false,
+        requesterCommended: false,
+        helperCommended: false,
     };
     setRequests(prev => [newRequest, ...prev]);
   };
 
-  const addCommunityEvent = (eventData: Omit<CommunityEvent, 'id' | 'timestamp' | 'organizerId' | 'organizerSymbolicName' | 'organizerSymbolicIcon' | 'organizerRole'>, user: User) => {
+  const addCommunityEvent = (eventData: Omit<CommunityEvent, 'id' | 'timestamp' | 'organizerId' | 'organizerSymbolicName' | 'organizerSymbolicIcon' | 'organizerRole' | 'organizerIsVerified'>, user: User) => {
     const newEvent: CommunityEvent = {
         ...eventData,
         id: `evt_${Date.now()}`,
@@ -205,8 +251,22 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         organizerSymbolicName: user.symbolicName,
         organizerSymbolicIcon: user.symbolicIcon,
         organizerRole: user.role,
+        organizerIsVerified: user.isVerified,
     };
     setCommunityEvents(prev => [newEvent, ...prev]);
+  };
+
+  const addResource = (resourceData: Omit<Resource, 'id' | 'timestamp' | 'organizerId' | 'organizerSymbolicName' | 'organizerSymbolicIcon' | 'organizerIsVerified'>, user: User) => {
+    const newResource: Resource = {
+      ...resourceData,
+      id: `res_${Date.now()}`,
+      timestamp: new Date(),
+      organizerId: user.id,
+      organizerSymbolicName: user.symbolicName,
+      organizerSymbolicIcon: user.symbolicIcon,
+      organizerIsVerified: user.isVerified,
+    };
+    setResources(prev => [newResource, ...prev]);
   };
 
   const addOffering = (offeringData: Omit<Offering, 'id' | 'timestamp' | 'userId'>, userId: string) => {
@@ -411,16 +471,46 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const getOfferingsForRequest = (requestId: string): Offering[] => {
         return offerings.filter(o => o.requestId === requestId).sort((a,b) => b.timestamp.getTime() - a.timestamp.getTime());
     };
+    
+    const leaveCommendation = (requestId: string, fromRole: 'requester' | 'helper', commendations: CommendationType[]) => {
+        const request = requests.find(r => r.id === requestId);
+        if (!request) return;
+
+        const toUserId = fromRole === 'requester' ? request.helperId : request.userId;
+        if (!toUserId) return;
+        
+        const toUser = getUserById(toUserId);
+        if (!toUser) return;
+        
+        const updatedCommendations = { ...toUser.commendations };
+        commendations.forEach(c => {
+            updatedCommendations[c] = (updatedCommendations[c] || 0) + 1;
+        });
+
+        updateAnyUser({ ...toUser, commendations: updatedCommendations });
+
+        setRequests(prev => prev.map(r => {
+            if (r.id === requestId) {
+                return {
+                    ...r,
+                    ...(fromRole === 'requester' && { requesterCommended: true }),
+                    ...(fromRole === 'helper' && { helperCommended: true }),
+                };
+            }
+            return r;
+        }));
+    };
+
 
   return (
-    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, communityEvents, addCommunityEvent, getRequestById, getOfferingsForRequest }}>
+    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, communityEvents, addCommunityEvent, getRequestById, getOfferingsForRequest, resources, addResource, leaveCommendation }}>
       {children}
     </DataContext.Provider>
   );
 };
 
 export const useData = (): DataContextType => {
-  const context = React.useContext(DataContext);
+  const context = useContext(DataContext);
   if (!context) {
     throw new Error('useData must be used within a DataProvider');
   }

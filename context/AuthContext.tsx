@@ -1,5 +1,5 @@
-import React from 'react';
-import { User, Role, HopePointCategory } from '../types';
+import React, { createContext, FC, ReactNode, useState, useEffect, useContext } from 'react';
+import { User, Role, HopePointCategory, VerificationStatus } from '../types';
 import i18n from '../i18n';
 
 interface AuthContextType {
@@ -13,17 +13,18 @@ interface AuthContextType {
   updateAnyUser: (updatedUser: User) => void;
   getAllUsers: () => User[];
   generateUniqueUsernames: () => string[];
+  updateVerificationStatus: (userId: string, status: 'Approved' | 'Rejected') => void;
 }
 
-const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const ADJECTIVES = ['Silent', 'Hopeful', 'Golden', 'Brave', 'Kind', 'Guiding', 'Gentle', 'First', 'Last', 'Shining'];
 const NOUNS = ['Star', 'Echo', 'River', 'Guardian', 'Light', 'Flower', 'Stone', 'Heart', 'Voice', 'Hand'];
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = React.useState<User | null>(null);
+export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     try {
       const storedUser = localStorage.getItem('michyUser');
       if (storedUser) {
@@ -69,14 +70,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: false, message: i18n.t('auth.errorExists') };
     }
 
-    // For demo, assign role based on username
     let userRole: Role = Role.Citizen;
+    let verificationStatus: VerificationStatus = 'NotRequested';
+    
     if (username.toUpperCase().includes('NGO')) {
         userRole = Role.NGO;
+        verificationStatus = 'Pending';
     } else if (username.toUpperCase().includes('GOV')) {
         userRole = Role.PublicWorker;
+        verificationStatus = 'Pending';
     } else if (username.toUpperCase().includes('ADMIN')) {
         userRole = Role.Admin;
+        verificationStatus = 'Approved'; 
     }
 
     const newUser: User = {
@@ -89,6 +94,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       hopePoints: 0,
       hopePointsBreakdown: {},
       hasCompletedOnboarding: false,
+      isVerified: userRole === Role.Admin, // Admins are auto-verified
+      verificationStatus: verificationStatus,
     };
 
     users.push(newUser);
@@ -150,6 +157,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }
   };
+  
+  const updateVerificationStatus = (userId: string, status: 'Approved' | 'Rejected') => {
+    const users = getUsers();
+    const userIndex = users.findIndex(u => u.id === userId);
+    if (userIndex !== -1) {
+        users[userIndex].verificationStatus = status;
+        users[userIndex].isVerified = status === 'Approved';
+        saveUsers(users);
+        
+        // If the updated user is the currently logged-in user, update their state
+        if (user && user.id === userId) {
+            setUser(users[userIndex]);
+        }
+    }
+  };
 
   const getAllUsers = (): User[] => {
     return getUsers();
@@ -175,14 +197,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, addHopePoints, updateUser, getUserById, updateAnyUser, getAllUsers, generateUniqueUsernames }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, addHopePoints, updateUser, getUserById, updateAnyUser, getAllUsers, generateUniqueUsernames, updateVerificationStatus }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = (): AuthContextType => {
-  const context = React.useContext(AuthContext);
+  const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }

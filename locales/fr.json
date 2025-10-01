@@ -5,6 +5,7 @@
   "nav": {
     "home": "Accueil",
     "echoes": "Échos",
+    "resources": "Ressources",
     "events": "Événements",
     "leaderboard": "Classement",
     "constellation": "Profil",
@@ -351,7 +352,12 @@
     "loading": "Chargement des statistiques...",
     "totalUsers": "Utilisateurs totaux",
     "totalRequests": "Demandes totales",
-    "totalEvents": "Événements totaux"
+    "totalEvents": "Événements totaux",
+    "userManagement": "Tous les utilisateurs",
+    "verificationRequests": "Demandes de vérification",
+    "approve": "Approuver",
+    "reject": "Rejeter",
+    "noPendingRequests": "Aucune demande de vérification en attente."
   },
   "leaderboard": {
     "title": "Classement de l'Espoir",
@@ -392,5 +398,59 @@
     },
     "viewAll": "Voir Tout",
     "createEvent": "Créer un Nouvel Événement"
+  },
+  "resources": {
+    "title": "Centre de Ressources",
+    "subtitle": "Trouvez un soutien et des services continus de nos partenaires communautaires.",
+    "emptyTitle": "Le Centre se développe",
+    "emptySubtitle": "Les organisations vérifiées publieront bientôt leurs ressources ici."
+  },
+  "createResource": {
+    "title": "Publier une Nouvelle Ressource",
+    "subtitle": "Partagez les services continus que votre organisation fournit.",
+    "form": {
+      "title": "Titre de la ressource",
+      "titlePlaceholder": "Ex: Cuisine communautaire hebdomadaire",
+      "category": "Catégorie",
+      "region": "Région",
+      "regionPlaceholder": "Ex: Beyrouth",
+      "description": "Description",
+      "descriptionPlaceholder": "Expliquez la ressource, à qui elle s'adresse et les exigences.",
+      "schedule": "Horaire / Heures",
+      "schedulePlaceholder": "Ex: Les mardis, 10h - 13h",
+      "contact": "Infos de contact (Optionnel)",
+      "contactPlaceholder": "Ex: Numéro de téléphone ou e-mail",
+      "submit": "Publier la ressource"
+    }
+  },
+  "resourceCategories": {
+    "Food": "Nourriture",
+    "Health": "Santé",
+    "Legal": "Aide juridique",
+    "Education": "Éducation",
+    "Shelter": "Abri"
+  },
+  "commendations": {
+    "title": "Recommandations Reçues",
+    "leaveTitle": "Laisser une recommandation",
+    "leaveSubtitle": "Comment s'est passée votre expérience avec {{name}}?",
+    "leaveButton": "Laisser une recommandation",
+    "submit": "Envoyer la recommandation",
+    "types": {
+      "Kind": "Aimable & Compatissant",
+      "Punctual": "Ponctuel & Fiable",
+      "Respectful": "Respectueux & Discret"
+    },
+    "praisedFor": "Loué pour être {{type}} {{count}} fois"
+  },
+  "verifiedOrg": "Organisation Vérifiée",
+  "verificationStatus": {
+    "Pending": "En attente",
+    "Approved": "Approuvé",
+    "Rejected": "Rejeté"
+  },
+  "profile": {
+    "verificationPending": "Votre compte est en attente de vérification. Vous serez averti lorsque l'examen sera terminé.",
+    "verificationRejected": "La vérification de votre compte a été rejetée. Veuillez contacter le support si vous pensez qu'il s'agit d'une erreur."
   }
 }

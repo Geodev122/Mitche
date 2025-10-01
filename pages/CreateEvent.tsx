@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC, useState, FormEvent } from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
@@ -7,19 +7,19 @@ import { ArrowRight, ArrowLeft } from 'lucide-react';
 import ConfirmationModal from '../components/ui/ConfirmationModal';
 import { useTranslation } from 'react-i18next';
 
-const CreateEvent: React.FC = () => {
+const CreateEvent: FC = () => {
   const navigate = ReactRouterDOM.useNavigate();
   const { addCommunityEvent } = useData();
   const { user } = useAuth();
   const { t, i18n } = useTranslation();
   
-  const [title, setTitle] = React.useState('');
-  const [description, setDescription] = React.useState('');
-  const [type, setType] = React.useState<CommunityEventType>(CommunityEventType.Volunteer);
-  const [region, setRegion] = React.useState('');
-  const [isConfirmModalOpen, setConfirmModalOpen] = React.useState(false);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [type, setType] = useState<CommunityEventType>(CommunityEventType.Volunteer);
+  const [region, setRegion] = useState('');
+  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!user) return;
     

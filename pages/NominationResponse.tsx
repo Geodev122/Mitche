@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC, useState, FormEvent } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 import * as ReactRouterDOM from 'react-router-dom';
@@ -6,15 +6,15 @@ import Card from '../components/ui/Card';
 import { Shield, UserCheck, CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-const NominationResponse: React.FC = () => {
+const NominationResponse: FC = () => {
   const { user } = useAuth();
   const { acceptNomination } = useData();
   const navigate = ReactRouterDOM.useNavigate();
   const { t, i18n } = useTranslation();
-  const [step, setStep] = React.useState(1); // 1: Choice, 2: Reveal Confirm, 3: Reveal Form, 4: Anonymous Confirm, 5: Finished
-  const [realName, setRealName] = React.useState('');
-  const [photo, setPhoto] = React.useState<File | null>(null);
-  const [isFinished, setIsFinished] = React.useState(false);
+  const [step, setStep] = useState(1); // 1: Choice, 2: Reveal Confirm, 3: Reveal Form, 4: Anonymous Confirm, 5: Finished
+  const [realName, setRealName] = useState('');
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [isFinished, setIsFinished] = useState(false);
   
   const BackArrow = i18n.dir() === 'rtl' ? ArrowRight : ArrowLeft;
 
@@ -37,7 +37,7 @@ const NominationResponse: React.FC = () => {
     setStep(5);
   };
 
-  const handleRevealSubmit = (e: React.FormEvent) => {
+  const handleRevealSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!realName) {
         // Simple validation, can be improved

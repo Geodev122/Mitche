@@ -33,6 +33,14 @@ export enum RequestStatus {
   Closed = 'Closed',
 }
 
+export enum CommendationType {
+  Kind = 'Kind',
+  Punctual = 'Punctual',
+  Respectful = 'Respectful',
+}
+
+export type VerificationStatus = 'Pending' | 'Approved' | 'Rejected' | 'NotRequested';
+
 export interface User {
   id: string;
   username: string;
@@ -54,6 +62,11 @@ export interface User {
   qrCodeUrl?: string;
   lastPointGivenTimestamp?: number;
   hasCompletedOnboarding?: boolean;
+  isVerified?: boolean;
+  verificationStatus?: VerificationStatus;
+  commendations?: {
+    [key in CommendationType]?: number;
+  };
 }
 
 export interface Request {
@@ -70,6 +83,8 @@ export interface Request {
   status: RequestStatus;
   helperId?: string;
   isConfirmedByRequester?: boolean;
+  requesterCommended?: boolean;
+  helperCommended?: boolean;
 }
 
 export interface Offering {
@@ -91,7 +106,6 @@ export interface Notification {
   isRead: boolean;
   type?: 'Generic' | 'Nomination'; // For Reveal Protocol
   messageKey?: string; // For i18n
-  // FIX: Changed type from `object` to `Record<string, any>` for compatibility with the i18next `t` function's options parameter.
   messageOptions?: Record<string, any>; // For i18n interpolation
 }
 
@@ -140,4 +154,29 @@ export interface CommunityEvent {
   timestamp: Date;
   region: string;
   type: CommunityEventType;
+  organizerIsVerified?: boolean;
+}
+
+// New Interfaces for Resource Hub
+export enum ResourceCategory {
+  Food = 'Food',
+  Health = 'Health',
+  Legal = 'Legal',
+  Education = 'Education',
+  Shelter = 'Shelter',
+}
+
+export interface Resource {
+  id: string;
+  organizerId: string;
+  organizerSymbolicName: string;
+  organizerSymbolicIcon: string;
+  organizerIsVerified?: boolean;
+  title: string;
+  description: string;
+  category: ResourceCategory;
+  region: string;
+  schedule: string;
+  contactInfo?: string;
+  timestamp: Date;
 }
