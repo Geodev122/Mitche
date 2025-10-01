@@ -36,7 +36,7 @@ const GlobalLanguageSwitcher: React.FC = () => {
 
 
   return (
-    <div ref={wrapperRef} className="fixed top-4 right-4 rtl:right-auto rtl:left-4 z-[100]">
+    <div ref={wrapperRef} className="fixed top-4 left-1/2 -translate-x-1/2 z-[100]">
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -49,7 +49,7 @@ const GlobalLanguageSwitcher: React.FC = () => {
           <ChevronDown className={`w-4 h-4 text-gray-600 ml-1 rtl:ml-0 rtl:mr-1 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
         {isOpen && (
-          <div className="absolute top-full right-0 rtl:right-auto rtl:left-0 mt-2 w-36 bg-white rounded-lg shadow-xl border animate-fade-in-down origin-top-right py-1">
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-36 bg-white rounded-lg shadow-xl border animate-fade-in-down origin-top py-1">
               {Object.keys(languages).map((lng) => (
                 <button
                   key={lng}
