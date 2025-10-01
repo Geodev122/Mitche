@@ -1,13 +1,29 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import HttpBackend from 'i18next-http-backend';
+
+// Import translation files directly to bundle them with the app
+import translationAR from './locales/ar.json';
+import translationEN from './locales/en.json';
+import translationFR from './locales/fr.json';
+
+const resources = {
+  ar: {
+    translation: translationAR,
+  },
+  en: {
+    translation: translationEN,
+  },
+  fr: {
+    translation: translationFR,
+  },
+};
 
 i18n
-  .use(HttpBackend)
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
+    resources,
     fallbackLng: 'ar',
     debug: false,
     interpolation: {
@@ -16,9 +32,6 @@ i18n
     detection: {
       order: ['localStorage', 'navigator'],
       caches: ['localStorage'],
-    },
-    backend: {
-      loadPath: '/locales/{{lng}}.json',
     },
     react: {
       useSuspense: true,
