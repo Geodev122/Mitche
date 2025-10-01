@@ -3,4 +3,4 @@
 // It has been modified to declare the React namespace without importing it,
 // which avoids the circular reference while allowing TypeScript to merge it with the actual React types.
 declare namespace React {}
-export = React;
+// FIX: Removed `export = React;` to prevent this file from being treated as a module, which was causing type conflicts.

@@ -224,7 +224,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
         updateUser({ nominationStatus: 'Nominated' });
     }
-  }, [user]);
+  }, [user, updateUser]);
 
   const addRequest = (requestData: Omit<Request, 'id' | 'timestamp' | 'userId' | 'userSymbolicName' | 'userSymbolicIcon' | 'status' | 'helperId' | 'isConfirmedByRequester' | 'requesterCommended' | 'helperCommended'>, user: User) => {
     const newRequest: Request = {
