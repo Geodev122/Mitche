@@ -1,15 +1,15 @@
-import React from 'react';
-// FIX: Import the `Navigate` component from `react-router-dom` to handle declarative navigation.
+import React, { FC, useState, ElementType } from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import Card from '../components/ui/Card';
 import SymbolIcon from '../components/ui/SymbolIcon';
 import Modal from '../components/ui/Modal';
-import { Request, RequestStatus, Offering, Role } from '../types';
+import { Request, RequestStatus, Offering, Role, CommendationType } from '../types';
 import { timeSince } from '../utils/time';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, ArrowRight, Info, Heart, Calendar, MapPin, Tag, Shield } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Info, Heart, Tag, Shield, ShieldCheck, Award } from 'lucide-react';
+import CommendationModal from '../components/ui/CommendationModal';
 
 const statusStyles: { [key in RequestStatus]: { text: string; classes: string } } = {
   [RequestStatus.Open]: { text: 'requestStatus.Open', classes: 'bg-green-100 text-green-700' },
@@ -18,7 +18,7 @@ const statusStyles: { [key in RequestStatus]: { text: string; classes: string } 
   [RequestStatus.Closed]: { text: 'requestStatus.Closed', classes: 'bg-gray-100 text-gray-700' },
 };
 
-const DetailItem: React.FC<{ icon: React.ElementType; label: string; value: string }> = ({ icon: Icon, label, value }) => (
+const DetailItem: FC<{ icon: ElementType; label: string; value: string }> = ({ icon: Icon, label, value }) => (
   <div className="flex items-start text-sm">
     <Icon className="w-4 h-4 text-gray-400 mt-1 mr-3 rtl:mr-0 rtl:ml-3 flex-shrink-0" />
     <div>
@@ -28,7 +28,7 @@ const DetailItem: React.FC<{ icon: React.ElementType; label: string; value: stri
   </div>
 );
 
-const EncouragementCard: React.FC<{ offering: Offering }> = ({ offering }) => {
+const EncouragementCard: FC<{ offering: Offering }> = ({ offering }) => {
   const { getUserById } = useAuth();
   const { t } = useTranslation();
   const sender = getUserById(offering.userId);
@@ -50,16 +50,17 @@ const EncouragementCard: React.FC<{ offering: Offering }> = ({ offering }) => {
   );
 };
 
-const RequestDetail: React.FC = () => {
+const RequestDetail: FC = () => {
   const { requestId } = ReactRouterDOM.useParams<{ requestId: string }>();
   const navigate = ReactRouterDOM.useNavigate();
   const { t, i18n } = useTranslation();
-  const { getRequestById, getOfferingsForRequest, addOffering, initiateHelp, confirmReceipt, fulfillRequest } = useData();
+  const { getRequestById, getOfferingsForRequest, addOffering, initiateHelp, confirmReceipt, fulfillRequest, leaveCommendation } = useData();
   const { user, getUserById } = useAuth();
   
-  const [isHelpModalOpen, setHelpModalOpen] = React.useState(false);
-  const [isEncourageModalOpen, setEncourageModalOpen] = React.useState(false);
-  const [encouragementMessage, setEncouragementMessage] = React.useState('');
+  const [isHelpModalOpen, setHelpModalOpen] = useState(false);
+  const [isEncourageModalOpen, setEncourageModalOpen] = useState(false);
+  const [isCommendationModalOpen, setCommendationModalOpen] = useState(false);
+  const [encouragementMessage, setEncouragementMessage] = useState('');
 
   if (!requestId || !user) {
     return <ReactRouterDOM.Navigate to="/echoes" />;
@@ -81,6 +82,12 @@ const RequestDetail: React.FC = () => {
     initiateHelp(request.id, user.id);
     setHelpModalOpen(false);
   };
+  
+  const handleLeaveCommendation = (commendations: CommendationType[]) => {
+    const fromRole = isOwner ? 'requester' : 'helper';
+    leaveCommendation(request.id, fromRole, commendations);
+  };
+
 
   const handleSendEncouragement = () => {
     if (encouragementMessage.trim() === '') return;
@@ -114,6 +121,15 @@ const RequestDetail: React.FC = () => {
       } else {
         buttons = <button className="w-full px-4 py-3 text-sm bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed" disabled>{t('echoes.card.waitingReceipt')}</button>;
       }
+    }
+    
+    const canLeaveCommendation = request.status === RequestStatus.Fulfilled && ((isOwner && !request.requesterCommended) || (isHelper && !request.helperCommended));
+    if(canLeaveCommendation) {
+        buttons = (
+            <button onClick={() => setCommendationModalOpen(true)} className="w-full px-4 py-3 text-sm bg-blue-500 text-white rounded-lg font-bold hover:bg-blue-600 flex items-center justify-center gap-2">
+                <Award size={18} /> {t('commendations.leaveButton')}
+            </button>
+        );
     }
 
     if (!buttons) return null;
@@ -151,7 +167,12 @@ const RequestDetail: React.FC = () => {
                 </div>
                 <h2 className="text-xl font-bold text-gray-800 mb-2">{request.title}</h2>
                 <p className="text-gray-600 whitespace-pre-wrap">{request.description}</p>
-                {helper && <p className="text-sm text-center bg-blue-50 text-blue-700 font-semibold p-2 rounded-md mt-4">{t('requestDetail.helper')}: {helper.symbolicName}</p>}
+                 {helper && 
+                    <div className="text-sm text-center bg-blue-50 text-blue-700 font-semibold p-2 rounded-md mt-4 flex items-center justify-center gap-2">
+                        <span>{t('requestDetail.helper')}: {helper.symbolicName}</span>
+                         {helper.isVerified && <ShieldCheck className="w-4 h-4 text-blue-500" title={t('verifiedOrg') as string} />}
+                    </div>
+                }
             </Card>
             
             <Card>
@@ -159,7 +180,6 @@ const RequestDetail: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <DetailItem icon={Info} label={t('requestStatus.title')} value={t(currentStatus.text)} />
                     <DetailItem icon={Tag} label={t('createRequest.form.category')} value={t(`requestTypes.${request.type}`)} />
-                    <DetailItem icon={MapPin} label={t('createRequest.form.region')} value={request.region} />
                     <DetailItem icon={Shield} label={t('createRequest.form.mode')} value={request.mode === 'Loud' ? t('createRequest.form.modeLoud') : t('createRequest.form.modeSilent')} />
                 </div>
             </Card>
@@ -199,6 +219,15 @@ const RequestDetail: React.FC = () => {
           />
           <button onClick={handleSendEncouragement} className="w-full mt-4 bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90">{t('echoes.encourageModal.send')}</button>
       </Modal>
+      
+      {isCommendationModalOpen && (
+        <CommendationModal 
+            isOpen={isCommendationModalOpen}
+            onClose={() => setCommendationModalOpen(false)}
+            onSubmit={handleLeaveCommendation}
+            userName={isOwner ? (helper?.symbolicName || '') : request.userSymbolicName}
+        />
+      )}
     </>
   );
 };

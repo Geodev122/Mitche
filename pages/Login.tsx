@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { FC, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import * as ReactRouterDOM from 'react-router-dom';
 import { Shield } from 'lucide-react';
 import AuthModal from '../components/auth/AuthModal';
 import { useTranslation } from 'react-i18next';
 
-const Login: React.FC = () => {
+const Login: FC = () => {
     const { user } = useAuth();
-    const [isModalOpen, setIsModalOpen] = React.useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const { t } = useTranslation();
 
     if (user) {

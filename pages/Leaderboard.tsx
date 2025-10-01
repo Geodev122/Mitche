@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { User } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
 import Card from '../components/ui/Card';
-import { Trophy, Crown } from 'lucide-react';
+import { Trophy, Crown, ShieldCheck } from 'lucide-react';
 
 const getPodiumClass = (rank: number) => {
     switch (rank) {
@@ -19,7 +19,8 @@ const getPodiumClass = (rank: number) => {
     }
 };
 
-const PodiumCard: React.FC<{ user: User; rank: number; isCurrentUser: boolean }> = ({ user, rank, isCurrentUser }) => {
+const PodiumCard: FC<{ user: User; rank: number; isCurrentUser: boolean }> = ({ user, rank, isCurrentUser }) => {
+    const { t } = useTranslation();
     const highlightClass = isCurrentUser ? 'ring-2 ring-offset-2 ring-[#D4AF37]' : '';
     return (
         <div className={`text-center p-4 rounded-xl border-2 ${getPodiumClass(rank)} ${highlightClass}`}>
@@ -29,13 +30,16 @@ const PodiumCard: React.FC<{ user: User; rank: number; isCurrentUser: boolean }>
             <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-2 border-2 ${getPodiumClass(rank)} bg-white`}>
                 <SymbolIcon name={user.symbolicIcon} className="w-8 h-8 text-gray-700" />
             </div>
-            <p className="font-bold text-gray-800 truncate">{user.symbolicName}</p>
+            <div className="flex items-center justify-center gap-1">
+                <p className="font-bold text-gray-800 truncate">{user.symbolicName}</p>
+                {user.isVerified && <ShieldCheck className="w-4 h-4 text-blue-500 flex-shrink-0" title={t('verifiedOrg') as string} />}
+            </div>
             <p className="text-sm font-bold text-[#D4AF37]">{user.hopePoints} pts</p>
         </div>
     );
 };
 
-const Leaderboard: React.FC = () => {
+const Leaderboard: FC = () => {
     const { getAllUsers, user: currentUser } = useAuth();
     const { t } = useTranslation();
 
@@ -91,7 +95,10 @@ const Leaderboard: React.FC = () => {
                             <div className="w-1/6 font-bold text-gray-700">{rank}</div>
                             <div className="w-3/6 flex items-center space-x-3 rtl:space-x-reverse">
                                 <SymbolIcon name={user.symbolicIcon} className="w-6 h-6 text-gray-500" />
-                                <span className="font-semibold text-gray-800 truncate">{user.symbolicName}</span>
+                                <div className="flex items-center gap-1">
+                                    <span className="font-semibold text-gray-800 truncate">{user.symbolicName}</span>
+                                    {user.isVerified && <ShieldCheck className="w-4 h-4 text-blue-500 flex-shrink-0" title={t('verifiedOrg') as string} />}
+                                </div>
                             </div>
                             <div className="w-2/6 text-right font-bold text-[#3A3A3A]">{user.hopePoints}</div>
                         </div>

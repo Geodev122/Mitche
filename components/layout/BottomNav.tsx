@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { FC } from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
-import { Home, MessageSquare, Calendar, BookOpen, Shield, Trophy } from 'lucide-react';
+import { Home, MessageSquare, Calendar, BookOpen, Shield, Trophy, PackageSearch } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { Role } from '../../types';
 
-const BottomNav: React.FC = () => {
+const BottomNav: FC = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
 
   const navItems = [
     { path: '/', label: t('nav.home'), icon: Home, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
     { path: '/echoes', label: t('nav.echoes'), icon: MessageSquare, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
+    { path: '/resources', label: t('nav.resources'), icon: PackageSearch, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
     { path: '/events', label: t('nav.events'), icon: Calendar, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
     { path: '/leaderboard', label: t('nav.leaderboard'), icon: Trophy, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
     { path: '/tapestry', label: t('nav.tapestry'), icon: BookOpen, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },

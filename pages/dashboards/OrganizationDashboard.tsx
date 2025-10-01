@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC, ElementType } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import * as ReactRouterDOM from 'react-router-dom';
@@ -8,7 +8,7 @@ import { ArrowRight, MessageSquare, Shield, Calendar, PlusCircle } from 'lucide-
 import { Request, RequestMode, RequestStatus } from '../../types';
 import { timeSince } from '../../utils/time';
 
-const StatCard: React.FC<{ value: number, label: string, icon: React.ElementType }> = ({ value, label, icon: Icon }) => (
+const StatCard: FC<{ value: number, label: string, icon: ElementType }> = ({ value, label, icon: Icon }) => (
     <div className="bg-white p-4 rounded-xl border border-[#F1EADF] shadow-sm flex flex-col items-center justify-center text-center">
         <Icon className="w-8 h-8 text-[#D4AF37] mb-2" />
         <p className="text-2xl font-bold text-gray-800">{value}</p>
@@ -16,7 +16,7 @@ const StatCard: React.FC<{ value: number, label: string, icon: React.ElementType
     </div>
 );
 
-const RequestRow: React.FC<{ request: Request, t: any }> = ({ request, t }) => (
+const RequestRow: FC<{ request: Request, t: any }> = ({ request, t }) => (
     <div className="flex items-center justify-between p-3 bg-gray-50/50 rounded-lg">
         <div>
             <p className="font-semibold text-sm text-gray-800 line-clamp-1">{request.title}</p>
@@ -27,7 +27,7 @@ const RequestRow: React.FC<{ request: Request, t: any }> = ({ request, t }) => (
 );
 
 
-const OrganizationDashboard: React.FC = () => {
+const OrganizationDashboard: FC = () => {
     const { user } = useAuth();
     const { requests, communityEvents } = useData();
     const navigate = ReactRouterDOM.useNavigate();
