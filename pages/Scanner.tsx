@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import * as ReactRouterDOM from 'react-router-dom';
 import jsQR from 'jsqr';
 import { useData } from '../context/DataContext';
 import { useTranslation } from 'react-i18next';
@@ -8,16 +8,16 @@ import { ArrowLeft, ArrowRight, CheckCircle, XCircle, Zap, CameraOff } from 'luc
 type ScanStatus = 'scanning' | 'processing' | 'success' | 'error' | 'no-camera';
 
 const Scanner: React.FC = () => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const navigate = useNavigate();
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const navigate = ReactRouterDOM.useNavigate();
   const { giveDailyPoint } = useData();
   const { t, i18n } = useTranslation();
 
-  const [status, setStatus] = useState<ScanStatus>('scanning');
-  const [message, setMessage] = useState('');
+  const [status, setStatus] = React.useState<ScanStatus>('scanning');
+  const [message, setMessage] = React.useState('');
 
-  const handleQrCode = useCallback(async (data: string) => {
+  const handleQrCode = React.useCallback(async (data: string) => {
     setStatus('processing'); 
 
     // Improved validation
@@ -41,7 +41,7 @@ const Scanner: React.FC = () => {
     }
   }, [giveDailyPoint, t, navigate]);
   
-  useEffect(() => {
+  React.useEffect(() => {
     // If we're not in the scanning state, don't run the camera logic.
     if (status !== 'scanning') {
       return;

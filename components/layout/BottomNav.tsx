@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import * as ReactRouterDOM from 'react-router-dom';
 import { Home, MessageSquare, Calendar, Star, BookOpen, Shield, Trophy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
@@ -25,7 +25,7 @@ const BottomNav: React.FC = () => {
     <nav className="fixed bottom-0 left-0 right-0 bg-[#FFFDF9] border-t border-[#EAE2D6] shadow-md z-10">
       <div className="flex justify-around max-w-lg mx-auto">
         {accessibleNavItems.map(({ path, label, icon: Icon }) => (
-          <NavLink
+          <ReactRouterDOM.NavLink
             key={path}
             to={path}
             end={path === '/'}
@@ -39,7 +39,7 @@ const BottomNav: React.FC = () => {
           >
             <Icon size={24} />
             <span className="text-xs mt-1">{label}</span>
-          </NavLink>
+          </ReactRouterDOM.NavLink>
         ))}
       </div>
     </nav>

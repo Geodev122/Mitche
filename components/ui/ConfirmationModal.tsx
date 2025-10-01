@@ -1,5 +1,6 @@
 
-import React, { ReactNode } from 'react';
+
+import React from 'react';
 import Modal from './Modal';
 
 interface ConfirmationModalProps {
@@ -7,7 +8,7 @@ interface ConfirmationModalProps {
   onClose: () => void;
   onConfirm: () => void;
   title: string;
-  children: ReactNode;
+  children: React.ReactNode;
   confirmText?: string;
   cancelText?: string;
 }

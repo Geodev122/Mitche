@@ -1,9 +1,10 @@
-import React, { ReactNode, Suspense } from 'react';
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React from 'react';
+import * as ReactRouterDOM from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
 import LanguageManager from './components/LanguageManager';
 import { Role } from './types';
+import GlobalLanguageSwitcher from './components/ui/GlobalLanguageSwitcher';
 
 import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
@@ -34,22 +35,23 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <DataProvider>
-        <HashRouter>
+        <ReactRouterDOM.HashRouter>
           <LanguageManager>
-            <Suspense fallback={<LoadingFallback />}>
+            <React.Suspense fallback={<LoadingFallback />}>
+              <GlobalLanguageSwitcher />
               <Main />
-            </Suspense>
+            </React.Suspense>
           </LanguageManager>
-        </HashRouter>
+        </ReactRouterDOM.HashRouter>
       </DataProvider>
     </AuthProvider>
   );
 };
 
-const ProtectedRoute: React.FC<{ children: ReactNode; roles: Role[] }> = ({ children, roles }) => {
+const ProtectedRoute: React.FC<{ children: React.ReactNode; roles: Role[] }> = ({ children, roles }) => {
   const { user } = useAuth();
   if (!user || !roles.includes(user.role)) {
-    return <Navigate to="/" />;
+    return <ReactRouterDOM.Navigate to="/" />;
   }
   return <>{children}</>;
 };
@@ -59,49 +61,49 @@ const Main: React.FC = () => {
 
   if (!user) {
     return (
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<Navigate to="/login" />} />
-      </Routes>
+      <ReactRouterDOM.Routes>
+        <ReactRouterDOM.Route path="/login" element={<Login />} />
+        <ReactRouterDOM.Route path="*" element={<ReactRouterDOM.Navigate to="/login" />} />
+      </ReactRouterDOM.Routes>
     );
   }
 
   if (!user.hasCompletedOnboarding) {
     return (
-      <Routes>
-        <Route path="/onboarding" element={<Onboarding />} />
-        <Route path="*" element={<Navigate to="/onboarding" />} />
-      </Routes>
+      <ReactRouterDOM.Routes>
+        <ReactRouterDOM.Route path="/onboarding" element={<Onboarding />} />
+        <ReactRouterDOM.Route path="*" element={<ReactRouterDOM.Navigate to="/onboarding" />} />
+      </ReactRouterDOM.Routes>
     );
   }
 
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Dashboard />} />
-        <Route path="echoes" element={<WallOfEchoes />} />
-        <Route path="echoes/:requestId" element={<RequestDetail />} />
-        <Route path="echoes/new" element={<CreateRequest />} />
-        <Route path="events" element={<CommunityEvents />} />
-        <Route path="events/new" element={
+    <ReactRouterDOM.Routes>
+      <ReactRouterDOM.Route path="/" element={<Layout />}>
+        <ReactRouterDOM.Route index element={<Dashboard />} />
+        <ReactRouterDOM.Route path="echoes" element={<WallOfEchoes />} />
+        <ReactRouterDOM.Route path="echoes/:requestId" element={<RequestDetail />} />
+        <ReactRouterDOM.Route path="echoes/new" element={<CreateRequest />} />
+        <ReactRouterDOM.Route path="events" element={<CommunityEvents />} />
+        <ReactRouterDOM.Route path="events/new" element={
           <ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]}>
             <CreateEvent />
           </ProtectedRoute>
         } />
-        <Route path="leaderboard" element={<Leaderboard />} />
-        <Route path="tapestry" element={<TempleOfStories />} />
-        <Route path="constellation" element={<Constellation />} />
-        <Route path="nomination" element={<NominationResponse />} />
-        <Route path="scanner" element={<Scanner />} />
-        <Route path="admin" element={
+        <ReactRouterDOM.Route path="leaderboard" element={<Leaderboard />} />
+        <ReactRouterDOM.Route path="tapestry" element={<TempleOfStories />} />
+        <ReactRouterDOM.Route path="constellation" element={<Constellation />} />
+        <ReactRouterDOM.Route path="nomination" element={<NominationResponse />} />
+        <ReactRouterDOM.Route path="scanner" element={<Scanner />} />
+        <ReactRouterDOM.Route path="admin" element={
           <ProtectedRoute roles={[Role.Admin]}>
             <AdminDashboard />
           </ProtectedRoute>
         } />
-        <Route path="onboarding" element={<Navigate to="/" />} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Route>
-    </Routes>
+        <ReactRouterDOM.Route path="onboarding" element={<ReactRouterDOM.Navigate to="/" />} />
+        <ReactRouterDOM.Route path="*" element={<ReactRouterDOM.Navigate to="/" />} />
+      </ReactRouterDOM.Route>
+    </ReactRouterDOM.Routes>
   );
 };
 

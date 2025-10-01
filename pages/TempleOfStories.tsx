@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
 import { BookOpen, Zap, Wind, Users, Heart } from 'lucide-react';
@@ -31,7 +31,7 @@ const colorMap: { [key in TapestryThreadColor]: { border: string, text: string, 
 const ThreadCard: React.FC<{ thread: TapestryThread }> = ({ thread }) => {
     const { echoThread } = useData();
     const { t } = useTranslation();
-    const [isPulsing, setIsPulsing] = useState(false);
+    const [isPulsing, setIsPulsing] = React.useState(false);
     const colors = colorMap[thread.color];
 
     const handleEcho = () => {
@@ -121,7 +121,7 @@ const ThreadCardSkeleton: React.FC = () => (
 const HopeTapestry: React.FC = () => {
     const { tapestryThreads, loading } = useData();
     const { t } = useTranslation();
-    const [filter, setFilter] = useState<'All' | TapestryThreadColor>('All');
+    const [filter, setFilter] = React.useState<'All' | TapestryThreadColor>('All');
 
     const totalThreads = tapestryThreads.length;
     const totalEchoes = tapestryThreads.reduce((sum, t) => sum + t.echoes, 0);

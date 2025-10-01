@@ -1,12 +1,15 @@
+// The original content of this file was causing circular dependencies and breaking ES module imports.
+// This file has been corrected to prevent those issues. A proper setup would likely remove this file
+// entirely to rely on @types packages from node_modules.
+
 declare module 'react' {
-  import * as React from 'react';
-  export = React;
-  export as namespace React;
+    export = React;
+    export as namespace React;
 }
 
 declare module 'react-dom/client' {
-  import * as ReactDOMClient from 'react-dom/client';
-  export = ReactDOMClient;
+    export = ReactDOMClient;
+    export as namespace ReactDOMClient;
 }
 
 declare module 'react/jsx-runtime' {

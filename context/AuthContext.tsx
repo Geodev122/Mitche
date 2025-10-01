@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React from 'react';
 import { User, Role, HopePointCategory } from '../types';
 import i18n from '../i18n';
 
@@ -14,12 +14,12 @@ interface AuthContextType {
   getAllUsers: () => User[];
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = React.useState<User | null>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     try {
       const storedUser = localStorage.getItem('michyUser');
       if (storedUser) {

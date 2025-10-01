@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
-import { useNavigate } from 'react-router-dom';
+import * as ReactRouterDOM from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Card from '../../components/ui/Card';
 import { ArrowRight, MessageSquare, Shield, Calendar, PlusCircle } from 'lucide-react';
@@ -30,7 +30,7 @@ const RequestRow: React.FC<{ request: Request, t: any }> = ({ request, t }) => (
 const OrganizationDashboard: React.FC = () => {
     const { user } = useAuth();
     const { requests, communityEvents } = useData();
-    const navigate = useNavigate();
+    const navigate = ReactRouterDOM.useNavigate();
     const { t } = useTranslation();
 
     if (!user) return null;
