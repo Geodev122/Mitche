@@ -91,12 +91,14 @@ const OrganizationDashboard: React.FC = () => {
                 </div>
                 <div className="space-y-2">
                      {orgEvents.slice(0, 3).map(event => (
-                        <div key={event.id} className="flex items-center justify-between p-3 bg-gray-50/50 rounded-lg">
-                            <div>
-                                <p className="font-semibold text-sm text-gray-800">{event.title}</p>
-                                <p className="text-xs text-gray-500">{event.region} - {timeSince(event.timestamp, t)}</p>
+                        <div key={event.id} onClick={() => navigate('/events')} className="cursor-pointer rounded-lg bg-gray-50/50 hover:bg-gray-100 transition-colors">
+                            <div className="flex items-center justify-between p-3">
+                                <div>
+                                    <p className="font-semibold text-sm text-gray-800 line-clamp-1">{event.title}</p>
+                                    <p className="text-xs text-gray-500">{event.region} - {timeSince(event.timestamp, t)}</p>
+                                </div>
+                                <ArrowRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
                             </div>
-                            <ArrowRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
                         </div>
                     ))}
                     {orgEvents.length === 0 && <p className="text-center text-sm text-gray-400 py-4">{t('constellation.noEvents')}</p>}

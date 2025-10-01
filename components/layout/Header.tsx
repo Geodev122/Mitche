@@ -5,7 +5,6 @@ import { useData } from '../../context/DataContext';
 import { Notification } from '../../types';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import LanguageSwitcher from '../ui/LanguageSwitcher';
 import { timeSince } from '../../utils/time';
 import SymbolIcon from '../ui/SymbolIcon';
 import ProfilePanel from './ProfilePanel';
@@ -57,7 +56,6 @@ const Header: React.FC = () => {
                     <span className="text-lg font-bold text-[#3A3A3A] hidden sm:inline">{t('appName')}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <LanguageSwitcher />
                     <div className="relative">
                         <button onClick={handleBellClick} className="relative p-2 rounded-full hover:bg-gray-200/50">
                             <Bell className="w-6 h-6 text-gray-600" />
