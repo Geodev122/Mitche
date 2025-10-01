@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
 import { BookOpen, Zap, Wind, Users, Heart } from 'lucide-react';

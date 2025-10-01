@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { Home, MessageSquare, Calendar, BookOpen, Shield, Trophy, PackageSearch } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

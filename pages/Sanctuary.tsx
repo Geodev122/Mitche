@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import * as ReactRouterDOM from 'react-router-dom';
 import { MessageSquare, Calendar, BookOpen, Star } from 'lucide-react';
