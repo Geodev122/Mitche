@@ -19,7 +19,7 @@ import CommunityEvents from './pages/CommunityEvents';
 import CreateEvent from './pages/CreateEvent';
 import AdminDashboard from './pages/AdminDashboard';
 import Leaderboard from './pages/Leaderboard';
-import GlobalLanguageSwitcher from './components/ui/GlobalLanguageSwitcher';
+import Constellation from './pages/Constellation';
 
 const LoadingFallback: React.FC = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-[#FBF9F4]">
@@ -37,7 +37,6 @@ const App: React.FC = () => {
         <HashRouter>
           <LanguageManager>
             <Suspense fallback={<LoadingFallback />}>
-              <GlobalLanguageSwitcher />
               <Main />
             </Suspense>
           </LanguageManager>
@@ -91,6 +90,7 @@ const Main: React.FC = () => {
         } />
         <Route path="leaderboard" element={<Leaderboard />} />
         <Route path="tapestry" element={<TempleOfStories />} />
+        <Route path="constellation" element={<Constellation />} />
         <Route path="nomination" element={<NominationResponse />} />
         <Route path="scanner" element={<Scanner />} />
         <Route path="admin" element={
