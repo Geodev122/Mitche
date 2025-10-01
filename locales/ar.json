@@ -29,16 +29,7 @@
     "username": "اسم المستخدم",
     "password": "كلمة المرور",
     "loginLoading": "...جاري الدخول",
-    "chooseSymbolicIdentity": "اختر اسمك الرمزي",
-    "selectName": "-- اختر اسماً --",
     "signupLoading": "...جاري الإنشاء",
-    "symbolicNames": {
-      "hopeBearer": "حامل الأمل",
-      "voiceOfLight": "صوت النور",
-      "helpingHand": "يد العون",
-      "morningStar": "نجمة الصباح",
-      "braveHeart": "قلب شجاع"
-    },
     "errorInvalid": "اسم المستخدم أو كلمة المرور غير صحيحة.",
     "errorExists": "اسم المستخدم موجود بالفعل.",
     "errorSymbolicName": "الرجاء اختيار اسم رمزي.",
@@ -81,6 +72,14 @@
         "back": "رجوع",
         "createIdentity": "اصنع هويتك",
         "complete": "ادخل إلى الملاذ"
+    },
+    "selectName": "-- اختر اسماً --",
+    "symbolicNames": {
+      "hopeBearer": "حامل الأمل",
+      "voiceOfLight": "صوت النور",
+      "helpingHand": "يد العون",
+      "morningStar": "نجمة الصباح",
+      "braveHeart": "قلب شجاع"
     }
   },
   "sanctuary": {

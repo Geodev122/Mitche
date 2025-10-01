@@ -127,8 +127,8 @@ const Onboarding: React.FC = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-2">{t('onboarding.step5.chooseName')}</label>
                 <select value={symbolicName} onChange={e => setSymbolicName(e.target.value)} required className="w-full px-4 py-3 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]">
-                  <option value="" disabled>{t('auth.selectName')}</option>
-                  {symbolicNameKeys.map(nameKey => <option key={nameKey} value={t(`auth.symbolicNames.${nameKey}`)}>{t(`auth.symbolicNames.${nameKey}`)}</option>)}
+                  <option value="" disabled>{t('onboarding.selectName')}</option>
+                  {symbolicNameKeys.map(nameKey => <option key={nameKey} value={t(`onboarding.symbolicNames.${nameKey}`)}>{t(`onboarding.symbolicNames.${nameKey}`)}</option>)}
                 </select>
               </div>
               <div>

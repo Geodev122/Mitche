@@ -29,16 +29,7 @@
     "username": "Nom d'utilisateur",
     "password": "Mot de passe",
     "loginLoading": "Connexion en cours...",
-    "chooseSymbolicIdentity": "Choisissez Votre Nom Symbolique",
-    "selectName": "-- Choisissez un Nom --",
     "signupLoading": "Création du compte...",
-    "symbolicNames": {
-      "hopeBearer": "Porteur d'Espoir",
-      "voiceOfLight": "Voix de Lumière",
-      "helpingHand": "Main Tendue",
-      "morningStar": "Étoile du Matin",
-      "braveHeart": "Cœur Brave"
-    },
     "errorInvalid": "Nom d'utilisateur ou mot de passe incorrect.",
     "errorExists": "Ce nom d'utilisateur existe déjà.",
     "errorSymbolicName": "Veuillez choisir un nom symbolique.",
@@ -81,6 +72,14 @@
         "back": "Retour",
         "createIdentity": "Créez Votre Identité",
         "complete": "Entrer dans le Sanctuaire"
+    },
+    "selectName": "-- Choisissez un Nom --",
+    "symbolicNames": {
+      "hopeBearer": "Porteur d'Espoir",
+      "voiceOfLight": "Voix de Lumière",
+      "helpingHand": "Main Tendue",
+      "morningStar": "Étoile du Matin",
+      "braveHeart": "Cœur Brave"
     }
   },
   "sanctuary": {

@@ -29,16 +29,7 @@
     "username": "Username",
     "password": "Password",
     "loginLoading": "Logging in...",
-    "chooseSymbolicIdentity": "Choose Your Symbolic Name",
-    "selectName": "-- Select a Name --",
     "signupLoading": "Creating Account...",
-    "symbolicNames": {
-      "hopeBearer": "Hope Bearer",
-      "voiceOfLight": "Voice of Light",
-      "helpingHand": "Helping Hand",
-      "morningStar": "Morning Star",
-      "braveHeart": "Brave Heart"
-    },
     "errorInvalid": "Incorrect username or password.",
     "errorExists": "Username already exists.",
     "errorSymbolicName": "Please choose a symbolic name.",
@@ -81,6 +72,14 @@
         "back": "Back",
         "createIdentity": "Create Your Identity",
         "complete": "Enter the Sanctuary"
+    },
+    "selectName": "-- Select a Name --",
+    "symbolicNames": {
+      "hopeBearer": "Hope Bearer",
+      "voiceOfLight": "Voice of Light",
+      "helpingHand": "Helping Hand",
+      "morningStar": "Morning Star",
+      "braveHeart": "Brave Heart"
     }
   },
   "sanctuary": {

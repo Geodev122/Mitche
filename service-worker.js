@@ -34,66 +34,11 @@ self.addEventListener('activate', event => {
   return self.clients.claim();
 });
 
-// Function to handle fetching and validating translation files
-const fetchAndValidateTranslation = (event) => {
-  return fetch(event.request)
-    .then(networkResponse => {
-      if (!networkResponse.ok) {
-        throw new Error(`Network response was not ok for ${event.request.url}`);
-      }
-      
-      const responseClone = networkResponse.clone();
-      
-      return responseClone.json()
-        .then(data => {
-          // JSON is valid. Cache it and return the original response.
-          console.log(`Successfully fetched and validated ${event.request.url}`);
-          const cacheResponse = networkResponse.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, cacheResponse);
-          });
-          return networkResponse;
-        })
-        .catch(error => {
-          // JSON is malformed.
-          console.error(`Malformed JSON received for ${event.request.url}:`, error);
-          // Return a safe, empty JSON object to prevent the app from crashing.
-          return new Response('{}', { 
-            status: 200, 
-            statusText: 'OK', 
-            headers: { 'Content-Type': 'application/json' } 
-          });
-        });
-    })
-    .catch(error => {
-      // Network failed. Try to serve from cache.
-      console.warn(`Network request for ${event.request.url} failed. Trying cache. Error:`, error);
-      return caches.match(event.request).then(cachedResponse => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-        // If not in cache, also return the safe fallback.
-        console.error(`Could not fetch ${event.request.url} from network or cache.`);
-        return new Response('{}', { 
-          status: 200, 
-          statusText: 'OK', 
-          headers: { 'Content-Type': 'application/json' } 
-        });
-      });
-    });
-};
-
 // Intercept fetch requests
 self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Special handling for translation files
-  if (url.pathname.includes('/locales') && url.pathname.endsWith('.json')) {
-    event.respondWith(fetchAndValidateTranslation(event));
-    return;
-  }
-  
   // For navigation requests, use a network-first approach.
   if (request.mode === 'navigate') {
     event.respondWith(
