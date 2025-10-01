@@ -1,13 +1,6 @@
-// FIX: This declaration file was overriding React's type definitions.
-// The original `export * from 'react'` created a circular dependency.
-// By re-exporting from '@types/react', this file now acts as a proper proxy
-// to the correct type definitions, resolving all errors related to missing
-// React types like `useState`, `FC`, etc.
-// FIX: Corrected to import from 'react' instead of '@types/react' which is not allowed.
-
-// FIX: `export { default } from 'react'` created a circular dependency that broke
-// all React type imports. Re-exporting the default and named types explicitly
-// resolves the issue for the entire application.
-import React from 'react';
+// FIX: The previous content of this file created a circular dependency by using `import`.
+// This prevented TypeScript from resolving any React types correctly.
+// Using `export ... from` syntax is the correct way to re-export modules
+// and should resolve the type resolution issue across the entire application.
+export { default } from 'react';
 export * from 'react';
-export default React;

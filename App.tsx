@@ -4,7 +4,6 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
 import LanguageManager from './components/LanguageManager';
 import { Role } from './types';
-import GlobalLanguageSwitcher from './components/ui/GlobalLanguageSwitcher';
 
 import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
@@ -40,7 +39,6 @@ const App: FC = () => {
         <ReactRouterDOM.HashRouter>
           <LanguageManager>
             <Suspense fallback={<LoadingFallback />}>
-              <GlobalLanguageSwitcher />
               <Main />
             </Suspense>
           </LanguageManager>
