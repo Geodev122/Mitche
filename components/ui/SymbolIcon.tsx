@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import * as React from 'react';
 import { Star, Sun, Flower, Anchor } from 'lucide-react';
 
 interface SymbolIconProps {
@@ -6,7 +6,7 @@ interface SymbolIconProps {
   className?: string;
 }
 
-const SymbolIcon: FC<SymbolIconProps> = ({ name, className = "w-6 h-6" }) => {
+const SymbolIcon: React.FC<SymbolIconProps> = ({ name, className = "w-6 h-6" }) => {
   switch (name) {
     case 'Star':
       return <Star className={className} />;

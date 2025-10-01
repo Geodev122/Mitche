@@ -1,11 +1,11 @@
-import React, { FC } from 'react';
+import * as React from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { Home, MessageSquare, Calendar, BookOpen, Shield, Trophy, PackageSearch } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { Role } from '../../types';
 
-const BottomNav: FC = () => {
+const BottomNav: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
 
@@ -32,8 +32,8 @@ const BottomNav: FC = () => {
             className={({ isActive }) => 
               `flex flex-col items-center justify-center w-full py-3 transition-colors duration-300 ${
                 isActive 
-                  ? 'text-[#D4AF37] bg-amber-50/50' 
-                  : 'text-[#7F7B74] hover:text-[#D4AF37]'
+                  ? 'text-amber-700 bg-amber-100 font-semibold' 
+                  : 'text-gray-500 hover:text-amber-600'
               }`
             }
           >

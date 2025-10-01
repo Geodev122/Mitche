@@ -1,4 +1,4 @@
-import React, { createContext, FC, ReactNode, useState, useEffect, useContext } from 'react';
+import * as React from 'react';
 import { User, Role, HopePointCategory, VerificationStatus } from '../types';
 import i18n from '../i18n';
 
@@ -16,15 +16,15 @@ interface AuthContextType {
   updateVerificationStatus: (userId: string, status: 'Approved' | 'Rejected') => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
 const ADJECTIVES = ['Silent', 'Hopeful', 'Golden', 'Brave', 'Kind', 'Guiding', 'Gentle', 'First', 'Last', 'Shining'];
 const NOUNS = ['Star', 'Echo', 'River', 'Guardian', 'Light', 'Flower', 'Stone', 'Heart', 'Voice', 'Hand'];
 
-export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = React.useState<User | null>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     try {
       const storedUser = localStorage.getItem('michyUser');
       if (storedUser) {
@@ -204,7 +204,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
+  const context = React.useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }

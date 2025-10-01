@@ -1,4 +1,4 @@
-import React, { FC, Suspense, ReactNode } from 'react';
+import * as React from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
@@ -23,7 +23,7 @@ import Constellation from './pages/Constellation';
 import ResourceHub from './pages/ResourceHub';
 import CreateResource from './pages/CreateResource';
 
-const LoadingFallback: FC = () => (
+const LoadingFallback: React.FC = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-[#FBF9F4]">
     <div className="flex flex-col items-center text-center">
       <img src="/awardlogo.png" alt="Mitché Logo" className="w-24 h-24 mx-auto mb-4 animate-pulse" />
@@ -32,15 +32,15 @@ const LoadingFallback: FC = () => (
   </div>
 );
 
-const App: FC = () => {
+const App: React.FC = () => {
   return (
     <AuthProvider>
       <DataProvider>
         <ReactRouterDOM.HashRouter>
           <LanguageManager>
-            <Suspense fallback={<LoadingFallback />}>
+            <React.Suspense fallback={<LoadingFallback />}>
               <Main />
-            </Suspense>
+            </React.Suspense>
           </LanguageManager>
         </ReactRouterDOM.HashRouter>
       </DataProvider>
@@ -48,7 +48,7 @@ const App: FC = () => {
   );
 };
 
-const ProtectedRoute: FC<{ children: ReactNode; roles: Role[]; verifiedOnly?: boolean }> = ({ children, roles, verifiedOnly = false }) => {
+const ProtectedRoute: React.FC<{ children: React.ReactNode; roles: Role[]; verifiedOnly?: boolean }> = ({ children, roles, verifiedOnly = false }) => {
   const { user } = useAuth();
   if (!user || !roles.includes(user.role)) {
     return <ReactRouterDOM.Navigate to="/" />;
@@ -59,7 +59,7 @@ const ProtectedRoute: FC<{ children: ReactNode; roles: Role[]; verifiedOnly?: bo
   return <>{children}</>;
 };
 
-const Main: FC = () => {
+const Main: React.FC = () => {
   const { user } = useAuth();
 
   if (!user) {

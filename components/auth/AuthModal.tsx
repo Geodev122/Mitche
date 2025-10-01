@@ -1,4 +1,4 @@
-import React, { FC, useState, useCallback, useEffect, FormEvent, ChangeEvent } from 'react';
+import * as React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import Modal from '../ui/Modal';
 import { useTranslation } from 'react-i18next';
@@ -9,22 +9,22 @@ interface AuthModalProps {
     onClose: () => void;
 }
 
-const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     const { login, signup, generateUniqueUsernames } = useAuth();
     const { t } = useTranslation();
-    const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
+    const [activeTab, setActiveTab] = React.useState<'login' | 'signup'>('login');
     
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [username, setUsername] = React.useState('');
+    const [password, setPassword] = React.useState('');
+    const [error, setError] = React.useState('');
+    const [loading, setLoading] = React.useState(false);
 
     // New state for signup
-    const [generatedUsernames, setGeneratedUsernames] = useState<string[]>([]);
-    const [selectedUsername, setSelectedUsername] = useState<string | null>(null);
-    const [isGenerating, setIsGenerating] = useState(false);
+    const [generatedUsernames, setGeneratedUsernames] = React.useState<string[]>([]);
+    const [selectedUsername, setSelectedUsername] = React.useState<string | null>(null);
+    const [isGenerating, setIsGenerating] = React.useState(false);
 
-    const handleGenerateUsernames = useCallback(() => {
+    const handleGenerateUsernames = React.useCallback(() => {
         setIsGenerating(true);
         setSelectedUsername(null);
         setTimeout(() => {
@@ -34,13 +34,13 @@ const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose }) => {
         }, 300);
     }, [generateUniqueUsernames]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (activeTab === 'signup' && generatedUsernames.length === 0) {
             handleGenerateUsernames();
         }
     }, [activeTab, generatedUsernames.length, handleGenerateUsernames]);
 
-    const handleLogin = async (e: FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setLoading(true);
@@ -53,7 +53,7 @@ const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose }) => {
         }
     };
 
-    const handleSignup = async (e: FormEvent) => {
+    const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedUsername) {
             setError(t('auth.errorUsernameNotSelected'));
@@ -155,7 +155,7 @@ const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose }) => {
     );
 };
 
-const InputField: FC<{id: string, label: string, type: string, value: string, onChange: (e: ChangeEvent<HTMLInputElement>) => void, required?: boolean}> = 
+const InputField: React.FC<{id: string, label: string, type: string, value: string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, required?: boolean}> = 
 ({id, label, type, value, onChange, required}) => (
     <div>
         <label htmlFor={id} className="block text-sm font-medium text-gray-600 mb-1">{label}</label>

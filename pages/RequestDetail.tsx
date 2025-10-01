@@ -1,4 +1,4 @@
-import React, { FC, useState, ElementType } from 'react';
+import * as React from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
@@ -18,7 +18,7 @@ const statusStyles: { [key in RequestStatus]: { text: string; classes: string } 
   [RequestStatus.Closed]: { text: 'requestStatus.Closed', classes: 'bg-gray-100 text-gray-700' },
 };
 
-const DetailItem: FC<{ icon: ElementType; label: string; value: string }> = ({ icon: Icon, label, value }) => (
+const DetailItem: React.FC<{ icon: React.ElementType; label: string; value: string }> = ({ icon: Icon, label, value }) => (
   <div className="flex items-start text-sm">
     <Icon className="w-4 h-4 text-gray-400 mt-1 mr-3 rtl:mr-0 rtl:ml-3 flex-shrink-0" />
     <div>
@@ -28,7 +28,7 @@ const DetailItem: FC<{ icon: ElementType; label: string; value: string }> = ({ i
   </div>
 );
 
-const EncouragementCard: FC<{ offering: Offering }> = ({ offering }) => {
+const EncouragementCard: React.FC<{ offering: Offering }> = ({ offering }) => {
   const { getUserById } = useAuth();
   const { t } = useTranslation();
   const sender = getUserById(offering.userId);
@@ -50,17 +50,17 @@ const EncouragementCard: FC<{ offering: Offering }> = ({ offering }) => {
   );
 };
 
-const RequestDetail: FC = () => {
+const RequestDetail: React.FC = () => {
   const { requestId } = ReactRouterDOM.useParams<{ requestId: string }>();
   const navigate = ReactRouterDOM.useNavigate();
   const { t, i18n } = useTranslation();
   const { getRequestById, getOfferingsForRequest, addOffering, initiateHelp, confirmReceipt, fulfillRequest, leaveCommendation } = useData();
   const { user, getUserById } = useAuth();
   
-  const [isHelpModalOpen, setHelpModalOpen] = useState(false);
-  const [isEncourageModalOpen, setEncourageModalOpen] = useState(false);
-  const [isCommendationModalOpen, setCommendationModalOpen] = useState(false);
-  const [encouragementMessage, setEncouragementMessage] = useState('');
+  const [isHelpModalOpen, setHelpModalOpen] = React.useState(false);
+  const [isEncourageModalOpen, setEncourageModalOpen] = React.useState(false);
+  const [isCommendationModalOpen, setCommendationModalOpen] = React.useState(false);
+  const [encouragementMessage, setEncouragementMessage] = React.useState('');
 
   if (!requestId || !user) {
     return <ReactRouterDOM.Navigate to="/echoes" />;

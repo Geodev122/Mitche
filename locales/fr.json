@@ -2,6 +2,9 @@
 {
   "appName": "Mitché",
   "appSlogan": "Où l'espoir résonne",
+  "modal": {
+    "close": "Fermer la fenêtre modale"
+  },
   "nav": {
     "home": "Accueil",
     "echoes": "Échos",

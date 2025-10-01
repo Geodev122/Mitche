@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import * as React from 'react';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
 import { PlusCircle, MessageSquare } from 'lucide-react';
@@ -9,7 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { timeSince } from '../utils/time';
 
-const RequestCard: FC<{ request: Request }> = ({ request }) => {
+const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
   const { t } = useTranslation();
 
   const statusStyles: { [key in RequestStatus]: { text: string; classes: string } } = {
@@ -45,11 +45,11 @@ const RequestCard: FC<{ request: Request }> = ({ request }) => {
   );
 };
 
-const Skeleton: FC<{ className?: string }> = ({ className }) => (
+const Skeleton: React.FC<{ className?: string }> = ({ className }) => (
   <div className={`bg-gray-200 rounded animate-pulse ${className}`}></div>
 );
 
-const RequestCardSkeleton: FC = () => (
+const RequestCardSkeleton: React.FC = () => (
   <Card className="mb-4">
     <div className="flex items-start">
       <div className="mr-4 rtl:ml-0 rtl:ml-4 flex-shrink-0">
@@ -68,7 +68,7 @@ const RequestCardSkeleton: FC = () => (
   </Card>
 );
 
-const FilterChip: FC<{ label: string; value: any; currentFilter: any; setFilter: (value: any) => void; }> = 
+const FilterChip: React.FC<{ label: string; value: any; currentFilter: any; setFilter: (value: any) => void; }> = 
 ({ label, value, currentFilter, setFilter }) => (
   <button
     onClick={() => setFilter(value)}
@@ -83,11 +83,11 @@ const FilterChip: FC<{ label: string; value: any; currentFilter: any; setFilter:
 );
 
 
-const WallOfEchoes: FC = () => {
+const WallOfEchoes: React.FC = () => {
   const { requests, loading } = useData();
   const { user } = useAuth();
   const { t } = useTranslation();
-  const [filter, setFilter] = useState<RequestType | 'All'>('All');
+  const [filter, setFilter] = React.useState<RequestType | 'All'>('All');
 
   const visibleRequests = user?.role === Role.Citizen
     ? requests.filter(req => req.mode === RequestMode.Loud)

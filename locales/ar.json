@@ -2,6 +2,9 @@
 {
   "appName": "Mitché",
   "appSlogan": "حيث يتردد صدى الأمل",
+  "modal": {
+    "close": "إغلاق"
+  },
   "nav": {
     "home": "الرئيسية",
     "echoes": "صدى",

@@ -1,4 +1,4 @@
-import React, { createContext, FC, ReactNode, useState, useEffect, useContext } from 'react';
+import * as React from 'react';
 import { Request, Offering, RequestType, RequestMode, Notification, HopePointCategory, RequestStatus, TapestryThread, TapestryThreadColor, TapestryThreadPattern, User, CommunityEvent, CommunityEventType, Role, Resource, ResourceCategory, CommendationType } from '../types';
 import { useAuth } from './AuthContext';
 import i18n from '../i18n';
@@ -28,7 +28,7 @@ interface DataContextType {
   leaveCommendation: (requestId: string, fromRole: 'requester' | 'helper', commendations: CommendationType[]) => void;
 }
 
-const DataContext = createContext<DataContextType | undefined>(undefined);
+const DataContext = React.createContext<DataContextType | undefined>(undefined);
 
 const MOCK_REQUESTS: Request[] = [
     {
@@ -184,18 +184,18 @@ const MOCK_THREADS: TapestryThread[] = [
 ];
 
 
-export const DataProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [requests, setRequests] = useState<Request[]>([]);
-  const [offerings, setOfferings] = useState<Offering[]>([]);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [tapestryThreads, setTapestryThreads] = useState<TapestryThread[]>([]);
-  const [communityEvents, setCommunityEvents] = useState<CommunityEvent[]>([]);
-  const [resources, setResources] = useState<Resource[]>([]);
-  const [loading, setLoading] = useState(true);
+export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [requests, setRequests] = React.useState<Request[]>([]);
+  const [offerings, setOfferings] = React.useState<Offering[]>([]);
+  const [notifications, setNotifications] = React.useState<Notification[]>([]);
+  const [tapestryThreads, setTapestryThreads] = React.useState<TapestryThread[]>([]);
+  const [communityEvents, setCommunityEvents] = React.useState<CommunityEvent[]>([]);
+  const [resources, setResources] = React.useState<Resource[]>([]);
+  const [loading, setLoading] = React.useState(true);
   const { user, addHopePoints, updateUser, getUserById, updateAnyUser } = useAuth();
 
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Simulate API fetch
     setTimeout(() => {
       setRequests(MOCK_REQUESTS);
@@ -207,7 +207,7 @@ export const DataProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }, 1000);
   }, []);
   
-  useEffect(() => {
+  React.useEffect(() => {
      if (user && !user.nominationStatus) {
         const nominationNotification: Notification = {
             id: `notif_nomination_${user.id}`,
@@ -510,7 +510,7 @@ export const DataProvider: FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 export const useData = (): DataContextType => {
-  const context = useContext(DataContext);
+  const context = React.useContext(DataContext);
   if (!context) {
     throw new Error('useData must be used within a DataProvider');
   }
