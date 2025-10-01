@@ -4,7 +4,7 @@ import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
 import { Users, MessageSquare, Calendar, Shield, ShieldCheck, Check, X, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { User, Role, VerificationStatus } from '../types';
+import { User, VerificationStatus } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
 
 const StatCard: React.FC<{ icon: React.ElementType, value: number, label: string }> = ({ icon: Icon, value, label }) => (
@@ -40,18 +40,26 @@ const VerificationStatusBadge: React.FC<{ status?: VerificationStatus }> = ({ st
 const UserRow: React.FC<{ user: User }> = ({ user }) => {
     const { t } = useTranslation();
     return (
-        <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
-            <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                <SymbolIcon name={user.symbolicIcon} className="w-8 h-8 text-gray-500" />
-                <div>
-                    <div className="flex items-center gap-2">
-                        <p className="font-semibold text-gray-800">{user.symbolicName}</p>
-                        {user.isVerified && <ShieldCheck className="w-4 h-4 text-blue-500" />}
+        <div className="flex items-center justify-between p-3 bg-white rounded-lg border gap-2">
+            <div className="flex items-center space-x-3 rtl:space-x-reverse flex-grow min-w-0">
+                <SymbolIcon name={user.symbolicIcon} className="w-8 h-8 text-gray-500 flex-shrink-0" />
+                <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                        <p className="font-semibold text-gray-800 truncate" title={user.symbolicName}>{user.symbolicName}</p>
+                        {user.isVerified && <ShieldCheck className="w-4 h-4 text-blue-500 flex-shrink-0" title={t('verifiedOrg') as string} />}
                     </div>
-                    <p className="text-xs text-gray-500">{t(`roles.${user.role}`)}</p>
+                    <p className="text-xs text-gray-500 truncate" title={user.username}>@{user.username} - {t(`roles.${user.role}`)}</p>
                 </div>
             </div>
-            <VerificationStatusBadge status={user.verificationStatus} />
+            <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0 text-right">
+                 <div className="w-12">
+                    <p className="font-bold text-sm text-amber-600">{user.hopePoints}</p>
+                    <p className="text-xs text-gray-500">{t('leaderboard.points')}</p>
+                </div>
+                <div className="w-24">
+                    <VerificationStatusBadge status={user.verificationStatus} />
+                </div>
+            </div>
         </div>
     );
 };
@@ -107,18 +115,18 @@ const AdminDashboard: React.FC = () => {
                     <div className="space-y-2">
                         {pendingUsers.map(u => (
                              <div key={u.id} className="flex items-center justify-between p-3 bg-amber-50/50 rounded-lg border border-amber-200">
-                                <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                                    <SymbolIcon name={u.symbolicIcon} className="w-8 h-8 text-amber-700" />
-                                    <div>
-                                        <p className="font-semibold text-gray-800">{u.symbolicName}</p>
-                                        <p className="text-xs text-gray-500">{t(`roles.${u.role}`)}</p>
+                                <div className="flex items-center space-x-3 rtl:space-x-reverse min-w-0">
+                                    <SymbolIcon name={u.symbolicIcon} className="w-8 h-8 text-amber-700 flex-shrink-0" />
+                                    <div className="min-w-0">
+                                        <p className="font-semibold text-gray-800 truncate">{u.symbolicName}</p>
+                                        <p className="text-xs text-gray-500 truncate">@{u.username} - {t(`roles.${u.role}`)}</p>
                                     </div>
                                 </div>
-                                <div className="flex gap-2">
-                                     <button onClick={() => handleVerificationAction(u.id, 'Rejected')} className="p-2 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition-colors">
+                                <div className="flex gap-2 flex-shrink-0">
+                                     <button onClick={() => handleVerificationAction(u.id, 'Rejected')} className="p-2 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition-colors" title={t('admin.reject') as string}>
                                         <X size={16} />
                                      </button>
-                                     <button onClick={() => handleVerificationAction(u.id, 'Approved')} className="p-2 bg-green-100 text-green-600 rounded-full hover:bg-green-200 transition-colors">
+                                     <button onClick={() => handleVerificationAction(u.id, 'Approved')} className="p-2 bg-green-100 text-green-600 rounded-full hover:bg-green-200 transition-colors" title={t('admin.approve') as string}>
                                         <Check size={16} />
                                      </button>
                                 </div>
