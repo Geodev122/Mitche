@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import React, { createContext, useState, ReactNode, useEffect } from 'react';
 import { Request, Offering, RequestType, RequestMode, Notification, HopePointCategory, RequestStatus, TapestryThread, TapestryThreadColor, TapestryThreadPattern, User, CommunityEvent, CommunityEventType, Role } from '../types';
 import { useAuth } from './AuthContext';
 import i18n from '../i18n';
@@ -420,7 +420,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 };
 
 export const useData = (): DataContextType => {
-  const context = useContext(DataContext);
+  const context = React.useContext(DataContext);
   if (!context) {
     throw new Error('useData must be used within a DataProvider');
   }
