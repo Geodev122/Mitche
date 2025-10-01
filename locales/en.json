@@ -38,7 +38,11 @@
     "errorInvalid": "Incorrect username or password.",
     "errorExists": "Username already exists.",
     "errorSymbolicName": "Please choose a symbolic name.",
-    "identityChoiceInfo": "You will choose your symbolic identity after creating your account."
+    "identityChoiceInfo": "You will choose your symbolic identity after creating your account.",
+    "errorUsernameNotSelected": "Please select a username.",
+    "generatingUsernames": "Generating unique names...",
+    "chooseUsername": "Choose your username",
+    "refreshUsernames": "Refresh names"
   },
   "onboarding": {
     "welcome": {

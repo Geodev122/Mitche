@@ -2,6 +2,7 @@ import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import Modal from '../ui/Modal';
 import { useTranslation } from 'react-i18next';
+import { RefreshCw } from 'lucide-react';
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -9,7 +10,7 @@ interface AuthModalProps {
 }
 
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
-    const { login, signup } = useAuth();
+    const { login, signup, generateUniqueUsernames } = useAuth();
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = React.useState<'login' | 'signup'>('login');
     
@@ -17,6 +18,27 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     const [password, setPassword] = React.useState('');
     const [error, setError] = React.useState('');
     const [loading, setLoading] = React.useState(false);
+
+    // New state for signup
+    const [generatedUsernames, setGeneratedUsernames] = React.useState<string[]>([]);
+    const [selectedUsername, setSelectedUsername] = React.useState<string | null>(null);
+    const [isGenerating, setIsGenerating] = React.useState(false);
+
+    const handleGenerateUsernames = React.useCallback(() => {
+        setIsGenerating(true);
+        setSelectedUsername(null);
+        setTimeout(() => {
+            const names = generateUniqueUsernames();
+            setGeneratedUsernames(names);
+            setIsGenerating(false);
+        }, 300);
+    }, [generateUniqueUsernames]);
+
+    React.useEffect(() => {
+        if (activeTab === 'signup' && generatedUsernames.length === 0) {
+            handleGenerateUsernames();
+        }
+    }, [activeTab, generatedUsernames.length, handleGenerateUsernames]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -33,9 +55,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!selectedUsername) {
+            setError(t('auth.errorUsernameNotSelected'));
+            return;
+        }
         setError('');
         setLoading(true);
-        const result = await signup(username, password);
+        const result = await signup(selectedUsername, password);
         setLoading(false);
         if (result.success) {
             onClose();
@@ -48,6 +74,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         setUsername('');
         setPassword('');
         setError('');
+        setSelectedUsername(null);
     };
     
     const switchTab = (tab: 'login' | 'signup') => {
@@ -83,13 +110,43 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 </form>
             ) : (
                 <form onSubmit={handleSignup} className="space-y-4">
-                    <InputField id="signup-username" label={t('auth.username')} type="text" value={username} onChange={e => setUsername(e.target.value)} required />
+                     <div>
+                        <div className="flex justify-between items-center mb-2">
+                            <label className="block text-sm font-medium text-gray-600">{t('auth.chooseUsername')}</label>
+                            <button type="button" onClick={handleGenerateUsernames} className="text-xs font-semibold text-[#D4AF37] hover:underline flex items-center gap-1" disabled={isGenerating}>
+                                <RefreshCw className={`w-3 h-3 ${isGenerating ? 'animate-spin' : ''}`} />
+                                {t('auth.refreshUsernames')}
+                            </button>
+                        </div>
+                        {isGenerating ? (
+                            <div className="text-center p-8 text-gray-500">
+                                <p>{t('auth.generatingUsernames')}</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                {generatedUsernames.map(name => (
+                                    <button
+                                        type="button"
+                                        key={name}
+                                        onClick={() => setSelectedUsername(name)}
+                                        className={`w-full text-left p-3 rounded-lg border text-sm font-semibold transition-all duration-200 ${
+                                            selectedUsername === name
+                                                ? 'bg-amber-50 border-[#D4AF37] text-gray-800 ring-2 ring-[#D4AF37]'
+                                                : 'bg-white border-gray-200 text-gray-700 hover:border-gray-400'
+                                        }`}
+                                    >
+                                        {name}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                     <InputField id="signup-password" label={t('auth.password')} type="password" value={password} onChange={e => setPassword(e.target.value)} required />
                     
                     <p className="text-xs text-gray-500 text-center pt-2">{t('auth.identityChoiceInfo')}</p>
 
                     {error && <p className="text-red-500 text-xs">{error}</p>}
-                    <button type="submit" disabled={loading} className="w-full mt-4 bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors disabled:bg-gray-400">
+                    <button type="submit" disabled={loading || !selectedUsername} className="w-full mt-4 bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors disabled:bg-gray-400">
                         {loading ? t('auth.signupLoading') : t('auth.signup')}
                     </button>
                 </form>
