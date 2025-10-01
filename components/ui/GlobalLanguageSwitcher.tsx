@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown } from 'lucide-react';
 
@@ -10,8 +10,8 @@ const languages: { [key: string]: { short: string; nativeName: string } } = {
 
 const GlobalLanguageSwitcher: React.FC = () => {
   const { i18n } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = React.useState(false);
+  const wrapperRef = React.useRef<HTMLDivElement>(null);
 
   const currentLangCode = i18n.resolvedLanguage || 'ar';
   const currentLang = languages[currentLangCode] || languages['ar'];
@@ -22,7 +22,7 @@ const GlobalLanguageSwitcher: React.FC = () => {
   };
 
   // Click outside to close
-  useEffect(() => {
+  React.useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
         setIsOpen(false);

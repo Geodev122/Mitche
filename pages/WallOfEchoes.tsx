@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
 import { PlusCircle, MessageSquare } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import * as ReactRouterDOM from 'react-router-dom';
 import { Request, RequestType, RequestStatus, Role, RequestMode } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
 import { useAuth } from '../context/AuthContext';
@@ -21,7 +21,7 @@ const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
   const currentStatus = statusStyles[request.status];
 
   return (
-    <Link to={`/echoes/${request.id}`} className="block">
+    <ReactRouterDOM.Link to={`/echoes/${request.id}`} className="block">
       <Card className="transition-transform transform active:scale-95 relative">
         <div className="flex items-center mb-2">
             <div className="w-10 h-10 bg-[#F1EADF] rounded-full flex items-center justify-center mr-3 rtl:mr-0 rtl:ml-3">
@@ -41,7 +41,7 @@ const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
         <div className="text-sm font-semibold text-[#D4AF37] mb-2">{t(`requestTypes.${request.type}`)} - {request.region}</div>
         <p className="text-gray-600 text-md line-clamp-2">{request.description}</p>
       </Card>
-    </Link>
+    </ReactRouterDOM.Link>
   );
 };
 
@@ -87,7 +87,7 @@ const WallOfEchoes: React.FC = () => {
   const { requests, loading } = useData();
   const { user } = useAuth();
   const { t } = useTranslation();
-  const [filter, setFilter] = useState<RequestType | 'All'>('All');
+  const [filter, setFilter] = React.useState<RequestType | 'All'>('All');
 
   const visibleRequests = user?.role === Role.Citizen
     ? requests.filter(req => req.mode === RequestMode.Loud)
@@ -133,9 +133,9 @@ const WallOfEchoes: React.FC = () => {
       )}
 
       {canCreateRequest && (
-        <Link to="/echoes/new" className="fixed bottom-24 right-6 rtl:right-auto rtl:left-6 bg-[#D4AF37] text-white p-4 rounded-full shadow-lg hover:bg-opacity-90 transition-transform transform hover:scale-110 active:scale-100">
+        <ReactRouterDOM.Link to="/echoes/new" className="fixed bottom-24 right-6 rtl:right-auto rtl:left-6 bg-[#D4AF37] text-white p-4 rounded-full shadow-lg hover:bg-opacity-90 transition-transform transform hover:scale-110 active:scale-100">
           <PlusCircle size={28} />
-        </Link>
+        </ReactRouterDOM.Link>
       )}
     </div>
   );

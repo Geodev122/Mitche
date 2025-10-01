@@ -1,4 +1,4 @@
-import React, { createContext, useState, ReactNode, useEffect } from 'react';
+import React from 'react';
 import { Request, Offering, RequestType, RequestMode, Notification, HopePointCategory, RequestStatus, TapestryThread, TapestryThreadColor, TapestryThreadPattern, User, CommunityEvent, CommunityEventType, Role } from '../types';
 import { useAuth } from './AuthContext';
 import i18n from '../i18n';
@@ -25,7 +25,7 @@ interface DataContextType {
   getOfferingsForRequest: (requestId: string) => Offering[];
 }
 
-const DataContext = createContext<DataContextType | undefined>(undefined);
+const DataContext = React.createContext<DataContextType | undefined>(undefined);
 
 const MOCK_REQUESTS: Request[] = [
     {
@@ -142,17 +142,17 @@ const MOCK_THREADS: TapestryThread[] = [
 ];
 
 
-export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [requests, setRequests] = useState<Request[]>([]);
-  const [offerings, setOfferings] = useState<Offering[]>([]);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [tapestryThreads, setTapestryThreads] = useState<TapestryThread[]>([]);
-  const [communityEvents, setCommunityEvents] = useState<CommunityEvent[]>([]);
-  const [loading, setLoading] = useState(true);
+export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [requests, setRequests] = React.useState<Request[]>([]);
+  const [offerings, setOfferings] = React.useState<Offering[]>([]);
+  const [notifications, setNotifications] = React.useState<Notification[]>([]);
+  const [tapestryThreads, setTapestryThreads] = React.useState<TapestryThread[]>([]);
+  const [communityEvents, setCommunityEvents] = React.useState<CommunityEvent[]>([]);
+  const [loading, setLoading] = React.useState(true);
   const { user, addHopePoints, updateUser, getUserById, updateAnyUser } = useAuth();
 
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Simulate API fetch
     setTimeout(() => {
       setRequests(MOCK_REQUESTS);
@@ -163,7 +163,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }, 1000);
   }, []);
   
-  useEffect(() => {
+  React.useEffect(() => {
      if (user && !user.nominationStatus) {
         const nominationNotification: Notification = {
             id: `notif_nomination_${user.id}`,

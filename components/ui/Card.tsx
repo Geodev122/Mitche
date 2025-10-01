@@ -1,11 +1,12 @@
 
-import React, { ReactNode, CSSProperties } from 'react';
+
+import React from 'react';
 
 interface CardProps {
-  children: ReactNode;
+  children: React.ReactNode;
   className?: string;
   // FIX: Add optional style prop to allow passing inline styles to the card component.
-  style?: CSSProperties;
+  style?: React.CSSProperties;
 }
 
 const Card: React.FC<CardProps> = ({ children, className = '', style }) => {

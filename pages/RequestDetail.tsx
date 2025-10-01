@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 // FIX: Import the `Navigate` component from `react-router-dom` to handle declarative navigation.
-import { useParams, useNavigate, Navigate } from 'react-router-dom';
+import * as ReactRouterDOM from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import Card from '../components/ui/Card';
@@ -51,18 +51,18 @@ const EncouragementCard: React.FC<{ offering: Offering }> = ({ offering }) => {
 };
 
 const RequestDetail: React.FC = () => {
-  const { requestId } = useParams<{ requestId: string }>();
-  const navigate = useNavigate();
+  const { requestId } = ReactRouterDOM.useParams<{ requestId: string }>();
+  const navigate = ReactRouterDOM.useNavigate();
   const { t, i18n } = useTranslation();
   const { getRequestById, getOfferingsForRequest, addOffering, initiateHelp, confirmReceipt, fulfillRequest } = useData();
   const { user, getUserById } = useAuth();
   
-  const [isHelpModalOpen, setHelpModalOpen] = useState(false);
-  const [isEncourageModalOpen, setEncourageModalOpen] = useState(false);
-  const [encouragementMessage, setEncouragementMessage] = useState('');
+  const [isHelpModalOpen, setHelpModalOpen] = React.useState(false);
+  const [isEncourageModalOpen, setEncourageModalOpen] = React.useState(false);
+  const [encouragementMessage, setEncouragementMessage] = React.useState('');
 
   if (!requestId || !user) {
-    return <Navigate to="/echoes" />;
+    return <ReactRouterDOM.Navigate to="/echoes" />;
   }
 
   const request = getRequestById(requestId);

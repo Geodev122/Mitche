@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import Modal from '../ui/Modal';
 import { useTranslation } from 'react-i18next';
@@ -11,12 +11,12 @@ interface AuthModalProps {
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     const { login, signup } = useAuth();
     const { t } = useTranslation();
-    const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
+    const [activeTab, setActiveTab] = React.useState<'login' | 'signup'>('login');
     
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [username, setUsername] = React.useState('');
+    const [password, setPassword] = React.useState('');
+    const [error, setError] = React.useState('');
+    const [loading, setLoading] = React.useState(false);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();

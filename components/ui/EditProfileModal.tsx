@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { User } from '../../types';
 import Modal from './Modal';
@@ -13,10 +13,10 @@ interface EditProfileModalProps {
 const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, user }) => {
   const { updateUser } = useAuth();
   const { t } = useTranslation();
-  const [bio, setBio] = useState('');
-  const [location, setLocation] = useState('');
+  const [bio, setBio] = React.useState('');
+  const [location, setLocation] = React.useState('');
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (user) {
       setBio(user.bio || '');
       setLocation(user.location || '');

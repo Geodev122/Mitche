@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import * as ReactRouterDOM from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Role } from '../types';
 import CitizenDashboard from './dashboards/CitizenDashboard';
@@ -9,7 +9,7 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
 
   if (!user) {
-    return <Navigate to="/login" />;
+    return <ReactRouterDOM.Navigate to="/login" />;
   }
 
   switch (user.role) {
@@ -19,9 +19,9 @@ const Dashboard: React.FC = () => {
     case Role.PublicWorker:
       return <OrganizationDashboard />;
     case Role.Admin:
-      return <Navigate to="/admin" replace />;
+      return <ReactRouterDOM.Navigate to="/admin" replace />;
     default:
-      return <Navigate to="/login" />;
+      return <ReactRouterDOM.Navigate to="/login" />;
   }
 };
 

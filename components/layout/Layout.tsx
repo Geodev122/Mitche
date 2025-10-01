@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import * as ReactRouterDOM from 'react-router-dom';
 import BottomNav from './BottomNav';
 import Header from './Header';
 
@@ -8,7 +8,7 @@ const Layout: React.FC = () => {
     <div className="min-h-screen bg-[#FBF9F4] flex flex-col">
       <Header />
       <main className="flex-grow">
-        <Outlet />
+        <ReactRouterDOM.Outlet />
       </main>
       <BottomNav />
     </div>

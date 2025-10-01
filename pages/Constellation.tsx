@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
@@ -8,7 +8,7 @@ import { HopePointCategory, RequestStatus, Role } from '../types';
 import { useTranslation } from 'react-i18next';
 import Modal from '../components/ui/Modal';
 import EditProfileModal from '../components/ui/EditProfileModal';
-import { useNavigate } from 'react-router-dom';
+import * as ReactRouterDOM from 'react-router-dom';
 import { timeSince } from '../utils/time';
 import { isPushSupported, subscribeUser, unsubscribeUser, getSubscription } from '../utils/notifications';
 
@@ -79,17 +79,17 @@ const Constellation: React.FC = () => {
   const { user, logout } = useAuth();
   const { requests, offerings, tapestryThreads, communityEvents } = useData();
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [isAppInstalled, setIsAppInstalled] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const navigate = ReactRouterDOM.useNavigate();
+  const [deferredPrompt, setDeferredPrompt] = React.useState<BeforeInstallPromptEvent | null>(null);
+  const [isAppInstalled, setIsAppInstalled] = React.useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const [isQrModalOpen, setIsQrModalOpen] = React.useState(false);
   
-  const [isPushSupportedState, setIsPushSupportedState] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [isSubscriptionLoading, setSubscriptionLoading] = useState(true);
+  const [isPushSupportedState, setIsPushSupportedState] = React.useState(false);
+  const [isSubscribed, setIsSubscribed] = React.useState(false);
+  const [isSubscriptionLoading, setSubscriptionLoading] = React.useState(true);
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Check if the app is already running in standalone mode.
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
     if (isStandalone) {
@@ -122,7 +122,7 @@ const Constellation: React.FC = () => {
   }, []);
   
   // New useEffect for push notifications
-  useEffect(() => {
+  React.useEffect(() => {
     if (isPushSupported()) {
         setIsPushSupportedState(true);
         // Check initial subscription status

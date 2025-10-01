@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import SymbolIcon from '../components/ui/SymbolIcon';
@@ -18,10 +18,10 @@ const ConceptCard: React.FC<{ icon: React.ElementType; title: string; descriptio
 const Onboarding: React.FC = () => {
   const { updateUser } = useAuth();
   const { t } = useTranslation();
-  const [step, setStep] = useState(1);
-  const [symbolicName, setSymbolicName] = useState('');
-  const [symbolicIcon, setSymbolicIcon] = useState(symbolicIcons[0]);
-  const [error, setError] = useState('');
+  const [step, setStep] = React.useState(1);
+  const [symbolicName, setSymbolicName] = React.useState('');
+  const [symbolicIcon, setSymbolicIcon] = React.useState(symbolicIcons[0]);
+  const [error, setError] = React.useState('');
 
   const handleNextToIdentity = () => {
     setStep(2);

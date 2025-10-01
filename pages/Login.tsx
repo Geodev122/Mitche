@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Navigate } from 'react-router-dom';
+import * as ReactRouterDOM from 'react-router-dom';
 import { Shield } from 'lucide-react';
 import AuthModal from '../components/auth/AuthModal';
 import { useTranslation } from 'react-i18next';
 
 const Login: React.FC = () => {
     const { user } = useAuth();
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = React.useState(false);
     const { t } = useTranslation();
 
     if (user) {
-        return <Navigate to="/" />;
+        return <ReactRouterDOM.Navigate to="/" />;
     }
 
     return (

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 const languageDirection: { [key: string]: 'rtl' | 'ltr' } = {
@@ -10,7 +10,7 @@ const languageDirection: { [key: string]: 'rtl' | 'ltr' } = {
 const LanguageManager: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { i18n } = useTranslation();
 
-  useEffect(() => {
+  React.useEffect(() => {
     const currentLang = i18n.language.split('-')[0]; // handle cases like en-US
     document.documentElement.lang = currentLang;
     document.documentElement.dir = languageDirection[currentLang] || 'ltr';
