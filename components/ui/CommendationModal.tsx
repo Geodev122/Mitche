@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Modal from './Modal';
 import { useTranslation } from 'react-i18next';
 import { CommendationType } from '../../types';

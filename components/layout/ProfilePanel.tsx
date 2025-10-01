@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import Card from '../ui/Card';
@@ -22,14 +22,17 @@ interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
 }
 
-const SettingsButton: React.FC<{icon: React.ElementType, label: string, onClick?: () => void, isDestructive?: boolean}> = ({icon: Icon, label, onClick, isDestructive}) => (
-    <button onClick={onClick} className={`w-full flex items-center justify-between text-left p-3 rounded-lg bg-gray-50/50 hover:bg-gray-100 transition-colors duration-200 active:bg-gray-200 ${isDestructive ? 'text-red-600' : 'text-gray-700'}`}>
-        <div className="flex items-center">
-            <Icon className={`w-5 h-5 mr-3 rtl:mr-0 rtl:ml-3 ${isDestructive ? 'text-red-500' : 'text-gray-500'}`} />
-            <span className="font-semibold text-sm">{label}</span>
-        </div>
-        {!isDestructive && <ChevronRight className="w-5 h-5 text-gray-400" />}
-    </button>
+const SettingsButton: React.FC<{icon: React.ElementType, label: string, onClick?: () => void, isDestructive?: boolean, children?: React.ReactNode}> = ({icon: Icon, label, onClick, isDestructive, children}) => (
+    <div>
+      <button onClick={onClick} className={`w-full flex items-center justify-between text-left p-3 rounded-lg bg-gray-50/50 hover:bg-gray-100 transition-colors duration-200 active:bg-gray-200 ${isDestructive ? 'text-red-600' : 'text-gray-700'}`}>
+          <div className="flex items-center">
+              <Icon className={`w-5 h-5 mr-3 rtl:mr-0 rtl:ml-3 ${isDestructive ? 'text-red-500' : 'text-gray-500'}`} />
+              <span className="font-semibold text-sm">{label}</span>
+          </div>
+          {!isDestructive && <ChevronRight className="w-5 h-5 text-gray-400" />}
+      </button>
+       {children && <div className="px-3 pb-2">{children}</div>}
+    </div>
 );
 
 interface ProfilePanelProps {
@@ -49,6 +52,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
   const [isPushSupportedState, setIsPushSupportedState] = React.useState(false);
   const [isSubscribed, setIsSubscribed] = React.useState(false);
   const [isSubscriptionLoading, setSubscriptionLoading] = React.useState(true);
+  const [cameraStatus, setCameraStatus] = React.useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   React.useEffect(() => {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
@@ -107,19 +111,22 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
   };
   
   const handleCameraAccess = async () => {
+    setCameraStatus(null);
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert(t('constellation.cameraNotSupported'));
+        setCameraStatus({ message: t('constellation.cameraNotSupported'), type: 'error' });
+        setTimeout(() => setCameraStatus(null), 4000);
         return;
     }
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        alert(t('constellation.cameraAccessGranted'));
+        setCameraStatus({ message: t('constellation.cameraAccessGranted'), type: 'success' });
         // Stop the stream tracks immediately after getting permission
         stream.getTracks().forEach(track => track.stop());
     } catch (err) {
         console.error("Camera access denied:", err);
-        alert(t('constellation.cameraAccessDenied'));
+        setCameraStatus({ message: t('constellation.cameraAccessDenied'), type: 'error' });
     }
+     setTimeout(() => setCameraStatus(null), 4000);
   };
 
   const handleSendTestNotification = () => {
@@ -232,7 +239,13 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
                              />
                         )}
                         {showInstallButton && <SettingsButton icon={Download} label={t('constellation.installApp')} onClick={handleInstallClick} />}
-                        <SettingsButton icon={Camera} label={t('constellation.accessCamera')} onClick={handleCameraAccess} />
+                        <SettingsButton icon={Camera} label={t('constellation.accessCamera')} onClick={handleCameraAccess}>
+                            {cameraStatus && (
+                                <div className={`mt-1 p-2 text-xs rounded-md text-center animate-fade-in-down ${cameraStatus.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                    {cameraStatus.message}
+                                </div>
+                            )}
+                        </SettingsButton>
                         <SettingsButton icon={LogOut} label={t('constellation.logout')} onClick={logout} isDestructive />
                     </div>
                 </Card>
