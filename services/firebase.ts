@@ -480,7 +480,7 @@ class FirebaseService {
   }
 
   // Tapestry Threads Management
-  async addTapestryThread(threadData: TapestryThread): Promise<boolean> {
+  async addTapestryThread(threadData: TapestryThread): Promise<string | null> {
     try {
       const threadRef = doc(collection(db, 'tapestryThreads'));
       await setDoc(threadRef, {
@@ -489,10 +489,10 @@ class FirebaseService {
         timestamp: new Date(),
         createdAt: new Date()
       });
-      return true;
+      return threadRef.id;
     } catch (error) {
       console.error('Error adding tapestry thread:', error);
-      return false;
+      return null;
     }
   }
 

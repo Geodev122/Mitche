@@ -5,6 +5,7 @@ import { BookOpen, Zap, Wind, Users, Heart } from 'lucide-react';
 import SymbolIcon from '../components/ui/SymbolIcon';
 import { TapestryThread, TapestryThreadColor, TapestryThreadPattern } from '../types';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 
 // A component to render the pattern visually
 const PatternVisual: React.FC<{ pattern: TapestryThreadPattern }> = ({ pattern }) => {
@@ -128,6 +129,19 @@ const HopeTapestry: React.FC = () => {
     const totalRipples = tapestryThreads.reduce((sum, t) => sum + t.rippleTag, 0);
 
     const sortedThreads = [...tapestryThreads].sort((a,b) => b.timestamp.getTime() - a.timestamp.getTime());
+    const location = useLocation();
+    const highlightThreadId = (location.state as any)?.highlightThreadId as string | undefined;
+    const refs = React.useRef<Record<string, HTMLDivElement | null>>({});
+
+    React.useEffect(() => {
+        if (!highlightThreadId) return;
+        const el = refs.current[highlightThreadId];
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.classList.add('ring-4', 'ring-amber-300');
+            setTimeout(() => el.classList.remove('ring-4', 'ring-amber-300'), 3000);
+        }
+    }, [highlightThreadId, tapestryThreads]);
     
     const filteredThreads = filter === 'All'
         ? sortedThreads
@@ -204,7 +218,9 @@ const HopeTapestry: React.FC = () => {
                     </>
                 ) : filteredThreads.length > 0 ? (
                     filteredThreads.map((thread) => (
-                        <ThreadCard key={thread.id} thread={thread} />
+                        <div key={thread.id} ref={(el) => { refs.current[thread.id] = el; }}>
+                            <ThreadCard thread={thread} />
+                        </div>
                     ))
                 ) : (
                      <div className="text-center text-gray-500 py-16">
