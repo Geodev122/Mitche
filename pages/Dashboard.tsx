@@ -6,12 +6,36 @@ import CitizenDashboard from './dashboards/CitizenDashboard';
 import OrganizationDashboard from './dashboards/OrganizationDashboard';
 
 const Dashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
 
-  if (!user) {
-    return <ReactRouterDOM.Navigate to="/login" />;
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#FBF9F4]">
+        <div className="text-center">
+          <img src="/awardlogo.png" alt="Mitché Logo" className="w-16 h-16 mx-auto mb-4 animate-pulse" />
+          <p className="text-gray-500">Loading dashboard...</p>
+        </div>
+      </div>
+    );
   }
 
+  // No user - should not happen due to App.tsx routing, but safety check
+  if (!user) {
+    return <ReactRouterDOM.Navigate to="/login" replace />;
+  }
+
+  // User hasn't completed onboarding - should not happen due to App.tsx routing, but safety check
+  if (!user.hasCompletedOnboarding) {
+    return <ReactRouterDOM.Navigate to="/onboarding" replace />;
+  }
+
+  // User has incomplete profile (no symbolic name/icon)
+  if (!user.symbolicName || !user.symbolicIcon) {
+    return <ReactRouterDOM.Navigate to="/onboarding" replace />;
+  }
+
+  // Route to appropriate dashboard based on role
   switch (user.role) {
     case Role.Citizen:
       return <CitizenDashboard />;
@@ -21,7 +45,9 @@ const Dashboard: React.FC = () => {
     case Role.Admin:
       return <ReactRouterDOM.Navigate to="/admin" replace />;
     default:
-      return <ReactRouterDOM.Navigate to="/login" />;
+      // Unknown role - logout user
+      console.error('Unknown user role:', user.role);
+      return <ReactRouterDOM.Navigate to="/login" replace />;
   }
 };
 
