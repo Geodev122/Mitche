@@ -1,6 +1,6 @@
 import React from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
-import { Home, MessageSquare, Calendar, BookOpen, Shield, Trophy, PackageSearch } from 'lucide-react';
+import { Home, MessageSquare, Calendar, BookOpen, Shield, Trophy, PackageSearch, Zap } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { Role } from '../../types';
@@ -16,6 +16,7 @@ const BottomNav: React.FC = () => {
     { path: '/events', label: t('nav.events'), icon: Calendar, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
     { path: '/leaderboard', label: t('nav.leaderboard'), icon: Trophy, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
     { path: '/tapestry', label: t('nav.tapestry'), icon: BookOpen, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
+    { path: '/phase1', label: 'Phase 1', icon: Zap, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
     { path: '/admin', label: t('nav.admin'), icon: Shield, roles: [Role.Admin] },
   ];
   

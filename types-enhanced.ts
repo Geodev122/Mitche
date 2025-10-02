@@ -648,6 +648,10 @@ export interface Conversation {
   id: string;
   type: ConversationType;
   
+  // Basic Info
+  title?: string;
+  description?: string;
+  
   // Participants
   participants: string[];
   participantInfo: {
@@ -658,10 +662,36 @@ export interface Conversation {
   relatedId?: string;
   relatedType?: 'Request' | 'Event' | 'Resource';
   
+  // Last Message Info
+  lastMessage?: {
+    content: string;
+    senderId: string;
+    timestamp: Date;
+  };
+  
+  // Unread Count
+  unreadCount?: number;
+  
   // Status
   isActive: boolean;
   isArchived: boolean;
   lastActivity: Date;
+  
+  // Settings
+  settings?: {
+    isPrivate: boolean;
+    allowFileSharing: boolean;
+    allowReactions: boolean;
+    messageRetentionDays: number;
+    maxParticipants: number;
+  };
+  
+  // Metadata
+  metadata?: {
+    title: string;
+    description: string;
+    tags: string[];
+  };
   
   // Moderation
   isReported?: boolean;
@@ -675,10 +705,17 @@ export interface Conversation {
 export interface Message {
   id: string;
   senderId: string;
+  senderName: string;
   conversationId: string;
   
   // Message Content
-  content: string;
+  content: string | {
+    text?: string;
+    url?: string;
+    filename?: string;
+    size?: number;
+    caption?: string;
+  };
   type: MessageType;
   
   // Media
@@ -686,6 +723,10 @@ export interface Message {
   
   // Status
   isDelivered?: boolean;
+  deliveryStatus?: {
+    status: 'sending' | 'delivered' | 'read';
+    timestamp: Date;
+  };
   readBy?: {
     [userId: string]: Date;
   };
@@ -696,6 +737,14 @@ export interface Message {
   isDeleted?: boolean;
   deletedAt?: Date;
   
+  // Metadata
+  metadata?: {
+    edited: boolean;
+    replyTo: string | null;
+    mentions: string[];
+    tags: string[];
+  };
+  
   // Reaction System
   reactions?: {
     [emoji: string]: string[];
@@ -705,6 +754,7 @@ export interface Message {
   replyTo?: string;
   
   // Timestamps
+  timestamp: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -883,14 +933,22 @@ export interface PaginatedResponse<T = any> {
 }
 
 export interface SearchFilters {
-  type?: RequestType[];
-  urgency?: RequestUrgency[];
-  region?: string[];
+  type?: RequestType[] | RequestType;
+  urgency?: RequestUrgency[] | RequestUrgency;
+  region?: string[] | string;
+  location?: string;
+  status?: RequestStatus[] | RequestStatus;
   dateRange?: {
     start: Date;
     end: Date;
   };
-  status?: RequestStatus[];
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  limit?: number;
+  offset?: number;
+  searchText?: string;
+  userId?: string;
+  verified?: boolean;
 }
 
 export interface FirebaseTimestamp {

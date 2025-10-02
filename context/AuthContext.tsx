@@ -1,6 +1,9 @@
 import React from 'react';
 import { User, Role, HopePointCategory, VerificationStatus } from '../types';
+// Import enhanced types for Phase 1 features
+import { User as EnhancedUser, SearchFilters } from '../types-enhanced';
 import { firebaseService } from '../services/firebase';
+import { EnhancedFirebaseService } from '../services/firebase-enhanced-clean';
 import i18n from '../i18n';
 
 interface AuthContextType {
@@ -19,6 +22,8 @@ interface AuthContextType {
   generateUniqueUsernames: () => string[];
   updateVerificationStatus: (userId: string, status: 'Approved' | 'Rejected') => void;
   migrateToFirebase: () => Promise<void>;
+  // Enhanced services for Phase 1 features
+  enhancedFirebase: EnhancedFirebaseService;
 }
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
@@ -31,6 +36,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = React.useState(true);
   const [isFirebaseEnabled, setIsFirebaseEnabled] = React.useState(false);
   const authUnsubscribe = React.useRef<(() => void) | null>(null);
+  
+  // Initialize enhanced Firebase service
+  const enhancedFirebase = React.useMemo(() => new EnhancedFirebaseService(), []);
 
   // Initialize authentication state
   React.useEffect(() => {
@@ -386,7 +394,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       getAllUsers, 
       generateUniqueUsernames, 
       updateVerificationStatus,
-      migrateToFirebase
+      migrateToFirebase,
+      enhancedFirebase
     }}>
       {children}
     </AuthContext.Provider>
