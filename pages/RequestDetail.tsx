@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowLeft, ArrowRight, Info, Heart, Tag, Shield, ShieldCheck, Award } from 'lucide-react';
 import CommendationModal from '../components/ui/CommendationModal';
 import { ChatInterface } from '../components/chat/ChatInterface';
+import { RatingSystem } from '../components/rating/RatingSystem';
 
 const statusStyles: { [key in RequestStatus]: { text: string; classes: string } } = {
   [RequestStatus.Open]: { text: 'requestStatus.Open', classes: 'bg-green-100 text-green-700' },
@@ -56,7 +57,7 @@ const RequestDetail: React.FC = () => {
   const navigate = ReactRouterDOM.useNavigate();
   const { t, i18n } = useTranslation();
   const { getRequestById, getOfferingsForRequest, addOffering, initiateHelp, confirmReceipt, fulfillRequest, leaveCommendation } = useData();
-  const { user, getUserById } = useAuth();
+  const { user, getUserById, enhancedFirebase } = useAuth();
   
   const [isHelpModalOpen, setHelpModalOpen] = React.useState(false);
   const [isEncourageModalOpen, setEncourageModalOpen] = React.useState(false);
@@ -116,10 +117,25 @@ const RequestDetail: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-2">
           <button onClick={() => setHelpModalOpen(true)} className="flex-1 px-4 py-3 text-sm bg-[#3A3A3A] text-white rounded-lg font-bold hover:bg-opacity-80">{t('echoes.card.provideHelp')}</button>
           <button onClick={() => setEncourageModalOpen(true)} className="flex-1 px-4 py-3 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50">{t('echoes.card.sendEncouragement')}</button>
-          <button onClick={() => {
-              // Start chat with request owner
-              setChatParticipantIds([request.userId]);
-              setChatOpen(true);
+          <button onClick={async () => {
+              // Start or open chat with request owner and deep-link to chat route
+              try {
+                const convResp = await enhancedFirebase.createConversation({
+                  participants: [user.id, request.userId],
+                  title: `${request.title}`
+                });
+                if (convResp.success && convResp.data) {
+                  navigate(`/chat/${convResp.data.id}`);
+                } else {
+                  // Fallback to modal chat
+                  setChatParticipantIds([request.userId]);
+                  setChatOpen(true);
+                }
+              } catch (err) {
+                console.error('Error creating conversation:', err);
+                setChatParticipantIds([request.userId]);
+                setChatOpen(true);
+              }
             }} className="flex-1 px-4 py-3 text-sm bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700">Chat</button>
         </div>
       );
@@ -178,7 +194,7 @@ const RequestDetail: React.FC = () => {
                  {helper && 
                     <div className="text-sm text-center bg-blue-50 text-blue-700 font-semibold p-2 rounded-md mt-4 flex items-center justify-center gap-2">
                         <span>{t('requestDetail.helper')}: {helper.symbolicName}</span>
-                         {helper.isVerified && <ShieldCheck className="w-4 h-4 text-blue-500" title={t('verifiedOrg') as string} />}
+                         {helper.isVerified && <ShieldCheck className="w-4 h-4 text-blue-500" aria-label={t('verifiedOrg') as string} />}
                     </div>
                 }
             </Card>
@@ -238,7 +254,7 @@ const RequestDetail: React.FC = () => {
       )}
       {isChatOpen && (
         <Modal isOpen={isChatOpen} onClose={() => setChatOpen(false)} title={t('chat.title')}> 
-          <ChatInterface participantIds={chatParticipantIds} type={3 /* DirectMessage */} />
+          <ChatInterface participantIds={chatParticipantIds} />
         </Modal>
       )}
     </>

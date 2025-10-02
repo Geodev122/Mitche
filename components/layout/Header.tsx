@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, X } from 'lucide-react';
+import { Bell, X, BookOpen } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import { Notification } from '../../types';
@@ -66,6 +66,9 @@ const Header: React.FC = () => {
                             )}
                         </button>
                     </div>
+                    <button onClick={() => navigate('/tapestry')} title={t('tapestry.menu', 'Tapestry')} className="p-2 rounded-full hover:bg-gray-200/50">
+                      <BookOpen className="w-6 h-6 text-gray-600" />
+                    </button>
                      <button onClick={() => setProfileOpen(true)} className="p-2 rounded-full hover:bg-gray-200/50">
                         <SymbolIcon name={user.symbolicIcon} className="w-6 h-6 text-gray-600" />
                     </button>

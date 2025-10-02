@@ -27,6 +27,7 @@ interface DataContextType {
   getRequestById: (requestId: string) => Request | undefined;
   getOfferingsForRequest: (requestId: string) => Offering[];
   leaveCommendation: (requestId: string, fromRole: 'requester' | 'helper', commendations: CommendationType[]) => void;
+  addTapestryThread: (thread: Omit<TapestryThread, 'id' | 'timestamp'>) => Promise<boolean>;
 }
 
 const DataContext = React.createContext<DataContextType | undefined>(undefined);
@@ -413,6 +414,27 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const addTapestryThread = async (threadData: Omit<TapestryThread, 'id' | 'timestamp'>): Promise<boolean> => {
+    const newThread: Omit<TapestryThread, 'id'> = {
+      ...threadData,
+      timestamp: new Date(),
+    };
+
+    if (isFirebaseEnabled) {
+      try {
+        const success = await firebaseService.addTapestryThread(newThread as any);
+        return !!success;
+      } catch (err) {
+        console.error('Error adding tapestry thread to Firebase:', err);
+        return false;
+      }
+    } else {
+      const localThread: TapestryThread = { ...newThread, id: `thread_${Date.now()}` } as TapestryThread;
+      setTapestryThreads(prev => [localThread, ...prev]);
+      return true;
+    }
+  };
+
   const initiateHelp = (requestId: string, helperId: string) => {
       // Update request status via Firebase if available
       const request = requests.find(r => r.id === requestId);
@@ -491,47 +513,40 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fulfillRequest = async (requestId: string, helperId: string) => {
     const request = requests.find(r => r.id === requestId);
-    if (!request || !request.isConfirmedByRequester) return;
-
     if (isFirebaseEnabled) {
-      console.log('🔥 Updating request status in Firebase...');
-      const success = await firebaseService.updateRequest(requestId, { status: RequestStatus.Fulfilled });
-      if (success) {
-        console.log('✅ Request status updated successfully in Firebase');
-      } else {
-        console.error('❌ Failed to update request status in Firebase');
+      await firebaseService.updateRequest(requestId, { status: RequestStatus.Fulfilled, helperId });
+      if (request && request.userId !== helperId) {
+        const newNotification: Notification = {
+          id: `notif_${Date.now()}_fulfill`,
+          userId: request.userId,
+          requestId: request.id,
+          message: "DEPRECATED",
+          messageKey: 'notifications.fulfillment',
+          messageOptions: { title: request.title.substring(0, 20) },
+          timestamp: new Date(),
+          isRead: false,
+          type: 'Generic',
+        };
+        await firebaseService.createNotification(newNotification as any);
       }
     } else {
-      // Fallback to local state
-      setRequests(prev => prev.map(r => r.id === requestId ? {...r, status: RequestStatus.Fulfilled} : r));
-    }
-    
-    const category = request.mode === RequestMode.Loud ? HopePointCategory.CommunityBuilder : HopePointCategory.SilentHero;
-    
-    const pointsForHelp = 10;
-    addHopePoints(pointsForHelp, category);
-
-    if (request.userId !== helperId) {
-         const newNotification: Notification = {
-            id: `notif_${Date.now()}_fulfill`,
-            userId: request.userId,
-            requestId: request.id,
-            message: "DEPRECATED",
-            messageKey: 'notifications.fulfillment',
-            messageOptions: { title: request.title.substring(0, 20) },
-            timestamp: new Date(),
-            isRead: false,
-            type: 'Generic',
+      setRequests(prev => prev.map(r => r.id === requestId ? { ...r, status: RequestStatus.Fulfilled, helperId } : r));
+      if (request && request.userId !== helperId) {
+        const newNotification: Notification = {
+          id: `notif_${Date.now()}_fulfill`,
+          userId: request.userId,
+          requestId: request.id,
+          message: "DEPRECATED",
+          messageKey: 'notifications.fulfillment',
+          messageOptions: { title: request.title.substring(0, 20) },
+          timestamp: new Date(),
+          isRead: false,
+          type: 'Generic',
         };
-
-        if (isFirebaseEnabled) {
-          await firebaseService.createNotification(newNotification);
-        } else {
-          setNotifications(prev => [newNotification, ...prev]);
-        }
+        setNotifications(prev => [newNotification, ...prev]);
+      }
     }
   };
-  
     const getNotificationsForUser = (userId: string) => {
     const local = notifications.filter(n => n.userId === userId).sort((a,b) => b.timestamp.getTime() - a.timestamp.getTime());
     if (local.length > 0) return local;
@@ -867,7 +882,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 
   return (
-    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, communityEvents, addCommunityEvent, getRequestById, getOfferingsForRequest, resources, addResource, leaveCommendation }}>
+    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, communityEvents, addCommunityEvent, getRequestById, getOfferingsForRequest, resources, addResource, leaveCommendation, addTapestryThread }}>
       {children}
     </DataContext.Provider>
   );
