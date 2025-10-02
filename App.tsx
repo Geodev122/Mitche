@@ -22,7 +22,6 @@ import Leaderboard from './pages/Leaderboard';
 import Constellation from './pages/Constellation';
 import ResourceHub from './pages/ResourceHub';
 import CreateResource from './pages/CreateResource';
-import { Phase1Demo } from './pages/Phase1Demo';
 import EnhancedPlatformDemo from './pages/EnhancedPlatformDemo';
 
 const LoadingFallback: React.FC = () => (
@@ -115,7 +114,7 @@ const Main: React.FC = () => {
         <ReactRouterDOM.Route path="resources" element={<ResourceHub />} />
         <ReactRouterDOM.Route path="resources/new" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]} verifiedOnly={true}><CreateResource /></ProtectedRoute>} />
         <ReactRouterDOM.Route path="admin" element={<ProtectedRoute roles={[Role.Admin]}><AdminDashboard /></ProtectedRoute>} />
-        <ReactRouterDOM.Route path="phase1" element={<Phase1Demo />} />
+  {/* Phase1Demo was a developer demo; Phase1 features are embedded into main pages (search/chat/rating). */}
         <ReactRouterDOM.Route path="enhanced" element={<EnhancedPlatformDemo />} />
       </ReactRouterDOM.Route>
       {/* Catch-all route for authenticated users */}

@@ -67,6 +67,21 @@ export interface User {
   commendations?: {
     [key in CommendationType]?: number;
   };
+  // Optional fields used by Firebase and other services
+  avatar?: string; // URL to avatar image
+  displayName?: string;
+  email?: string;
+  phoneNumber?: string;
+  preferredLanguage?: string;
+  trustScore?: number;
+  joinDate?: string | Date;
+  joinedAt?: string | Date;
+  lastActive?: string | Date;
+  languagePreference?: string;
+  // Timestamps stored in Firestore may be serverTimestamp() values; allow loose typing
+  createdAt?: any;
+  updatedAt?: any;
+  lastUpdated?: any;
 }
 
 export interface Request {

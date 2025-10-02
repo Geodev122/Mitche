@@ -60,8 +60,8 @@ export class DatabaseMigration {
     
     usersSnapshot.docs.forEach((userDoc) => {
       const userData = userDoc.data() as any;
-      
-      const migratedUser: Partial<User> = {
+
+      const migratedUser: any = {
         // Core fields (already exist)
         id: userData.id || userDoc.id,
         username: userData.username,
@@ -126,7 +126,7 @@ export class DatabaseMigration {
         updatedAt: serverTimestamp()
       };
       
-      batch.update(userDoc.ref, migratedUser);
+      batch.update(userDoc.ref, migratedUser as any);
     });
     
     await batch.commit();
@@ -143,7 +143,7 @@ export class DatabaseMigration {
     requestsSnapshot.docs.forEach((requestDoc) => {
       const requestData = requestDoc.data() as any;
       
-      const migratedRequest: Partial<Request> = {
+  const migratedRequest: any = {
         id: requestData.id || requestDoc.id,
         createdBy: requestData.userId || requestData.createdBy,
         title: requestData.title,
@@ -200,7 +200,7 @@ export class DatabaseMigration {
         updatedAt: serverTimestamp()
       };
       
-      batch.update(requestDoc.ref, migratedRequest);
+      batch.update(requestDoc.ref, migratedRequest as any);
     });
     
     await batch.commit();
@@ -217,7 +217,7 @@ export class DatabaseMigration {
     offeringsSnapshot.docs.forEach((offeringDoc) => {
       const offeringData = offeringDoc.data() as any;
       
-      const migratedOffering: Partial<Offering> = {
+  const migratedOffering: any = {
         id: offeringData.id || offeringDoc.id,
         requestId: offeringData.requestId,
         offeredBy: offeringData.userId || offeringData.offeredBy,
@@ -247,7 +247,7 @@ export class DatabaseMigration {
         updatedAt: serverTimestamp()
       };
       
-      batch.update(offeringDoc.ref, migratedOffering);
+      batch.update(offeringDoc.ref, migratedOffering as any);
     });
     
     await batch.commit();
@@ -264,7 +264,7 @@ export class DatabaseMigration {
     eventsSnapshot.docs.forEach((eventDoc) => {
       const eventData = eventDoc.data() as any;
       
-      const migratedEvent: Partial<CommunityEvent> = {
+  const migratedEvent: any = {
         id: eventData.id || eventDoc.id,
         organizerId: eventData.organizerId,
         title: eventData.title,
@@ -323,7 +323,7 @@ export class DatabaseMigration {
         updatedAt: serverTimestamp()
       };
       
-      batch.update(eventDoc.ref, migratedEvent);
+      batch.update(eventDoc.ref, migratedEvent as any);
     });
     
     await batch.commit();
@@ -340,7 +340,7 @@ export class DatabaseMigration {
     resourcesSnapshot.docs.forEach((resourceDoc) => {
       const resourceData = resourceDoc.data() as any;
       
-      const migratedResource: Partial<Resource> = {
+  const migratedResource: any = {
         id: resourceData.id || resourceDoc.id,
         createdBy: resourceData.organizerId || resourceData.createdBy,
         title: resourceData.title,
@@ -410,7 +410,7 @@ export class DatabaseMigration {
         lastUpdated: serverTimestamp()
       };
       
-      batch.update(resourceDoc.ref, migratedResource);
+      batch.update(resourceDoc.ref, migratedResource as any);
     });
     
     await batch.commit();
