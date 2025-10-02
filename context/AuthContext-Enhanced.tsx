@@ -48,10 +48,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { id: firebaseUser.uid, ...userSnap.data() } as User;
     } else {
       // Create new user profile with enhanced role system
-      const newUser: Omit<User, 'id'> = {
+      const newUser: any = {
         displayName: firebaseUser.displayName || 'Anonymous User',
         email: firebaseUser.email || '',
-        photoURL: firebaseUser.photoURL || '',
+        photoUrl: firebaseUser.photoURL || '',
         role: Role.Citizen, // Default role
         isVerified: false,
         verificationStatus: 'Pending',
@@ -85,7 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         interactionHistory: []
       };
 
-      await setDoc(userRef, newUser);
+      await setDoc(userRef, newUser as any);
       return { id: firebaseUser.uid, ...newUser } as User;
     }
   };

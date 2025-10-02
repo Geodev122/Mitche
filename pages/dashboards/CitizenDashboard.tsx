@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import * as ReactRouterDOM from 'react-router-dom';
 import { MessageSquare, Calendar, BookOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { AdvancedSearch } from '../../components/search/AdvancedSearch';
+import { RatingSystem } from '../../components/rating/RatingSystem';
 
 const CitizenDashboard: React.FC = () => {
   const { user } = useAuth();
   const navigate = ReactRouterDOM.useNavigate();
   const { t } = useTranslation();
+  const [searchResults, setSearchResults] = useState<any[]>([]);
 
   // Safety check - should not happen due to App.tsx routing, but good practice
   if (!user) {
@@ -49,6 +52,54 @@ const CitizenDashboard: React.FC = () => {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Embed a compact Advanced Search panel so Phase1 search is available from the dashboard */}
+      <div className="mt-8">
+        <AdvancedSearch
+          searchType="requests"
+          onSearch={(results) => {
+            setSearchResults(results || []);
+          }}
+        />
+
+        {searchResults.length > 0 && (
+          <div className="mt-4 bg-white rounded-lg p-4 shadow-sm">
+            <h4 className="font-semibold mb-2">Search Preview ({searchResults.length})</h4>
+            <ul className="space-y-2">
+              {searchResults.slice(0,5).map((r: any) => (
+                <li key={r.id || r.title} className="p-2 border rounded flex justify-between items-center">
+                  <div>
+                    <div className="font-medium">{r.title || r.description?.substring(0,50) || 'Untitled'}</div>
+                    <div className="text-xs text-gray-500">{r.region || r.location?.region}</div>
+                  </div>
+                  <div>
+                    <button onClick={() => navigate(r.id ? `/echoes/${r.id}` : '/echoes')} className="px-3 py-1 bg-blue-600 text-white rounded-md">Open</button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white rounded-lg p-4">
+          <h3 className="font-semibold mb-3">Quick Rating Example</h3>
+          <RatingSystem
+            targetId="sample-user-1"
+            targetType="user"
+            targetName="Community Helper"
+            currentRating={{ average: 4.6, count: 21 }}
+            showReviewForm={true}
+          />
+        </div>
+
+        <div className="bg-white rounded-lg p-4">
+          <h3 className="font-semibold mb-3">Open Chat</h3>
+          <p className="text-sm text-gray-500 mb-3">Start a conversation related to any request or offering. Chats are powered by real-time Firebase messaging.</p>
+          <button onClick={() => navigate('/echoes')} className="px-4 py-2 bg-blue-600 text-white rounded-md">Go to Echoes</button>
+        </div>
       </div>
     </div>
   );
