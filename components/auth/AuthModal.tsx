@@ -59,10 +59,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             setError(t('auth.errorUsernameNotSelected'));
             return;
         }
-        if (!password) {
-            setError(t('auth.errorPassword'));
-            return;
-        }
         setError('');
         setLoading(true);
         const result = await signup(selectedUsername, password);
