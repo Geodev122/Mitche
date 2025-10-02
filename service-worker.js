@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mitche-cache-v5';
+const CACHE_NAME = 'mitche-cache-v6';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -11,7 +11,11 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('Opened cache');
-        return cache.addAll(urlsToCache);
+        return cache.addAll(urlsToCache).catch(err => {
+          console.warn('Failed to cache some resources:', err);
+          // Don't fail the install if some resources can't be cached
+          return Promise.resolve();
+        });
       })
   );
   self.skipWaiting();
@@ -39,41 +43,56 @@ self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
 
+  // Skip cross-origin requests and non-GET requests
+  if (url.origin !== location.origin || request.method !== 'GET') {
+    return;
+  }
+
   // For navigation requests, use a network-first approach.
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request).catch(() => caches.match('/index.html'))
+      fetch(request)
+        .catch(() => caches.match('/index.html'))
+        .catch(() => Response.error())
     );
     return;
   }
 
-  // For other requests, use cache-first.
+  // For other requests, use cache-first with fallback
   event.respondWith(
     caches.match(request)
       .then(response => {
-        // Cache hit - return response
         if (response) {
           return response;
         }
-        // Not in cache - fetch from network, then cache it
-        return fetch(request).then(
-          response => {
-            // Check if we received a valid response
-            if(!response || response.status !== 200) {
+        
+        return fetch(request)
+          .then(response => {
+            if (!response || response.status !== 200 || response.type !== 'basic') {
               return response;
             }
 
             const responseToCache = response.clone();
             caches.open(CACHE_NAME)
               .then(cache => {
-                if(request.method === 'GET') {
-                  cache.put(request, responseToCache);
-                }
+                cache.put(request, responseToCache).catch(err => {
+                  console.warn('Failed to cache response:', err);
+                });
+              })
+              .catch(err => {
+                console.warn('Failed to open cache:', err);
               });
 
             return response;
-          }
-        );
+          })
+          .catch(err => {
+            console.warn('Fetch failed:', err);
+            return Response.error();
+          });
+      })
+      .catch(err => {
+        console.warn('Cache match failed:', err);
+        return fetch(request).catch(() => Response.error());
       })
   );
 });
