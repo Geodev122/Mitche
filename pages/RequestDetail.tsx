@@ -10,6 +10,7 @@ import { timeSince } from '../utils/time';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, ArrowRight, Info, Heart, Tag, Shield, ShieldCheck, Award } from 'lucide-react';
 import CommendationModal from '../components/ui/CommendationModal';
+import { ChatInterface } from '../components/chat/ChatInterface';
 
 const statusStyles: { [key in RequestStatus]: { text: string; classes: string } } = {
   [RequestStatus.Open]: { text: 'requestStatus.Open', classes: 'bg-green-100 text-green-700' },
@@ -61,6 +62,8 @@ const RequestDetail: React.FC = () => {
   const [isEncourageModalOpen, setEncourageModalOpen] = React.useState(false);
   const [isCommendationModalOpen, setCommendationModalOpen] = React.useState(false);
   const [encouragementMessage, setEncouragementMessage] = React.useState('');
+  const [isChatOpen, setChatOpen] = React.useState(false);
+  const [chatParticipantIds, setChatParticipantIds] = React.useState<string[]>([]);
 
   if (!requestId || !user) {
     return <ReactRouterDOM.Navigate to="/echoes" />;
@@ -113,6 +116,11 @@ const RequestDetail: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-2">
           <button onClick={() => setHelpModalOpen(true)} className="flex-1 px-4 py-3 text-sm bg-[#3A3A3A] text-white rounded-lg font-bold hover:bg-opacity-80">{t('echoes.card.provideHelp')}</button>
           <button onClick={() => setEncourageModalOpen(true)} className="flex-1 px-4 py-3 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50">{t('echoes.card.sendEncouragement')}</button>
+          <button onClick={() => {
+              // Start chat with request owner
+              setChatParticipantIds([request.userId]);
+              setChatOpen(true);
+            }} className="flex-1 px-4 py-3 text-sm bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700">Chat</button>
         </div>
       );
     } else if (request.status === RequestStatus.Pending && isHelper) {
@@ -227,6 +235,11 @@ const RequestDetail: React.FC = () => {
             onSubmit={handleLeaveCommendation}
             userName={isOwner ? (helper?.symbolicName || '') : request.userSymbolicName}
         />
+      )}
+      {isChatOpen && (
+        <Modal isOpen={isChatOpen} onClose={() => setChatOpen(false)} title={t('chat.title')}> 
+          <ChatInterface participantIds={chatParticipantIds} type={3 /* DirectMessage */} />
+        </Modal>
       )}
     </>
   );

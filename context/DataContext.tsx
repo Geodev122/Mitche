@@ -301,7 +301,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (isFirebaseEnabled) {
       console.log('🔥 Creating request in Firebase...');
-      const success = await firebaseService.createRequest(newRequest);
+      const success = await firebaseService.createRequest(newRequest as any);
       if (success) {
         console.log('✅ Request created successfully in Firebase');
         // Firebase listener will update the state automatically
@@ -354,10 +354,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (isFirebaseEnabled) {
       console.log('🔥 Creating resource in Firebase...');
-      const success = await firebaseService.createResource(newResource);
+      const success = await firebaseService.createResource(newResource as any);
       if (success) {
         console.log('✅ Resource created successfully in Firebase');
-        // Firebase listener will update the state automatically
       } else {
         console.error('❌ Failed to create resource in Firebase');
       }
@@ -377,10 +376,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (isFirebaseEnabled) {
       console.log('🔥 Creating offering in Firebase...');
-      const success = await firebaseService.createOffering(newOffering);
+      const success = await firebaseService.createOffering(newOffering as any);
       if (success) {
         console.log('✅ Offering created successfully in Firebase');
-        // Firebase listener will update the state automatically
       } else {
         console.error('❌ Failed to create offering in Firebase');
       }
@@ -407,16 +405,22 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             isRead: false,
             type: 'Generic'
         };
-        setNotifications(prev => [newNotification, ...prev]);
+        if (isFirebaseEnabled) {
+          await firebaseService.createNotification(newNotification as any);
+        } else {
+          setNotifications(prev => [newNotification, ...prev]);
+        }
     }
   };
 
   const initiateHelp = (requestId: string, helperId: string) => {
-      setRequests(prev => prev.map(r => r.id === requestId ? {...r, status: RequestStatus.Pending, helperId: helperId} : r));
+      // Update request status via Firebase if available
       const request = requests.find(r => r.id === requestId);
-      const helper = user; // Assuming current user is the helper
-      if(request && helper) {
-        const newNotification: Notification = {
+      const helper = user; // current user
+      if (isFirebaseEnabled) {
+        firebaseService.updateRequest(requestId, { status: RequestStatus.Pending, helperId });
+        if (request && helper) {
+          const newNotification: Notification = {
             id: `notif_${Date.now()}_help_offer`,
             userId: request.userId,
             requestId: request.id,
@@ -426,16 +430,34 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             timestamp: new Date(),
             isRead: false,
             type: 'Generic',
-        };
-        setNotifications(prev => [newNotification, ...prev]);
+          };
+          firebaseService.createNotification(newNotification as any);
+        }
+      } else {
+        setRequests(prev => prev.map(r => r.id === requestId ? {...r, status: RequestStatus.Pending, helperId: helperId} : r));
+        if(request && helper) {
+          const newNotification: Notification = {
+            id: `notif_${Date.now()}_help_offer`,
+            userId: request.userId,
+            requestId: request.id,
+            message: "DEPRECATED",
+            messageKey: 'notifications.helpOffer',
+            messageOptions: { name: helper.symbolicName, title: request.title.substring(0, 20) },
+            timestamp: new Date(),
+            isRead: false,
+            type: 'Generic',
+          };
+          setNotifications(prev => [newNotification, ...prev]);
+        }
       }
   };
 
   const confirmReceipt = (requestId: string) => {
-      setRequests(prev => prev.map(r => r.id === requestId ? {...r, isConfirmedByRequester: true} : r));
       const request = requests.find(r => r.id === requestId);
-      if(request && request.helperId) {
-        const newNotification: Notification = {
+      if (isFirebaseEnabled) {
+        firebaseService.updateRequest(requestId, { isConfirmedByRequester: true });
+        if (request && request.helperId) {
+          const newNotification: Notification = {
             id: `notif_${Date.now()}_help_confirm`,
             userId: request.helperId,
             requestId: request.id,
@@ -445,8 +467,25 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             timestamp: new Date(),
             isRead: false,
             type: 'Generic',
-        };
-        setNotifications(prev => [newNotification, ...prev]);
+          };
+          firebaseService.createNotification(newNotification as any);
+        }
+      } else {
+        setRequests(prev => prev.map(r => r.id === requestId ? {...r, isConfirmedByRequester: true} : r));
+        if(request && request.helperId) {
+          const newNotification: Notification = {
+            id: `notif_${Date.now()}_help_confirm`,
+            userId: request.helperId,
+            requestId: request.id,
+            message: "DEPRECATED",
+            messageKey: 'notifications.receiptConfirm',
+            messageOptions: { title: request.title.substring(0, 20) },
+            timestamp: new Date(),
+            isRead: false,
+            type: 'Generic',
+          };
+          setNotifications(prev => [newNotification, ...prev]);
+        }
       }
   };
 
@@ -459,7 +498,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const success = await firebaseService.updateRequest(requestId, { status: RequestStatus.Fulfilled });
       if (success) {
         console.log('✅ Request status updated successfully in Firebase');
-        // Firebase listener will update the state automatically
       } else {
         console.error('❌ Failed to update request status in Firebase');
       }
