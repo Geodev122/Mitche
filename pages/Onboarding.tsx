@@ -41,8 +41,10 @@ const Onboarding: React.FC = () => {
       symbolicIcon,
       hasCompletedOnboarding: true,
     });
-    // The user is now fully onboarded, navigate to the main dashboard.
-    navigate('/', { replace: true });
+    // Use a small delay to ensure state update completes before navigation
+    setTimeout(() => {
+      navigate('/', { replace: true });
+    }, 100);
   };
   
   const StepWrapper: React.FC<{children: React.ReactNode}> = ({children}) => (

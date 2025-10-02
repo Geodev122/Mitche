@@ -32,6 +32,7 @@
     "signupLoading": "...جاري الإنشاء",
     "errorInvalid": "اسم المستخدم أو كلمة المرور غير صحيحة.",
     "errorExists": "اسم المستخدم موجود بالفعل.",
+    "errorPassword": "الرجاء إدخال كلمة مرور.",
     "errorSymbolicName": "الرجاء اختيار اسم رمزي.",
     "identityChoiceInfo": "ستختار هويتك الرمزية بعد إنشاء حسابك.",
     "errorUsernameNotSelected": "الرجاء اختيار اسم مستخدم.",
