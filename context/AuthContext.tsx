@@ -3,7 +3,7 @@ import { User, Role, HopePointCategory, VerificationStatus } from '../types';
 // Import enhanced types for Phase 1 features
 import { User as EnhancedUser, SearchFilters } from '../types-enhanced';
 import { firebaseService } from '../services/firebase';
-import { EnhancedFirebaseService } from '../services/firebase-enhanced-clean';
+import { EnhancedFirebaseService } from '../services/firebase-enhanced';
 import i18n from '../i18n';
 
 interface AuthContextType {

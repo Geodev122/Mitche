@@ -1,6 +1,7 @@
 import React from 'react';
 import { Request, Offering, RequestType, RequestMode, Notification, HopePointCategory, RequestStatus, TapestryThread, TapestryThreadColor, TapestryThreadPattern, User, CommunityEvent, CommunityEventType, Role, Resource, ResourceCategory, CommendationType } from '../types';
 import { useAuth } from './AuthContext';
+import { firebaseService } from '../services/firebase';
 import i18n from '../i18n';
 
 interface DataContextType {
@@ -10,10 +11,10 @@ interface DataContextType {
   tapestryThreads: TapestryThread[];
   communityEvents: CommunityEvent[];
   resources: Resource[];
-  addRequest: (request: Omit<Request, 'id' | 'timestamp' | 'userId' | 'userSymbolicName' | 'userSymbolicIcon' | 'status' | 'helperId' | 'isConfirmedByRequester'| 'requesterCommended' | 'helperCommended'>, user: User) => void;
-  addOffering: (offering: Omit<Offering, 'id' | 'timestamp' | 'userId'>, userId: string) => void;
-  addCommunityEvent: (event: Omit<CommunityEvent, 'id' | 'timestamp' | 'organizerId' | 'organizerSymbolicName' | 'organizerSymbolicIcon' | 'organizerRole' | 'organizerIsVerified'>, user: User) => void;
-  addResource: (resource: Omit<Resource, 'id' | 'timestamp' | 'organizerId' | 'organizerSymbolicName' | 'organizerSymbolicIcon' | 'organizerIsVerified'>, user: User) => void;
+  addRequest: (request: Omit<Request, 'id' | 'timestamp' | 'userId' | 'userSymbolicName' | 'userSymbolicIcon' | 'status' | 'helperId' | 'isConfirmedByRequester'| 'requesterCommended' | 'helperCommended'>, user: User) => Promise<void>;
+  addOffering: (offering: Omit<Offering, 'id' | 'timestamp' | 'userId'>, userId: string) => Promise<void>;
+  addCommunityEvent: (event: Omit<CommunityEvent, 'id' | 'timestamp' | 'organizerId' | 'organizerSymbolicName' | 'organizerSymbolicIcon' | 'organizerRole' | 'organizerIsVerified'>, user: User) => Promise<void>;
+  addResource: (resource: Omit<Resource, 'id' | 'timestamp' | 'organizerId' | 'organizerSymbolicName' | 'organizerSymbolicIcon' | 'organizerIsVerified'>, user: User) => Promise<void>;
   initiateHelp: (requestId: string, helperId: string) => void;
   confirmReceipt: (requestId: string) => void;
   fulfillRequest: (requestId: string, helperId: string) => void;
@@ -192,20 +193,79 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [communityEvents, setCommunityEvents] = React.useState<CommunityEvent[]>([]);
   const [resources, setResources] = React.useState<Resource[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const { user, addHopePoints, updateUser, getUserById, updateAnyUser } = useAuth();
+  const { user, addHopePoints, updateUser, getUserById, updateAnyUser, isFirebaseEnabled } = useAuth();
 
-
+  // Firebase real-time listeners
   React.useEffect(() => {
-    // Simulate API fetch
-    setTimeout(() => {
-      setRequests(MOCK_REQUESTS);
-      setOfferings(MOCK_OFFERINGS);
-      setTapestryThreads(MOCK_THREADS);
-      setCommunityEvents(MOCK_EVENTS);
-      setResources(MOCK_RESOURCES);
+    if (isFirebaseEnabled) {
+      console.log('🔥 Initializing Firebase real-time data connections...');
+      const unsubscribes: (() => void)[] = [];
+
+      // Subscribe to requests
+      const unsubscribeRequests = firebaseService.subscribeToRequests((firebaseRequests) => {
+        console.log('📝 Received requests from Firebase:', firebaseRequests.length);
+        setRequests(firebaseRequests);
+      });
+      unsubscribes.push(unsubscribeRequests);
+
+      // Subscribe to community events
+      const unsubscribeEvents = firebaseService.subscribeToEvents((firebaseEvents) => {
+        console.log('🎉 Received events from Firebase:', firebaseEvents.length);
+        setCommunityEvents(firebaseEvents);
+      });
+      unsubscribes.push(unsubscribeEvents);
+
+      // Subscribe to resources
+      const unsubscribeResources = firebaseService.subscribeToResources((firebaseResources) => {
+        console.log('📚 Received resources from Firebase:', firebaseResources.length);
+        setResources(firebaseResources);
+      });
+      unsubscribes.push(unsubscribeResources);
+
+      // Subscribe to offerings
+      const unsubscribeOfferings = firebaseService.subscribeToOfferings((firebaseOfferings) => {
+        console.log('🤝 Received offerings from Firebase:', firebaseOfferings.length);
+        setOfferings(firebaseOfferings);
+      });
+      unsubscribes.push(unsubscribeOfferings);
+
+      // Subscribe to tapestry threads
+      const unsubscribeThreads = firebaseService.subscribeToTapestryThreads((firebaseThreads) => {
+        console.log('🧵 Received tapestry threads from Firebase:', firebaseThreads.length);
+        setTapestryThreads(firebaseThreads);
+      });
+      unsubscribes.push(unsubscribeThreads);
+
+      // Subscribe to notifications for current user
+      if (user) {
+        const unsubscribeNotifications = firebaseService.subscribeToNotifications((firebaseNotifications) => {
+          const userNotifications = firebaseNotifications.filter(n => n.userId === user.id);
+          console.log('🔔 Received notifications from Firebase:', userNotifications.length);
+          setNotifications(userNotifications);
+        });
+        unsubscribes.push(unsubscribeNotifications);
+      }
+
       setLoading(false);
-    }, 1000);
-  }, []);
+
+      // Cleanup function
+      return () => {
+        console.log('🧹 Cleaning up Firebase listeners...');
+        unsubscribes.forEach(unsubscribe => unsubscribe());
+      };
+    } else {
+      // Fallback to mock data when Firebase is not available
+      console.log('📦 Using mock data (Firebase not available)');
+      setTimeout(() => {
+        setRequests(MOCK_REQUESTS);
+        setOfferings(MOCK_OFFERINGS);
+        setTapestryThreads(MOCK_THREADS);
+        setCommunityEvents(MOCK_EVENTS);
+        setResources(MOCK_RESOURCES);
+        setLoading(false);
+      }, 1000);
+    }
+  }, [isFirebaseEnabled, user]);
   
   React.useEffect(() => {
      if (user && !user.nominationStatus) {
@@ -226,10 +286,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user, updateUser]);
 
-  const addRequest = (requestData: Omit<Request, 'id' | 'timestamp' | 'userId' | 'userSymbolicName' | 'userSymbolicIcon' | 'status' | 'helperId' | 'isConfirmedByRequester' | 'requesterCommended' | 'helperCommended'>, user: User) => {
-    const newRequest: Request = {
+  const addRequest = async (requestData: Omit<Request, 'id' | 'timestamp' | 'userId' | 'userSymbolicName' | 'userSymbolicIcon' | 'status' | 'helperId' | 'isConfirmedByRequester' | 'requesterCommended' | 'helperCommended'>, user: User) => {
+    const newRequest: Omit<Request, 'id'> = {
         ...requestData,
-        id: `req_${Date.now()}`,
         timestamp: new Date(),
         userId: user.id,
         userSymbolicName: user.symbolicName,
@@ -239,13 +298,26 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         requesterCommended: false,
         helperCommended: false,
     };
-    setRequests(prev => [newRequest, ...prev]);
+
+    if (isFirebaseEnabled) {
+      console.log('🔥 Creating request in Firebase...');
+      const success = await firebaseService.createRequest(newRequest);
+      if (success) {
+        console.log('✅ Request created successfully in Firebase');
+        // Firebase listener will update the state automatically
+      } else {
+        console.error('❌ Failed to create request in Firebase');
+      }
+    } else {
+      // Fallback to local state
+      const localRequest: Request = { ...newRequest, id: `req_${Date.now()}` };
+      setRequests(prev => [localRequest, ...prev]);
+    }
   };
 
-  const addCommunityEvent = (eventData: Omit<CommunityEvent, 'id' | 'timestamp' | 'organizerId' | 'organizerSymbolicName' | 'organizerSymbolicIcon' | 'organizerRole' | 'organizerIsVerified'>, user: User) => {
-    const newEvent: CommunityEvent = {
+  const addCommunityEvent = async (eventData: Omit<CommunityEvent, 'id' | 'timestamp' | 'organizerId' | 'organizerSymbolicName' | 'organizerSymbolicIcon' | 'organizerRole' | 'organizerIsVerified'>, user: User) => {
+    const newEvent: Omit<CommunityEvent, 'id'> = {
         ...eventData,
-        id: `evt_${Date.now()}`,
         timestamp: new Date(),
         organizerId: user.id,
         organizerSymbolicName: user.symbolicName,
@@ -253,30 +325,70 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         organizerRole: user.role,
         organizerIsVerified: user.isVerified,
     };
-    setCommunityEvents(prev => [newEvent, ...prev]);
+
+    if (isFirebaseEnabled) {
+      console.log('🔥 Creating event in Firebase...');
+      const success = await firebaseService.createEvent(newEvent);
+      if (success) {
+        console.log('✅ Event created successfully in Firebase');
+        // Firebase listener will update the state automatically
+      } else {
+        console.error('❌ Failed to create event in Firebase');
+      }
+    } else {
+      // Fallback to local state
+      const localEvent: CommunityEvent = { ...newEvent, id: `evt_${Date.now()}` };
+      setCommunityEvents(prev => [localEvent, ...prev]);
+    }
   };
 
-  const addResource = (resourceData: Omit<Resource, 'id' | 'timestamp' | 'organizerId' | 'organizerSymbolicName' | 'organizerSymbolicIcon' | 'organizerIsVerified'>, user: User) => {
-    const newResource: Resource = {
+  const addResource = async (resourceData: Omit<Resource, 'id' | 'timestamp' | 'organizerId' | 'organizerSymbolicName' | 'organizerSymbolicIcon' | 'organizerIsVerified'>, user: User) => {
+    const newResource: Omit<Resource, 'id'> = {
       ...resourceData,
-      id: `res_${Date.now()}`,
       timestamp: new Date(),
       organizerId: user.id,
       organizerSymbolicName: user.symbolicName,
       organizerSymbolicIcon: user.symbolicIcon,
       organizerIsVerified: user.isVerified,
     };
-    setResources(prev => [newResource, ...prev]);
+
+    if (isFirebaseEnabled) {
+      console.log('🔥 Creating resource in Firebase...');
+      const success = await firebaseService.createResource(newResource);
+      if (success) {
+        console.log('✅ Resource created successfully in Firebase');
+        // Firebase listener will update the state automatically
+      } else {
+        console.error('❌ Failed to create resource in Firebase');
+      }
+    } else {
+      // Fallback to local state
+      const localResource: Resource = { ...newResource, id: `res_${Date.now()}` };
+      setResources(prev => [localResource, ...prev]);
+    }
   };
 
-  const addOffering = (offeringData: Omit<Offering, 'id' | 'timestamp' | 'userId'>, userId: string) => {
-    const newOffering: Offering = {
+  const addOffering = async (offeringData: Omit<Offering, 'id' | 'timestamp' | 'userId'>, userId: string) => {
+    const newOffering: Omit<Offering, 'id'> = {
         ...offeringData,
-        id: `offering_${Date.now()}`,
         timestamp: new Date(),
         userId
     };
-    setOfferings(prev => [newOffering, ...prev]);
+
+    if (isFirebaseEnabled) {
+      console.log('🔥 Creating offering in Firebase...');
+      const success = await firebaseService.createOffering(newOffering);
+      if (success) {
+        console.log('✅ Offering created successfully in Firebase');
+        // Firebase listener will update the state automatically
+      } else {
+        console.error('❌ Failed to create offering in Firebase');
+      }
+    } else {
+      // Fallback to local state
+      const localOffering: Offering = { ...newOffering, id: `offering_${Date.now()}` };
+      setOfferings(prev => [localOffering, ...prev]);
+    }
 
     if (offeringData.type === 'Encouragement') {
       addHopePoints(offeringData.pointsEarned, HopePointCategory.VoiceOfCompassion);
@@ -338,11 +450,23 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
   };
 
-  const fulfillRequest = (requestId: string, helperId: string) => {
+  const fulfillRequest = async (requestId: string, helperId: string) => {
     const request = requests.find(r => r.id === requestId);
     if (!request || !request.isConfirmedByRequester) return;
 
-    setRequests(prev => prev.map(r => r.id === requestId ? {...r, status: RequestStatus.Fulfilled} : r));
+    if (isFirebaseEnabled) {
+      console.log('🔥 Updating request status in Firebase...');
+      const success = await firebaseService.updateRequest(requestId, { status: RequestStatus.Fulfilled });
+      if (success) {
+        console.log('✅ Request status updated successfully in Firebase');
+        // Firebase listener will update the state automatically
+      } else {
+        console.error('❌ Failed to update request status in Firebase');
+      }
+    } else {
+      // Fallback to local state
+      setRequests(prev => prev.map(r => r.id === requestId ? {...r, status: RequestStatus.Fulfilled} : r));
+    }
     
     const category = request.mode === RequestMode.Loud ? HopePointCategory.CommunityBuilder : HopePointCategory.SilentHero;
     
@@ -361,7 +485,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             isRead: false,
             type: 'Generic',
         };
-        setNotifications(prev => [newNotification, ...prev]);
+
+        if (isFirebaseEnabled) {
+          await firebaseService.createNotification(newNotification);
+        } else {
+          setNotifications(prev => [newNotification, ...prev]);
+        }
     }
   };
   
