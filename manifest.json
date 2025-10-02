@@ -7,6 +7,9 @@
   "orientation": "portrait-primary",
   "background_color": "#FBF9F4",
   "theme_color": "#D4AF37",
+  "scope": "/",
+  "lang": "ar",
+  "dir": "rtl",
   "icons": [
     {
       "src": "/awardlogo.png",
@@ -19,6 +22,15 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "categories": ["social", "lifestyle", "utilities"],
+  "screenshots": [
+    {
+      "src": "/awardlogo.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
     }
   ]
 }

@@ -52,7 +52,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.error("Failed to parse user from localStorage", error);
         localStorage.removeItem('michyUser');
       } finally {
-        setIsLoading(false);
+        // Add small delay to prevent flash
+        setTimeout(() => setIsLoading(false), 100);
       }
     };
 

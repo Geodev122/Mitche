@@ -27,12 +27,20 @@ const LoadingFallback: React.FC = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-[#FBF9F4]">
     <div className="flex flex-col items-center text-center">
       <img src="/awardlogo.png" alt="Mitché Logo" className="w-24 h-24 mx-auto mb-4 animate-pulse" />
-      <p className="text-gray-500">Preparing the Sanctuary...</p>
+      <p className="text-gray-500">Loading...</p>
     </div>
   </div>
 );
 
 const App: React.FC = () => {
+  React.useEffect(() => {
+    // Hide loading screen once React app is ready
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+      loadingScreen.style.display = 'none';
+    }
+  }, []);
+
   return (
     <AuthProvider>
       <DataProvider>
