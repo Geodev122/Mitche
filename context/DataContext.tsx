@@ -533,11 +533,30 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
   
     const getNotificationsForUser = (userId: string) => {
-        return notifications.filter(n => n.userId === userId).sort((a,b) => b.timestamp.getTime() - a.timestamp.getTime());
+    const local = notifications.filter(n => n.userId === userId).sort((a,b) => b.timestamp.getTime() - a.timestamp.getTime());
+    if (local.length > 0) return local;
+
+    if (isFirebaseEnabled) {
+      (async () => {
+        try {
+          const remote = await firebaseService.getUserNotifications(userId);
+          if (remote && remote.length) {
+            setNotifications(remote as Notification[]);
+          }
+        } catch (err) {
+          console.error('Error fetching notifications for user:', err);
+        }
+      })();
+    }
+
+    return local;
     };
 
     const markAsRead = (notificationId: string) => {
-        setNotifications(prev => prev.map(n => n.id === notificationId ? {...n, isRead: true} : n));
+    setNotifications(prev => prev.map(n => n.id === notificationId ? {...n, isRead: true} : n));
+    if (isFirebaseEnabled) {
+      firebaseService.updateNotification(notificationId, { isRead: true });
+    }
     };
     
     const acceptNomination = (userId: string, choice: 'Reveal' | 'Anonymous', details?: { realName: string, photoUrl?: string }) => {
@@ -632,11 +651,53 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const getRequestById = (requestId: string): Request | undefined => {
-        return requests.find(r => r.id === requestId);
+    const local = requests.find(r => r.id === requestId);
+    if (local) return local;
+
+    // If Firebase is enabled but we don't have the request locally yet, fetch once
+    if (isFirebaseEnabled) {
+      (async () => {
+        try {
+          const remote = await firebaseService.getRequests();
+          if (remote && remote.length) {
+            setRequests(remote);
+          }
+        } catch (err) {
+          console.error('Error fetching request by id:', err);
+        }
+      })();
+    }
+
+    return undefined;
     };
 
     const getOfferingsForRequest = (requestId: string): Offering[] => {
-        return offerings.filter(o => o.requestId === requestId).sort((a,b) => b.timestamp.getTime() - a.timestamp.getTime());
+    const local = offerings.filter(o => o.requestId === requestId).sort((a,b) => b.timestamp.getTime() - a.timestamp.getTime());
+    if (local.length > 0) return local;
+
+    // If Firebase is enabled and we don't have offerings locally, fetch them once
+    if (isFirebaseEnabled) {
+      (async () => {
+        try {
+          const remoteOfferings = await firebaseService.getOfferingsForRequest(requestId);
+          if (remoteOfferings && remoteOfferings.length) {
+            // Merge remote offerings into state
+            setOfferings(prev => {
+              const existingIds = new Set(prev.map(p => p.id));
+              const merged = [...prev];
+              remoteOfferings.forEach(o => {
+                if (!existingIds.has(o.id)) merged.push(o as Offering);
+              });
+              return merged.sort((a,b) => b.timestamp.getTime() - a.timestamp.getTime());
+            });
+          }
+        } catch (err) {
+          console.error('Error fetching offerings for request:', err);
+        }
+      })();
+    }
+
+    return local;
     };
     
     const leaveCommendation = (requestId: string, fromRole: 'requester' | 'helper', commendations: CommendationType[]) => {
