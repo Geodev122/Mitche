@@ -19,8 +19,16 @@ import path from 'path';
 async function loadServiceAccount() {
   const envPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
   const fallback = path.resolve(process.cwd(), 'serviceAccountKey.json');
-  const filePath = envPath && fs.existsSync(envPath) ? envPath : (fs.existsSync(fallback) ? fallback : null);
-  if (!filePath) throw new Error('Service account JSON not found. Set GOOGLE_APPLICATION_CREDENTIALS or place serviceAccountKey.json in project root.');
+  console.log('DEBUG: GOOGLE_APPLICATION_CREDENTIALS=', envPath);
+  console.log('DEBUG: checking fallback path=', fallback);
+  const envExists = envPath ? fs.existsSync(envPath) : false;
+  const fallbackExists = fs.existsSync(fallback);
+  console.log('DEBUG: envExists=', envExists, 'fallbackExists=', fallbackExists);
+  const filePath = envPath && envExists ? envPath : (fallbackExists ? fallback : null);
+  if (!filePath) {
+    throw new Error('Service account JSON not found. Set GOOGLE_APPLICATION_CREDENTIALS or place serviceAccountKey.json in project root.');
+  }
+  console.log('DEBUG: using service account file at', filePath);
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
