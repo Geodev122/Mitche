@@ -4,6 +4,7 @@ import * as ReactRouterDOM from 'react-router-dom';
 import { MessageSquare, Calendar, BookOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { AdvancedSearch } from '../../components/search/AdvancedSearch';
+import TapestryPreview from '../../components/tapestry/TapestryPreview';
 import { RatingSystem } from '../../components/rating/RatingSystem';
 
 const CitizenDashboard: React.FC = () => {
@@ -35,6 +36,11 @@ const CitizenDashboard: React.FC = () => {
         </h1>
         <p className="text-md text-gray-500 mt-2">"{t('sanctuary.quote')}"</p>
       </header>
+
+      {/* Tapestry preview (Phase 1 feature surfaced on Home) */}
+      <div className="mb-6">
+        <TapestryPreview />
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {navTiles.map((tile) => (
