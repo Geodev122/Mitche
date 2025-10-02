@@ -23,6 +23,7 @@ import Constellation from './pages/Constellation';
 import ResourceHub from './pages/ResourceHub';
 import CreateResource from './pages/CreateResource';
 import { Phase1Demo } from './pages/Phase1Demo';
+import EnhancedPlatformDemo from './pages/EnhancedPlatformDemo';
 
 const LoadingFallback: React.FC = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-[#FBF9F4]">
@@ -115,6 +116,7 @@ const Main: React.FC = () => {
         <ReactRouterDOM.Route path="resources/new" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]} verifiedOnly={true}><CreateResource /></ProtectedRoute>} />
         <ReactRouterDOM.Route path="admin" element={<ProtectedRoute roles={[Role.Admin]}><AdminDashboard /></ProtectedRoute>} />
         <ReactRouterDOM.Route path="phase1" element={<Phase1Demo />} />
+        <ReactRouterDOM.Route path="enhanced" element={<EnhancedPlatformDemo />} />
       </ReactRouterDOM.Route>
       {/* Catch-all route for authenticated users */}
       <ReactRouterDOM.Route path="*" element={<ReactRouterDOM.Navigate to="/" replace />} />
