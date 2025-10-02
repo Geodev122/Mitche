@@ -1,12 +1,13 @@
 {
-  "name": "mitché-—-منصة-حامل-الأمل",
+  "name": "mitche-hope-bearer-platform",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "vite preview --host 0.0.0.0 --port $PORT"
   },
   "dependencies": {
     "i18next": "23.11.5",
