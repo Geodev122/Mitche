@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Role } from '../types';
 import CitizenDashboard from './dashboards/CitizenDashboard';
 import OrganizationDashboard from './dashboards/OrganizationDashboard';
+import MigrationNotice from '../components/ui/MigrationNotice';
 
 const Dashboard: React.FC = () => {
   const { user, isLoading } = useAuth();
@@ -38,10 +39,20 @@ const Dashboard: React.FC = () => {
   // Route to appropriate dashboard based on role
   switch (user.role) {
     case Role.Citizen:
-      return <CitizenDashboard />;
+      return (
+        <div>
+          <MigrationNotice />
+          <CitizenDashboard />
+        </div>
+      );
     case Role.NGO:
     case Role.PublicWorker:
-      return <OrganizationDashboard />;
+      return (
+        <div>
+          <MigrationNotice />
+          <OrganizationDashboard />
+        </div>
+      );
     case Role.Admin:
       return <ReactRouterDOM.Navigate to="/admin" replace />;
     default:
