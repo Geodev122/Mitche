@@ -34,15 +34,22 @@ const Onboarding: React.FC = () => {
     handleNext();
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     if (!symbolicName || !symbolicIcon) return;
-    updateUser({
-      symbolicName,
-      symbolicIcon,
-      hasCompletedOnboarding: true,
-    });
-    // The user is now fully onboarded, navigate to the main dashboard.
-    navigate('/', { replace: true });
+    
+    try {
+      await updateUser({
+        symbolicName,
+        symbolicIcon,
+        hasCompletedOnboarding: true,
+      });
+      
+      // Navigate to dashboard after ensuring state is updated
+      navigate('/', { replace: true });
+    } catch (error) {
+      console.error('Failed to complete onboarding:', error);
+      setError('Failed to complete onboarding. Please try again.');
+    }
   };
   
   const StepWrapper: React.FC<{children: React.ReactNode}> = ({children}) => (

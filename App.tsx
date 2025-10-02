@@ -60,26 +60,34 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; roles: Role[]; verif
 };
 
 const Main: React.FC = () => {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
 
+  // Show loading screen while authentication state is being determined
+  if (isLoading) {
+    return <LoadingFallback />;
+  }
+
+  // No user logged in - show login/signup flow
   if (!user) {
     return (
       <ReactRouterDOM.Routes>
         <ReactRouterDOM.Route path="/login" element={<Login />} />
-        <ReactRouterDOM.Route path="*" element={<ReactRouterDOM.Navigate to="/login" />} />
+        <ReactRouterDOM.Route path="*" element={<ReactRouterDOM.Navigate to="/login" replace />} />
       </ReactRouterDOM.Routes>
     );
   }
 
+  // User logged in but hasn't completed onboarding
   if (!user.hasCompletedOnboarding) {
     return (
       <ReactRouterDOM.Routes>
         <ReactRouterDOM.Route path="/onboarding" element={<Onboarding />} />
-        <ReactRouterDOM.Route path="*" element={<ReactRouterDOM.Navigate to="/onboarding" />} />
+        <ReactRouterDOM.Route path="*" element={<ReactRouterDOM.Navigate to="/onboarding" replace />} />
       </ReactRouterDOM.Routes>
     );
   }
 
+  // User is fully authenticated and onboarded
   return (
     <ReactRouterDOM.Routes>
       <ReactRouterDOM.Route path="/" element={<Layout />}>
@@ -98,6 +106,8 @@ const Main: React.FC = () => {
         <ReactRouterDOM.Route path="resources/new" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]} verifiedOnly={true}><CreateResource /></ProtectedRoute>} />
         <ReactRouterDOM.Route path="admin" element={<ProtectedRoute roles={[Role.Admin]}><AdminDashboard /></ProtectedRoute>} />
       </ReactRouterDOM.Route>
+      {/* Catch-all route for authenticated users */}
+      <ReactRouterDOM.Route path="*" element={<ReactRouterDOM.Navigate to="/" replace />} />
     </ReactRouterDOM.Routes>
   );
 };

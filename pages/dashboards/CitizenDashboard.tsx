@@ -9,6 +9,15 @@ const CitizenDashboard: React.FC = () => {
   const navigate = ReactRouterDOM.useNavigate();
   const { t } = useTranslation();
 
+  // Safety check - should not happen due to App.tsx routing, but good practice
+  if (!user) {
+    return <ReactRouterDOM.Navigate to="/login" replace />;
+  }
+
+  if (!user.hasCompletedOnboarding) {
+    return <ReactRouterDOM.Navigate to="/onboarding" replace />;
+  }
+
   const navTiles = [
     { title: t('sanctuary.tiles.echoes'), subtitle: t('sanctuary.tiles.echoesSub'), path: '/echoes', icon: MessageSquare },
     { title: t('sanctuary.tiles.events'), subtitle: t('sanctuary.tiles.eventsSub'), path: '/events', icon: Calendar },
@@ -18,7 +27,9 @@ const CitizenDashboard: React.FC = () => {
   return (
     <div className="p-4 pb-24">
       <header className="text-center my-8">
-        <h1 className="text-2xl text-gray-700">{t('sanctuary.welcome', { name: user?.symbolicName })}</h1>
+        <h1 className="text-2xl text-gray-700">
+          {t('sanctuary.welcome', { name: user?.symbolicName || 'Friend' })}
+        </h1>
         <p className="text-md text-gray-500 mt-2">"{t('sanctuary.quote')}"</p>
       </header>
       
