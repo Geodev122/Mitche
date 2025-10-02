@@ -560,49 +560,107 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
     
     const acceptNomination = (userId: string, choice: 'Reveal' | 'Anonymous', details?: { realName: string, photoUrl?: string }) => {
-        if (choice === 'Reveal' && details && user) {
-            updateUser({
+        if (!user) return;
+
+        if (choice === 'Reveal' && details) {
+            // Update nomination status for current user
+            if (isFirebaseEnabled) {
+              // Update user in Firestore and add tapestry thread remotely
+              firebaseService.updateUser(user.id, {
                 nominationStatus: 'AcceptedReveal',
                 realName: details.realName,
                 photoUrl: details.photoUrl
-            });
-            const newThread: TapestryThread = {
-                 id: `thread_${Date.now()}`,
-                 honoreeUserId: userId,
-                 honoreeSymbolicName: user.symbolicName,
-                 honoreeSymbolicIcon: user.symbolicIcon,
-                 honoreeRealName: details.realName,
-                 honoreePhotoUrl: details.photoUrl,
-                 isAnonymous: false,
-                 story: i18n.t('tapestry.story.revealed'),
-                 color: TapestryThreadColor.Gold, // Hope Bearer award
-                 pattern: TapestryThreadPattern.Lines,
-                 rippleTag: 5,
-                 echoes: 0,
-                 timestamp: new Date(),
-            };
-            setTapestryThreads(prev => [newThread, ...prev]);
-        } else if (user) {
-            updateUser({ nominationStatus: 'AcceptedAnonymous' });
-            const newThread: TapestryThread = {
-                 id: `thread_${Date.now()}`,
-                 honoreeUserId: userId,
-                 honoreeSymbolicName: user.symbolicName,
-                 honoreeSymbolicIcon: user.symbolicIcon,
-                 isAnonymous: true,
-                 story: i18n.t('tapestry.story.anonymous'),
-                 color: TapestryThreadColor.Blue, // Silent Hero
-                 pattern: TapestryThreadPattern.Spirals,
-                 rippleTag: 3,
-                 echoes: 0,
-                 timestamp: new Date(),
-            };
-            setTapestryThreads(prev => [newThread, ...prev]);
+              });
+
+              const newThread: TapestryThread = {
+                id: `thread_${Date.now()}`,
+                honoreeUserId: userId,
+                honoreeSymbolicName: user.symbolicName,
+                honoreeSymbolicIcon: user.symbolicIcon,
+                honoreeRealName: details.realName,
+                honoreePhotoUrl: details.photoUrl,
+                isAnonymous: false,
+                story: i18n.t('tapestry.story.revealed'),
+                color: TapestryThreadColor.Gold,
+                pattern: TapestryThreadPattern.Lines,
+                rippleTag: 5,
+                echoes: 0,
+                timestamp: new Date(),
+              };
+              firebaseService.addTapestryThread(newThread as any);
+            } else {
+              updateUser({
+                nominationStatus: 'AcceptedReveal',
+                realName: details.realName,
+                photoUrl: details.photoUrl
+              });
+              const newThread: TapestryThread = {
+                id: `thread_${Date.now()}`,
+                honoreeUserId: userId,
+                honoreeSymbolicName: user.symbolicName,
+                honoreeSymbolicIcon: user.symbolicIcon,
+                honoreeRealName: details.realName,
+                honoreePhotoUrl: details.photoUrl,
+                isAnonymous: false,
+                story: i18n.t('tapestry.story.revealed'),
+                color: TapestryThreadColor.Gold,
+                pattern: TapestryThreadPattern.Lines,
+                rippleTag: 5,
+                echoes: 0,
+                timestamp: new Date(),
+              };
+              setTapestryThreads(prev => [newThread, ...prev]);
+            }
+        } else {
+            // Anonymous acceptance
+            if (isFirebaseEnabled) {
+              firebaseService.updateUser(user.id, { nominationStatus: 'AcceptedAnonymous' });
+              const newThread: TapestryThread = {
+                id: `thread_${Date.now()}`,
+                honoreeUserId: userId,
+                honoreeSymbolicName: user.symbolicName,
+                honoreeSymbolicIcon: user.symbolicIcon,
+                isAnonymous: true,
+                story: i18n.t('tapestry.story.anonymous'),
+                color: TapestryThreadColor.Blue,
+                pattern: TapestryThreadPattern.Spirals,
+                rippleTag: 3,
+                echoes: 0,
+                timestamp: new Date(),
+              };
+              firebaseService.addTapestryThread(newThread as any);
+            } else {
+              updateUser({ nominationStatus: 'AcceptedAnonymous' });
+              const newThread: TapestryThread = {
+                id: `thread_${Date.now()}`,
+                honoreeUserId: userId,
+                honoreeSymbolicName: user.symbolicName,
+                honoreeSymbolicIcon: user.symbolicIcon,
+                isAnonymous: true,
+                story: i18n.t('tapestry.story.anonymous'),
+                color: TapestryThreadColor.Blue,
+                pattern: TapestryThreadPattern.Spirals,
+                rippleTag: 3,
+                echoes: 0,
+                timestamp: new Date(),
+              };
+              setTapestryThreads(prev => [newThread, ...prev]);
+            }
         }
     };
 
     const echoThread = (threadId: string) => {
-        setTapestryThreads(prev => prev.map(t => t.id === threadId ? { ...t, echoes: t.echoes + 1 } : t));
+        const thread = tapestryThreads.find(t => t.id === threadId);
+        if (!thread) return;
+
+        const newCount = thread.echoes + 1;
+
+        // Optimistic local update
+        setTapestryThreads(prev => prev.map(t => t.id === threadId ? { ...t, echoes: newCount } : t));
+
+        if (isFirebaseEnabled) {
+          firebaseService.updateTapestryThread(threadId, { echoes: newCount });
+        }
     };
 
     const giveDailyPoint = async (receiverId: string): Promise<{ success: boolean; messageKey: string; receiverName?: string }> => {
@@ -619,35 +677,87 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             return { success: false, messageKey: 'scanner.error.alreadyGiven' };
         }
 
-        const receiver = getUserById(receiverId);
-        if (!receiver) {
-            return { success: false, messageKey: 'scanner.error.userNotFound' };
+        // In Firebase mode, fetch receiver remotely
+        let receiver = getUserById(receiverId);
+        if (isFirebaseEnabled) {
+          try {
+            const remote = await firebaseService.getUser(receiverId);
+            if (remote) receiver = remote as User;
+          } catch (err) {
+            console.error('Error fetching receiver:', err);
+          }
         }
 
-        // Update receiver
-        const updatedReceiver = {
+        if (!receiver) {
+          return { success: false, messageKey: 'scanner.error.userNotFound' };
+        }
+
+        // Prepare updates
+        const receiverUpdatedPartial = {
+          hopePoints: (receiver.hopePoints || 0) + 1,
+          hopePointsBreakdown: {
+            ...(receiver.hopePointsBreakdown || {}),
+            [HopePointCategory.CommunityGift]: ((receiver.hopePointsBreakdown && receiver.hopePointsBreakdown[HopePointCategory.CommunityGift]) || 0) + 1
+          }
+        } as Partial<User>;
+
+        const giverUpdatedPartial = {
+          hopePoints: (user.hopePoints || 0) + 1,
+          hopePointsBreakdown: {
+            ...(user.hopePointsBreakdown || {}),
+            [HopePointCategory.CommunityGift]: ((user.hopePointsBreakdown && user.hopePointsBreakdown[HopePointCategory.CommunityGift]) || 0) + 1
+          },
+          lastPointGivenTimestamp: Date.now()
+        } as Partial<User>;
+
+        // Apply updates
+        if (isFirebaseEnabled) {
+          try {
+            await firebaseService.updateUser(receiverId, receiverUpdatedPartial);
+            await firebaseService.updateUser(user.id, giverUpdatedPartial);
+            // Add notification to receiver
+            const newNotification: Notification = {
+              id: `notif_${Date.now()}_gift`,
+              userId: receiverId,
+              message: 'DEPRECATED',
+              messageKey: 'notifications.dailyGift',
+              timestamp: new Date(),
+              isRead: false,
+              type: 'Generic'
+            };
+            await firebaseService.createNotification(newNotification as any);
+            // Optimistically update local auth state via updateUser from context
+            updateUser(giverUpdatedPartial);
+            return { success: true, messageKey: 'scanner.success.giftSent', receiverName: receiver.symbolicName };
+          } catch (err) {
+            console.error('Error applying daily point via Firebase:', err);
+            return { success: false, messageKey: 'scanner.error.server' };
+          }
+        } else {
+          // local fallback
+          const updatedReceiver = {
             ...receiver,
-            hopePoints: receiver.hopePoints + 1,
+            hopePoints: (receiver.hopePoints || 0) + 1,
             hopePointsBreakdown: {
-                ...receiver.hopePointsBreakdown,
-                [HopePointCategory.CommunityGift]: (receiver.hopePointsBreakdown[HopePointCategory.CommunityGift] || 0) + 1,
+              ...(receiver.hopePointsBreakdown || {}),
+              [HopePointCategory.CommunityGift]: ((receiver.hopePointsBreakdown && receiver.hopePointsBreakdown[HopePointCategory.CommunityGift]) || 0) + 1
             }
-        };
-        updateAnyUser(updatedReceiver);
+          };
+          updateAnyUser(updatedReceiver as User);
 
-        // Update giver (current user)
-        const updatedGiver = {
+          const updatedGiver = {
             ...user,
-            hopePoints: user.hopePoints + 1,
+            hopePoints: (user.hopePoints || 0) + 1,
             hopePointsBreakdown: {
-                ...user.hopePointsBreakdown,
-                [HopePointCategory.CommunityGift]: (user.hopePointsBreakdown[HopePointCategory.CommunityGift] || 0) + 1,
+              ...(user.hopePointsBreakdown || {}),
+              [HopePointCategory.CommunityGift]: ((user.hopePointsBreakdown && user.hopePointsBreakdown[HopePointCategory.CommunityGift]) || 0) + 1
             },
-            lastPointGivenTimestamp: Date.now(),
-        };
-        updateUser(updatedGiver);
+            lastPointGivenTimestamp: Date.now()
+          } as Partial<User>;
+          updateUser(updatedGiver);
 
-        return { success: true, messageKey: 'scanner.success.giftSent', receiverName: receiver.symbolicName };
+          return { success: true, messageKey: 'scanner.success.giftSent', receiverName: receiver.symbolicName };
+        }
     };
 
     const getRequestById = (requestId: string): Request | undefined => {
@@ -707,26 +817,52 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const toUserId = fromRole === 'requester' ? request.helperId : request.userId;
         if (!toUserId) return;
         
-        const toUser = getUserById(toUserId);
-        if (!toUser) return;
-        
-        const updatedCommendations = { ...toUser.commendations };
-        commendations.forEach(c => {
-            updatedCommendations[c] = (updatedCommendations[c] || 0) + 1;
-        });
+        if (isFirebaseEnabled) {
+          (async () => {
+            try {
+              // Fetch target user remotely
+              const remoteUser = await firebaseService.getUser(toUserId);
+              if (!remoteUser) return;
 
-        updateAnyUser({ ...toUser, commendations: updatedCommendations });
+              const updatedCommendations = { ...(remoteUser.commendations || {}) };
+              commendations.forEach(c => {
+                updatedCommendations[c] = (updatedCommendations[c] || 0) + 1;
+              });
 
-        setRequests(prev => prev.map(r => {
-            if (r.id === requestId) {
-                return {
-                    ...r,
-                    ...(fromRole === 'requester' && { requesterCommended: true }),
-                    ...(fromRole === 'helper' && { helperCommended: true }),
-                };
+              await firebaseService.updateUser(toUserId, { commendations: updatedCommendations } as any);
+
+              // Update request flags
+              if (fromRole === 'requester') {
+                await firebaseService.updateRequest(requestId, { requesterCommended: true });
+              } else {
+                await firebaseService.updateRequest(requestId, { helperCommended: true });
+              }
+            } catch (err) {
+              console.error('Error leaving commendation via Firebase:', err);
             }
-            return r;
-        }));
+          })();
+        } else {
+          const toUser = getUserById(toUserId);
+          if (!toUser) return;
+          
+          const updatedCommendations = { ...toUser.commendations };
+          commendations.forEach(c => {
+              updatedCommendations[c] = (updatedCommendations[c] || 0) + 1;
+          });
+
+          updateAnyUser({ ...toUser, commendations: updatedCommendations });
+
+          setRequests(prev => prev.map(r => {
+              if (r.id === requestId) {
+                  return {
+                      ...r,
+                      ...(fromRole === 'requester' && { requesterCommended: true }),
+                      ...(fromRole === 'helper' && { helperCommended: true }),
+                  };
+              }
+              return r;
+          }));
+        }
     };
 
 
