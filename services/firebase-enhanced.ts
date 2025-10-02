@@ -399,3 +399,5 @@ export class EnhancedFirebaseService {
     }
   }
 }
+
+export const enhancedFirebaseService = new EnhancedFirebaseService();
