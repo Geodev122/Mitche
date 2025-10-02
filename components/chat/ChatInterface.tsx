@@ -60,7 +60,20 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           // If a conversationId was provided via props, try to select it
           if (conversationId) {
             const found = response.data.find(c => c.id === conversationId);
-            if (found) setActiveConversation(found);
+            if (found) {
+              setActiveConversation(found);
+            } else {
+              // Fallback: try fetching the conversation directly by id
+              try {
+                const convResp = await enhancedFirebase.getConversationById(conversationId);
+                if (convResp.success && convResp.data) {
+                  setActiveConversation(convResp.data);
+                  setConversations(prev => [convResp.data!, ...prev]);
+                }
+              } catch (err) {
+                console.error('Error fetching conversation by id fallback:', err);
+              }
+            }
           }
         }
       } catch (error) {
