@@ -53,6 +53,276 @@ export class EnhancedFirebaseService {
         isArchived: false
       });
       
+      const createdConversation = {
+        id: conversationRef.id,
+        ...conversationData,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lastActivity: new Date(),
+        isActive: true,
+        isArchived: false
+      } as Conversation;
+      
+      return { success: true, data: createdConversation };
+    } catch (error) {
+      console.error('Error creating conversation:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+  
+  async updateConversation(conversationId: string, updates: Partial<Conversation>): Promise<ApiResponse<void>> {
+    try {
+      const conversationRef = doc(db, 'conversations', conversationId);
+      await updateDoc(conversationRef, {
+        ...updates,
+        updatedAt: serverTimestamp()
+      });
+      return { success: true };
+    } catch (error) {
+      console.error('Error updating conversation:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+  
+  async getUserConversations(userId: string): Promise<ApiResponse<Conversation[]>> {
+    try {
+      const conversationsQuery = query(
+        collection(db, 'conversations'),
+        where('participants', 'array-contains', userId),
+        where('isActive', '==', true),
+        orderBy('lastActivity', 'desc')
+      );
+      
+      const snapshot = await getDocs(conversationsQuery);
+      const conversations = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Conversation[];
+      
+      return { success: true, data: conversations };
+    } catch (error) {
+      console.error('Error getting user conversations:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+  
+  subscribeToMessages(conversationId: string, onUpdate: (messages: Message[]) => void): (() => void) | undefined {
+    try {
+      const messagesQuery = query(
+        collection(db, 'messages'),
+        where('conversationId', '==', conversationId),
+        orderBy('timestamp', 'asc')
+      );
+      
+      return onSnapshot(messagesQuery, (snapshot) => {
+        const messages = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Message[];
+        onUpdate(messages);
+      });
+    } catch (error) {
+      console.error('Error subscribing to messages:', error);
+      return undefined;
+    }
+  }
+  
+  async sendMessage(messageData: Partial<Message>, conversationId: string): Promise<ApiResponse<Message>> {
+    try {
+      const messageRef = await addDoc(collection(db, 'messages'), {
+        ...messageData,
+        conversationId,
+        timestamp: serverTimestamp(),
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        deliveryStatus: {
+          status: 'delivered',
+          timestamp: serverTimestamp()
+        }
+      });
+      
+      const createdMessage = {
+        id: messageRef.id,
+        ...messageData,
+        conversationId,
+        timestamp: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      } as Message;
+      
+      return { success: true, data: createdMessage };
+    } catch (error) {
+      console.error('Error sending message:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+  
+  async markMessagesAsRead(conversationId: string, userId: string): Promise<ApiResponse<void>> {
+    try {
+      const messagesQuery = query(
+        collection(db, 'messages'),
+        where('conversationId', '==', conversationId),
+        where('senderId', '!=', userId)
+      );
+      
+      const snapshot = await getDocs(messagesQuery);
+      const batch = writeBatch(db);
+      
+      snapshot.docs.forEach(doc => {
+        const messageRef = doc.ref;
+        batch.update(messageRef, {
+          [`readBy.${userId}`]: serverTimestamp(),
+          'deliveryStatus.status': 'read',
+          'deliveryStatus.timestamp': serverTimestamp()
+        });
+      });
+      
+      await batch.commit();
+      return { success: true };
+    } catch (error) {
+      console.error('Error marking messages as read:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+  
+  async addReaction(messageId: string, userId: string, emoji: string): Promise<ApiResponse<void>> {
+    try {
+      const messageRef = doc(db, 'messages', messageId);
+      await updateDoc(messageRef, {
+        [`reactions.${emoji}`]: arrayUnion(userId),
+        updatedAt: serverTimestamp()
+      });
+      return { success: true };
+    } catch (error) {
+      console.error('Error adding reaction:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+}
+    } catch (error) {
+      console.error('Error updating conversation:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+  
+  async getUserConversations(userId: string): Promise<ApiResponse<Conversation[]>> {
+    try {
+      const conversationsQuery = query(
+        collection(db, 'conversations'),
+        where('participants', 'array-contains', userId),
+        where('isActive', '==', true),
+        orderBy('lastActivity', 'desc')
+      );
+      
+      const snapshot = await getDocs(conversationsQuery);
+      const conversations = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Conversation[];
+      
+      return { success: true, data: conversations };
+    } catch (error) {
+      console.error('Error getting user conversations:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+  
+  subscribeToMessages(conversationId: string, onUpdate: (messages: Message[]) => void): (() => void) | undefined {
+    try {
+      const messagesQuery = query(
+        collection(db, 'messages'),
+        where('conversationId', '==', conversationId),
+        orderBy('timestamp', 'asc')
+      );
+      
+      return onSnapshot(messagesQuery, (snapshot) => {
+        const messages = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Message[];
+        onUpdate(messages);
+      });
+    } catch (error) {
+      console.error('Error subscribing to messages:', error);
+      return undefined;
+    }
+  }
+  
+  async sendMessage(messageData: Partial<Message>, conversationId: string): Promise<ApiResponse<Message>> {
+    try {
+      const messageRef = await addDoc(collection(db, 'messages'), {
+        ...messageData,
+        conversationId,
+        timestamp: serverTimestamp(),
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        deliveryStatus: {
+          status: 'delivered',
+          timestamp: serverTimestamp()
+        }
+      });
+      
+      const createdMessage = {
+        id: messageRef.id,
+        ...messageData,
+        conversationId,
+        timestamp: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      } as Message;
+      
+      return { success: true, data: createdMessage };
+    } catch (error) {
+      console.error('Error sending message:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+  
+  async markMessagesAsRead(conversationId: string, userId: string): Promise<ApiResponse<void>> {
+    try {
+      const messagesQuery = query(
+        collection(db, 'messages'),
+        where('conversationId', '==', conversationId),
+        where('senderId', '!=', userId)
+      );
+      
+      const snapshot = await getDocs(messagesQuery);
+      const batch = writeBatch(db);
+      
+      snapshot.docs.forEach(doc => {
+        const messageRef = doc.ref;
+        batch.update(messageRef, {
+          [`readBy.${userId}`]: serverTimestamp(),
+          'deliveryStatus.status': 'read',
+          'deliveryStatus.timestamp': serverTimestamp()
+        });
+      });
+      
+      await batch.commit();
+      return { success: true };
+    } catch (error) {
+      console.error('Error marking messages as read:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+  
+  async addReaction(messageId: string, userId: string, emoji: string): Promise<ApiResponse<void>> {
+    try {
+      const messageRef = doc(db, 'messages', messageId);
+      await updateDoc(messageRef, {
+        [`reactions.${emoji}`]: arrayUnion(userId),
+        updatedAt: serverTimestamp()
+      });
+      return { success: true };
+    } catch (error) {
+      console.error('Error adding reaction:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+        isActive: true,
+        isArchived: false
+      });
+      
       const newConversation = await getDoc(conversationRef);
       return { 
         success: true, 
