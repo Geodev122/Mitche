@@ -12,10 +12,10 @@ This document outlines a comprehensive Firestore database schema designed to sup
   // Core Profile
   id: string;
   email: string;
-  username: string;
+  username: string; // Login username for authentication
   displayName?: string; // From Google Auth
-  symbolicName: string;
-  symbolicIcon: string;
+  symbolicName: string; // Chosen identity name displayed across platform
+  symbolicIcon: string; // Chosen symbolic icon for identity representation
   role: 'Citizen' | 'NGO' | 'PublicWorker' | 'Admin';
   
   // Verification & Status
