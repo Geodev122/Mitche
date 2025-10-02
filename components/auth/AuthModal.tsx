@@ -42,31 +42,68 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        if (!username.trim()) {
+            setError('Please enter a username');
+            return;
+        }
+        
+        if (!password.trim()) {
+            setError(t('auth.errorPassword'));
+            return;
+        }
+        
         setError('');
         setLoading(true);
-        const result = await login(username, password);
-        setLoading(false);
-        if (result.success) {
-            onClose();
-        } else {
-            setError(t('auth.errorInvalid'));
+        
+        try {
+            const result = await login(username.trim(), password.trim());
+            if (result.success) {
+                onClose();
+                resetForm();
+            } else {
+                setError(result.message || t('auth.errorInvalid'));
+            }
+        } catch (error) {
+            setError('An unexpected error occurred');
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
+        
         if (!selectedUsername) {
             setError(t('auth.errorUsernameNotSelected'));
             return;
         }
+        
+        if (!password.trim()) {
+            setError(t('auth.errorPassword'));
+            return;
+        }
+        
+        if (password.length < 4) {
+            setError('Password must be at least 4 characters');
+            return;
+        }
+        
         setError('');
         setLoading(true);
-        const result = await signup(selectedUsername, password);
-        setLoading(false);
-        if (result.success) {
-            onClose();
-        } else {
-            setError(result.message || t('auth.errorExists'));
+        
+        try {
+            const result = await signup(selectedUsername, password.trim());
+            if (result.success) {
+                onClose();
+                resetForm();
+            } else {
+                setError(result.message || t('auth.errorExists'));
+            }
+        } catch (error) {
+            setError('An unexpected error occurred');
+        } finally {
+            setLoading(false);
         }
     };
     
@@ -75,6 +112,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         setPassword('');
         setError('');
         setSelectedUsername(null);
+        setGeneratedUsernames([]);
+        setLoading(false);
     };
     
     const switchTab = (tab: 'login' | 'signup') => {
