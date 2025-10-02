@@ -32,7 +32,6 @@
     "signupLoading": "Creating Account...",
     "errorInvalid": "Incorrect username or password.",
     "errorExists": "Username already exists.",
-    "errorPassword": "Please enter a password.",
     "errorSymbolicName": "Please choose a symbolic name.",
     "identityChoiceInfo": "You will choose your symbolic identity after creating your account.",
     "errorUsernameNotSelected": "Please select a username.",
