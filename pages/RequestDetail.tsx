@@ -1,6 +1,5 @@
 import React from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
-import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import Card from '../components/ui/Card';
 import SymbolIcon from '../components/ui/SymbolIcon';
@@ -12,6 +11,7 @@ import { ArrowLeft, ArrowRight, Info, Heart, Tag, Shield, ShieldCheck, Award } f
 import CommendationModal from '../components/ui/CommendationModal';
 import { ChatInterface } from '../components/chat/ChatInterface';
 import { RatingSystem } from '../components/rating/RatingSystem';
+import { useData } from '../context/DataContext';
 
 const statusStyles: { [key in RequestStatus]: { text: string; classes: string } } = {
   [RequestStatus.Open]: { text: 'requestStatus.Open', classes: 'bg-green-100 text-green-700' },
@@ -57,6 +57,7 @@ const RequestDetail: React.FC = () => {
   const navigate = ReactRouterDOM.useNavigate();
   const { t, i18n } = useTranslation();
   const { getRequestById, getOfferingsForRequest, addOffering, initiateHelp, confirmReceipt, fulfillRequest, leaveCommendation } = useData();
+  const { addTapestryThread } = useData();
   const { user, getUserById, enhancedFirebase } = useAuth();
   
   const [isHelpModalOpen, setHelpModalOpen] = React.useState(false);
@@ -65,6 +66,13 @@ const RequestDetail: React.FC = () => {
   const [encouragementMessage, setEncouragementMessage] = React.useState('');
   const [isChatOpen, setChatOpen] = React.useState(false);
   const [chatParticipantIds, setChatParticipantIds] = React.useState<string[]>([]);
+  const [isAddTapestryOpen, setAddTapestryOpen] = React.useState(false);
+  const [tapestryStory, setTapestryStory] = React.useState('');
+  const [tapestryRevealChoice, setTapestryRevealChoice] = React.useState<'Reveal' | 'Anonymous'>('Anonymous');
+  const [tapestryRealName, setTapestryRealName] = React.useState('');
+  const [tapestryPhotoUrl, setTapestryPhotoUrl] = React.useState('');
+  const [tapestryColor, setTapestryColor] = React.useState('Amber');
+  const [tapestryPattern, setTapestryPattern] = React.useState('Spirals');
 
   if (!requestId || !user) {
     return <ReactRouterDOM.Navigate to="/echoes" />;
@@ -137,6 +145,7 @@ const RequestDetail: React.FC = () => {
                 setChatOpen(true);
               }
             }} className="flex-1 px-4 py-3 text-sm bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700">Chat</button>
+          <button onClick={() => setAddTapestryOpen(true)} className="flex-1 px-4 py-3 text-sm bg-amber-500 text-white rounded-lg font-bold hover:bg-amber-600">Add to Tapestry</button>
         </div>
       );
     } else if (request.status === RequestStatus.Pending && isHelper) {
@@ -231,6 +240,65 @@ const RequestDetail: React.FC = () => {
             <p className="text-xs text-gray-400 text-center my-2">{t('echoes.helpModal.dummyPhone')}</p>
         </>
         <button onClick={handleInitiateHelp} className="w-full mt-4 bg-[#3A3A3A] text-white py-3 rounded-lg font-bold hover:bg-opacity-90">{t('echoes.helpModal.confirmHelp')}</button>
+      </Modal>
+
+      <Modal isOpen={isAddTapestryOpen} onClose={() => setAddTapestryOpen(false)} title={t('tapestry.add.title', 'Add to Hope Tapestry')}>
+        <div>
+          <p className="text-sm text-gray-600 mb-2">{t('tapestry.add.instructions', 'Share a short story to honor or recognize someone.')}</p>
+          <textarea value={tapestryStory} onChange={(e) => setTapestryStory(e.target.value)} rows={4} className="w-full px-3 py-2 border rounded-md mb-2" placeholder={t('tapestry.add.placeholder', 'Write your story...')} />
+
+          <div className="flex gap-2 mb-2">
+            <label className="flex items-center gap-2">
+              <input type="radio" name="reveal" checked={tapestryRevealChoice === 'Anonymous'} onChange={() => setTapestryRevealChoice('Anonymous')} /> {t('tapestry.add.anonymous', 'Anonymous')}
+            </label>
+            <label className="flex items-center gap-2">
+              <input type="radio" name="reveal" checked={tapestryRevealChoice === 'Reveal'} onChange={() => setTapestryRevealChoice('Reveal')} /> {t('tapestry.add.reveal', 'Reveal my name')}
+            </label>
+          </div>
+
+          {tapestryRevealChoice === 'Reveal' && (
+            <>
+              <input value={tapestryRealName} onChange={(e) => setTapestryRealName(e.target.value)} placeholder={t('tapestry.add.realName', 'Your name')} className="w-full px-3 py-2 border rounded-md mb-2" />
+              <input value={tapestryPhotoUrl} onChange={(e) => setTapestryPhotoUrl(e.target.value)} placeholder={t('tapestry.add.photoUrl', 'Photo URL (optional)')} className="w-full px-3 py-2 border rounded-md mb-2" />
+            </>
+          )}
+
+          <div className="flex gap-2 mb-2">
+            <select value={tapestryColor} onChange={(e) => setTapestryColor(e.target.value)} className="px-2 py-2 border rounded-md">
+              <option>Amber</option>
+              <option>Gold</option>
+              <option>Blue</option>
+              <option>Green</option>
+            </select>
+            <select value={tapestryPattern} onChange={(e) => setTapestryPattern(e.target.value)} className="px-2 py-2 border rounded-md">
+              <option>Spirals</option>
+              <option>Lines</option>
+              <option>Dots</option>
+            </select>
+          </div>
+
+          <div className="flex gap-2">
+            <button className="flex-1 bg-amber-500 text-white py-2 rounded-md" onClick={async () => {
+              if (!tapestryStory.trim()) return;
+              const success = await addTapestryThread({
+                honoreeUserId: request.userId,
+                honoreeSymbolicName: request.userSymbolicName,
+                honoreeSymbolicIcon: request.userSymbolicIcon,
+                isAnonymous: tapestryRevealChoice === 'Anonymous',
+                story: tapestryStory,
+                color: tapestryColor as any,
+                pattern: tapestryPattern as any,
+                rippleTag: 1,
+                echoes: 0
+              });
+              if (success) {
+                setAddTapestryOpen(false);
+                setTapestryStory('');
+              }
+            }}>{t('tapestry.add.submit', 'Add to Tapestry')}</button>
+            <button className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-md" onClick={() => setAddTapestryOpen(false)}>{t('cancel', 'Cancel')}</button>
+          </div>
+        </div>
       </Modal>
 
       <Modal isOpen={isEncourageModalOpen} onClose={() => setEncourageModalOpen(false)} title={t('echoes.encourageModal.title')}>

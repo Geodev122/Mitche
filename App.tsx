@@ -17,6 +17,7 @@ import NominationResponse from './pages/NominationResponse';
 import Scanner from './pages/Scanner';
 import CommunityEvents from './pages/CommunityEvents';
 import CreateEvent from './pages/CreateEvent';
+import ChatPage from './pages/ChatPage';
 import AdminDashboard from './pages/AdminDashboard';
 import Leaderboard from './pages/Leaderboard';
 import Constellation from './pages/Constellation';
@@ -105,6 +106,7 @@ const Main: React.FC = () => {
         <ReactRouterDOM.Route path="echoes/:requestId" element={<RequestDetail />} />
         <ReactRouterDOM.Route path="echoes/new" element={<ProtectedRoute roles={[Role.Citizen]}><CreateRequest /></ProtectedRoute>} />
         <ReactRouterDOM.Route path="tapestry" element={<TempleOfStories />} />
+  <ReactRouterDOM.Route path="chat/:conversationId" element={<ChatPage />} />
         <ReactRouterDOM.Route path="nomination" element={<NominationResponse />} />
         <ReactRouterDOM.Route path="scanner" element={<Scanner />} />
         <ReactRouterDOM.Route path="events" element={<CommunityEvents />} />
