@@ -1,4 +1,5 @@
 import React from 'react';
+import * as ReactRouterDOM from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import SymbolIcon from '../components/ui/SymbolIcon';
@@ -10,6 +11,7 @@ const symbolicIcons = ["Star", "Lantern", "Flower"];
 const Onboarding: React.FC = () => {
   const { updateUser } = useAuth();
   const { t } = useTranslation();
+  const navigate = ReactRouterDOM.useNavigate();
   const [step, setStep] = React.useState(1);
   const [symbolicName, setSymbolicName] = React.useState('');
   const [symbolicIcon, setSymbolicIcon] = React.useState(symbolicIcons[0]);
@@ -39,7 +41,8 @@ const Onboarding: React.FC = () => {
       symbolicIcon,
       hasCompletedOnboarding: true,
     });
-    // The App.tsx router will automatically handle the redirect
+    // The user is now fully onboarded, navigate to the main dashboard.
+    navigate('/', { replace: true });
   };
   
   const StepWrapper: React.FC<{children: React.ReactNode}> = ({children}) => (

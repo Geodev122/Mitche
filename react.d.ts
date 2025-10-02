@@ -3,6 +3,10 @@
 // including the default export, to fix module resolution issues.
 // FIX: Changed from `export { default } from 'react'` to an explicit import and export
 // to resolve a "Circular definition of import alias 'default'" error.
-import React from 'react';
+
+// FIX: To resolve the "Circular definition of import alias 'React'" error,
+// the default import is aliased to 'ReactDefault' to prevent a name collision
+// with the 'React' namespace that is re-exported via 'export * from 'react''.
+import ReactDefault from 'react';
 export * from 'react';
-export default React;
+export { ReactDefault as default };
