@@ -9,6 +9,7 @@ interface AuthContextType {
   isFirebaseEnabled: boolean;
   login: (username: string, password: string) => Promise<{ success: boolean; message?: string }>;
   signup: (username: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  signInWithGoogle: () => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   addHopePoints: (points: number, category: HopePointCategory) => void;
   updateUser: (updatedUserData: Partial<User>) => Promise<void>;
@@ -218,6 +219,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const signInWithGoogle = async (): Promise<{ success: boolean; message?: string }> => {
+    if (!isFirebaseEnabled) {
+      return { success: false, message: "Google sign-in requires Firebase authentication" };
+    }
+
+    try {
+      return await firebaseService.signInWithGoogle();
+    } catch (error: any) {
+      console.error('Error signing in with Google:', error);
+      return { success: false, message: error.message || "Failed to sign in with Google" };
+    }
+  };
+
   const logout = async () => {
     try {
       if (isFirebaseEnabled) {
@@ -362,7 +376,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isLoading,
       isFirebaseEnabled,
       login, 
-      signup, 
+      signup,
+      signInWithGoogle, 
       logout, 
       addHopePoints, 
       updateUser, 

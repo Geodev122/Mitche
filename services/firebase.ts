@@ -23,15 +23,23 @@ import {
   signInWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged,
+  signInWithPopup,
+  GoogleAuthProvider,
   User as FirebaseUser
 } from 'firebase/auth';
 import { firebaseConfig } from '../firebase.config';
-import { User, Request, CommunityEvent, Resource, Offering, Notification, TapestryThread } from '../types';
+import { User, Request, CommunityEvent, Resource, Offering, Notification, TapestryThread, Role } from '../types';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+
+// Initialize Google Auth Provider
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
 
 // Enable offline persistence
 import { enableIndexedDbPersistence } from 'firebase/firestore';
@@ -67,7 +75,7 @@ class FirebaseService {
         password: '', // Don't store password in Firestore
         symbolicName: userData.symbolicName || '',
         symbolicIcon: userData.symbolicIcon || '',
-        role: userData.role || 'Citizen',
+        role: userData.role || Role.Citizen,
         hopePoints: 0,
         hopePointsBreakdown: {},
         hasCompletedOnboarding: false,
@@ -97,6 +105,50 @@ class FirebaseService {
       return { success: true, user: userData };
     } catch (error: any) {
       console.error('Error signing in:', error);
+      return { success: false, message: error.message };
+    }
+  }
+
+  async signInWithGoogle() {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const firebaseUser = result.user;
+      
+      // Check if user already exists
+      let existingUser = await this.getUser(firebaseUser.uid);
+      
+      if (!existingUser) {
+        // Create new user document for Google sign-up
+        const newUser: User = {
+          id: firebaseUser.uid,
+          username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+          password: '', // Google auth doesn't use password
+          symbolicName: '',
+          symbolicIcon: '',
+          role: Role.Citizen,
+          hopePoints: 0,
+          hopePointsBreakdown: {},
+          hasCompletedOnboarding: false,
+          isVerified: false,
+          verificationStatus: 'NotRequested',
+          joinDate: new Date().toISOString(),
+          lastActive: new Date().toISOString(),
+          languagePreference: 'en',
+          avatar: firebaseUser.photoURL || '',
+        };
+        
+        await setDoc(doc(db, 'users', firebaseUser.uid), newUser);
+        return { success: true, user: newUser };
+      } else {
+        // Update last active for existing user
+        await updateDoc(doc(db, 'users', firebaseUser.uid), {
+          lastActive: new Date().toISOString(),
+          avatar: firebaseUser.photoURL || existingUser.avatar,
+        });
+        return { success: true, user: existingUser };
+      }
+    } catch (error: any) {
+      console.error('Error signing in with Google:', error);
       return { success: false, message: error.message };
     }
   }
