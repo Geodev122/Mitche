@@ -43,10 +43,10 @@ export type VerificationStatus = 'Pending' | 'Approved' | 'Rejected' | 'NotReque
 
 export interface User {
   id: string;
-  username: string;
+  username: string; // Login username for authentication
   password: string; // In a real app, this would be a hash
-  symbolicName: string;
-  symbolicIcon: string;
+  symbolicName: string; // Chosen identity name displayed across the platform
+  symbolicIcon: string; // Chosen symbolic icon for identity representation
   role: Role;
   hopePoints: number;
   hopePointsBreakdown: {
@@ -72,8 +72,8 @@ export interface User {
 export interface Request {
   id: string;
   userId: string;
-  userSymbolicName: string;
-  userSymbolicIcon: string;
+  userSymbolicName: string; // Creator's chosen symbolic identity name
+  userSymbolicIcon: string; // Creator's chosen symbolic icon
   title: string;
   description: string;
   type: RequestType;

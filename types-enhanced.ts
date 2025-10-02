@@ -383,11 +383,9 @@ export interface Request {
   saves?: number;
   offeringsCount?: number;
   
-  // Creator Info (for display)
-  userSymbolicName?: string; // Legacy field
-  userSymbolicIcon?: string; // Legacy field
-  creatorSymbolicName: string;
-  creatorSymbolicIcon: string;
+  // Creator Info (for display) - Symbolic identity chosen by user
+  creatorSymbolicName: string;  // The chosen identity name (not login username)
+  creatorSymbolicIcon: string;  // The chosen symbolic icon
   
   // Verification & Moderation
   isVerified?: boolean;
@@ -408,10 +406,10 @@ export interface Request {
   responseTime?: number;
   fulfillmentTime?: number;
   
-  // Legacy fields
+  // Legacy fields for backward compatibility
   userId?: string; // Mapped to createdBy
-  userSymbolicName?: string; // Legacy
-  userSymbolicIcon?: string; // Legacy
+  userSymbolicName?: string; // Legacy, use creatorSymbolicName
+  userSymbolicIcon?: string; // Legacy, use creatorSymbolicIcon
   timestamp?: Date; // Legacy, use createdAt
   region?: string; // Legacy, use location.region
   helperId?: string; // Legacy, use assignedHelper
