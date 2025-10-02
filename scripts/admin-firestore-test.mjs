@@ -1,7 +1,11 @@
 /*
   Admin Firestore smoke test
   - Requires: npm install firebase-admin
-  - Provide a service account JSON and set env var GOOGLE_APPLICATION_CREDENTIALS to its path, or place it at ./serviceAccountKey.json
+  - Provide credentials using one of the following (preferred avoids leaving files on disk):
+      * FIREBASE_ADMIN_SA_JSON => raw JSON string of the service account
+      * FIREBASE_ADMIN_SA_B64  => base64 encoded JSON of the service account
+      * GOOGLE_APPLICATION_CREDENTIALS => path to service account JSON file
+      * ./serviceAccountKey.json in project root (fallback)
   - Run: node ./scripts/admin-firestore-test.mjs
 
   This script will:
@@ -17,6 +21,30 @@ import fs from 'fs';
 import path from 'path';
 
 async function loadServiceAccount() {
+  // Check raw JSON env var first (convenient for CI)
+  const rawJson = process.env.FIREBASE_ADMIN_SA_JSON;
+  if (rawJson) {
+    console.log('DEBUG: using service account from FIREBASE_ADMIN_SA_JSON');
+    try {
+      return JSON.parse(rawJson);
+    } catch (err) {
+      throw new Error('FIREBASE_ADMIN_SA_JSON is set but could not be parsed as JSON: ' + err.message);
+    }
+  }
+
+  // Next check base64-encoded env var
+  const b64 = process.env.FIREBASE_ADMIN_SA_B64;
+  if (b64) {
+    console.log('DEBUG: using service account from FIREBASE_ADMIN_SA_B64 (base64)');
+    try {
+      const json = Buffer.from(b64, 'base64').toString('utf8');
+      return JSON.parse(json);
+    } catch (err) {
+      throw new Error('FIREBASE_ADMIN_SA_B64 is set but could not be decoded/parsed: ' + err.message);
+    }
+  }
+
+  // Finally, check filesystem paths
   const envPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
   const fallback = path.resolve(process.cwd(), 'serviceAccountKey.json');
   console.log('DEBUG: GOOGLE_APPLICATION_CREDENTIALS=', envPath);
@@ -26,7 +54,7 @@ async function loadServiceAccount() {
   console.log('DEBUG: envExists=', envExists, 'fallbackExists=', fallbackExists);
   const filePath = envPath && envExists ? envPath : (fallbackExists ? fallback : null);
   if (!filePath) {
-    throw new Error('Service account JSON not found. Set GOOGLE_APPLICATION_CREDENTIALS or place serviceAccountKey.json in project root.');
+    throw new Error('Service account JSON not found. Set FIREBASE_ADMIN_SA_JSON or FIREBASE_ADMIN_SA_B64, set GOOGLE_APPLICATION_CREDENTIALS to a valid path, or place serviceAccountKey.json in project root.');
   }
   console.log('DEBUG: using service account file at', filePath);
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -34,8 +62,14 @@ async function loadServiceAccount() {
 
 async function run() {
   try {
-    const admin = await import('firebase-admin');
+    const adminModule = await import('firebase-admin');
+    // Some Node/npm combos expose the admin SDK on the default export, others on the namespace.
+    const admin = adminModule && adminModule.default ? adminModule.default : adminModule;
     const serviceAccount = await loadServiceAccount();
+
+    if (!admin || !admin.credential || typeof admin.credential.cert !== 'function') {
+      throw new Error('Loaded firebase-admin but could not find admin.credential.cert — check firebase-admin installation/version');
+    }
 
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount)
