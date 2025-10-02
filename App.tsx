@@ -24,6 +24,7 @@ import ResourceHub from './pages/ResourceHub';
 import CreateResource from './pages/CreateResource';
 import { Phase1Demo } from './pages/Phase1Demo';
 import EnhancedPlatformDemo from './pages/EnhancedPlatformDemo';
+import FirebaseConnectionTest from './components/FirebaseConnectionTest';
 
 const LoadingFallback: React.FC = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-[#FBF9F4]">
@@ -50,6 +51,7 @@ const App: React.FC = () => {
           <LanguageManager>
             <React.Suspense fallback={<LoadingFallback />}>
               <Main />
+              <FirebaseConnectionTest />
             </React.Suspense>
           </LanguageManager>
         </ReactRouterDOM.HashRouter>
