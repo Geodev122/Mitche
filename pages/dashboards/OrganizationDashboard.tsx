@@ -33,7 +33,14 @@ const OrganizationDashboard: React.FC = () => {
     const navigate = ReactRouterDOM.useNavigate();
     const { t } = useTranslation();
 
-    if (!user) return null;
+    // Safety checks
+    if (!user) {
+        return <ReactRouterDOM.Navigate to="/login" replace />;
+    }
+
+    if (!user.hasCompletedOnboarding) {
+        return <ReactRouterDOM.Navigate to="/onboarding" replace />;
+    }
 
     const openRequests = requests.filter(r => r.status === RequestStatus.Open);
     const silentRequests = openRequests.filter(r => r.mode === RequestMode.Silent);
@@ -43,7 +50,9 @@ const OrganizationDashboard: React.FC = () => {
     return (
         <div className="p-4 pb-24 space-y-6">
             <header className="text-center my-4">
-                <h1 className="text-2xl text-gray-700">{t('sanctuary.welcome', { name: user?.symbolicName })}</h1>
+                <h1 className="text-2xl text-gray-700">
+                    {t('sanctuary.welcome', { name: user?.symbolicName || 'Organization' })}
+                </h1>
                 <p className="text-md text-gray-500 mt-2">{t('orgDashboard.subtitle')}</p>
             </header>
 
