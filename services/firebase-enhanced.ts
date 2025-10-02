@@ -105,6 +105,19 @@ export class EnhancedFirebaseService {
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
+
+  async getConversationById(conversationId: string): Promise<ApiResponse<Conversation>> {
+    try {
+      const convRef = doc(db, 'conversations', conversationId);
+      const snap = await getDoc(convRef as any);
+      if (!snap.exists()) return { success: false, error: 'Not found' };
+  const data = { id: snap.id, ...(snap.data() as any) } as Conversation;
+      return { success: true, data };
+    } catch (error) {
+      console.error('Error fetching conversation by id:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
   
   subscribeToMessages(conversationId: string, onUpdate: (messages: Message[]) => void): (() => void) | undefined {
     try {

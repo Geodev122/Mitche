@@ -12,6 +12,7 @@ import CommendationModal from '../components/ui/CommendationModal';
 import { ChatInterface } from '../components/chat/ChatInterface';
 import { RatingSystem } from '../components/rating/RatingSystem';
 import { useData } from '../context/DataContext';
+import { useToast } from '../components/ui/Toast';
 
 const statusStyles: { [key in RequestStatus]: { text: string; classes: string } } = {
   [RequestStatus.Open]: { text: 'requestStatus.Open', classes: 'bg-green-100 text-green-700' },
@@ -73,6 +74,7 @@ const RequestDetail: React.FC = () => {
   const [tapestryPhotoUrl, setTapestryPhotoUrl] = React.useState('');
   const [tapestryColor, setTapestryColor] = React.useState('Amber');
   const [tapestryPattern, setTapestryPattern] = React.useState('Spirals');
+  const toast = useToast();
 
   if (!requestId || !user) {
     return <ReactRouterDOM.Navigate to="/echoes" />;
@@ -280,7 +282,7 @@ const RequestDetail: React.FC = () => {
           <div className="flex gap-2">
             <button className="flex-1 bg-amber-500 text-white py-2 rounded-md" onClick={async () => {
               if (!tapestryStory.trim()) return;
-              const success = await addTapestryThread({
+              const createdId = await addTapestryThread({
                 honoreeUserId: request.userId,
                 honoreeSymbolicName: request.userSymbolicName,
                 honoreeSymbolicIcon: request.userSymbolicIcon,
@@ -291,9 +293,12 @@ const RequestDetail: React.FC = () => {
                 rippleTag: 1,
                 echoes: 0
               });
-              if (success) {
+              if (createdId) {
                 setAddTapestryOpen(false);
                 setTapestryStory('');
+                toast.show(t('tapestry.add.success', 'Added to tapestry successfully'), 'success');
+                // Navigate to tapestry and pass highlight id in state
+                navigate('/tapestry', { state: { highlightThreadId: createdId } });
               }
             }}>{t('tapestry.add.submit', 'Add to Tapestry')}</button>
             <button className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-md" onClick={() => setAddTapestryOpen(false)}>{t('cancel', 'Cancel')}</button>

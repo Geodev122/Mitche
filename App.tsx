@@ -3,6 +3,7 @@ import * as ReactRouterDOM from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
 import LanguageManager from './components/LanguageManager';
+import { ToastProvider } from './components/ui/Toast';
 import { Role } from './types';
 
 import Onboarding from './pages/Onboarding';
@@ -46,13 +47,15 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <DataProvider>
-        <ReactRouterDOM.HashRouter>
-          <LanguageManager>
-            <React.Suspense fallback={<LoadingFallback />}>
-              <Main />
-            </React.Suspense>
-          </LanguageManager>
-        </ReactRouterDOM.HashRouter>
+        <ToastProvider>
+          <ReactRouterDOM.HashRouter>
+            <LanguageManager>
+              <React.Suspense fallback={<LoadingFallback />}>
+                <Main />
+              </React.Suspense>
+            </LanguageManager>
+          </ReactRouterDOM.HashRouter>
+        </ToastProvider>
       </DataProvider>
     </AuthProvider>
   );

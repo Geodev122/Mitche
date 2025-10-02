@@ -27,7 +27,7 @@ interface DataContextType {
   getRequestById: (requestId: string) => Request | undefined;
   getOfferingsForRequest: (requestId: string) => Offering[];
   leaveCommendation: (requestId: string, fromRole: 'requester' | 'helper', commendations: CommendationType[]) => void;
-  addTapestryThread: (thread: Omit<TapestryThread, 'id' | 'timestamp'>) => Promise<boolean>;
+  addTapestryThread: (thread: Omit<TapestryThread, 'id' | 'timestamp'>) => Promise<string | null>;
 }
 
 const DataContext = React.createContext<DataContextType | undefined>(undefined);
@@ -414,7 +414,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const addTapestryThread = async (threadData: Omit<TapestryThread, 'id' | 'timestamp'>): Promise<boolean> => {
+  const addTapestryThread = async (threadData: Omit<TapestryThread, 'id' | 'timestamp'>): Promise<string | null> => {
     const newThread: Omit<TapestryThread, 'id'> = {
       ...threadData,
       timestamp: new Date(),
@@ -422,16 +422,16 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (isFirebaseEnabled) {
       try {
-        const success = await firebaseService.addTapestryThread(newThread as any);
-        return !!success;
+        const createdId = await firebaseService.addTapestryThread(newThread as any);
+        return createdId;
       } catch (err) {
         console.error('Error adding tapestry thread to Firebase:', err);
-        return false;
+        return null;
       }
     } else {
       const localThread: TapestryThread = { ...newThread, id: `thread_${Date.now()}` } as TapestryThread;
       setTapestryThreads(prev => [localThread, ...prev]);
-      return true;
+      return localThread.id;
     }
   };
 

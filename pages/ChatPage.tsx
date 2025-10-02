@@ -8,8 +8,7 @@ const ChatPage: React.FC = () => {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Chat</h1>
-      {/* Render ChatInterface and allow it to load the conversation by id via enhancedService (it will list conversations and match id) */}
-      <ChatInterface participantIds={[]} />
+      <ChatInterface participantIds={[]} conversationId={conversationId} />
     </div>
   );
 };

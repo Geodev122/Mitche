@@ -28,6 +28,7 @@ interface ChatInterfaceProps {
   eventId?: string;
   participantIds?: string[];
   type?: ConversationType;
+  conversationId?: string;
 }
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({
@@ -35,6 +36,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   eventId,
   participantIds = [],
   type = ConversationType.DirectMessage
+  ,conversationId
 }) => {
   const { user, enhancedFirebase } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -55,6 +57,11 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         const response = await enhancedFirebase.getUserConversations(user.id);
         if (response.success && response.data) {
           setConversations(response.data);
+          // If a conversationId was provided via props, try to select it
+          if (conversationId) {
+            const found = response.data.find(c => c.id === conversationId);
+            if (found) setActiveConversation(found);
+          }
         }
       } catch (error) {
         console.error('Error loading conversations:', error);
