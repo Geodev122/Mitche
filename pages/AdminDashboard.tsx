@@ -78,6 +78,13 @@ const AdminDashboard: React.FC = () => {
     const [demoContent, setDemoContent] = React.useState('');
     const toast = useToast();
 
+    // Leaderboard aggregates debug state
+    const [aggregates, setAggregates] = React.useState<Array<{id: string; points: number}>>([]);
+    const [aggRaw, setAggRaw] = React.useState<any>(null);
+    const [aggregatesLoading, setAggregatesLoading] = React.useState(false);
+    const [perUserDetails, setPerUserDetails] = React.useState<Record<string, any>>({});
+    const [showRawAgg, setShowRawAgg] = React.useState(false);
+
     // search & pagination
     const [queryText, setQueryText] = React.useState('');
     const [page, setPage] = React.useState(1);
@@ -108,6 +115,46 @@ const AdminDashboard: React.FC = () => {
     React.useEffect(() => {
         fetchDemoContent();
     }, [fetchDemoContent]);
+
+    // Fetch pre-aggregated leaderboard global doc
+    const fetchAggregates = React.useCallback(async () => {
+        setAggregatesLoading(true);
+        try {
+            const { db } = await import('../services/firebase');
+            const { getDoc, doc } = await import('firebase/firestore');
+            const docRef = doc(db, 'leaderboard_aggregates', 'global');
+            const snap = await getDoc(docRef as any);
+            if (!snap.exists()) {
+                setAggregates([]);
+                setAggRaw(null);
+            } else {
+                const data = snap.data() as any || {};
+                setAggRaw(data);
+                const totals = data.totals || {};
+                const rows = Object.entries(totals).map(([id, pts]) => ({ id, points: Number(pts || 0) }));
+                rows.sort((a, b) => b.points - a.points);
+                setAggregates(rows);
+            }
+        } catch (err) {
+            console.error('Error fetching aggregates:', err);
+            setAggregates([]);
+            setAggRaw(null);
+        } finally {
+            setAggregatesLoading(false);
+        }
+    }, []);
+
+    const fetchPerUserDetail = React.useCallback(async (userId: string) => {
+        try {
+            const { db } = await import('../services/firebase');
+            const { getDoc, doc } = await import('firebase/firestore');
+            const ref = doc(db, 'leaderboard_aggregates', userId);
+            const snap = await getDoc(ref as any);
+            setPerUserDetails(prev => ({ ...prev, [userId]: snap.exists() ? snap.data() : null }));
+        } catch (err) {
+            console.error('Error fetching per-user aggregate:', err);
+        }
+    }, []);
 
     const handleAddDemo = async () => {
         if (!demoTitle) {
@@ -292,6 +339,62 @@ const AdminDashboard: React.FC = () => {
                         )}
                     </div>
                 </div>
+            </Card>
+
+            {/* Leaderboard aggregates debug panel */}
+            <Card>
+                <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-xl font-bold text-gray-800">Leaderboard Aggregates (debug)</h2>
+                    <div className="flex items-center gap-2">
+                        <button onClick={async () => await fetchAggregates()} className="px-3 py-1 bg-amber-500 text-white rounded">Refresh</button>
+                        <button onClick={() => setShowRawAgg(s => !s)} className="px-3 py-1 border rounded">{showRawAgg ? 'Hide Raw' : 'Show Raw'}</button>
+                    </div>
+                </div>
+
+                {aggregatesLoading ? (
+                    <p className="text-sm text-gray-500">Loading aggregates...</p>
+                ) : (
+                    <div className="space-y-2">
+                        {aggregates.length === 0 ? (
+                            <p className="text-sm text-gray-500">No aggregates found.</p>
+                        ) : (
+                            <div className="space-y-1">
+                                {aggregates.slice(0, 50).map((row, idx) => (
+                                    <div key={row.id} className="flex items-center justify-between p-2 bg-white rounded border">
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            <div className="font-mono text-sm text-gray-500 w-10">#{idx+1}</div>
+                                            <div className="min-w-0">
+                                                <div className="text-sm font-semibold truncate">{row.id}</div>
+                                                <div className="text-xs text-gray-400 truncate">doc: leaderboard_aggregates/{row.id}</div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="font-bold text-amber-600">{row.points}</div>
+                                            <button onClick={() => fetchPerUserDetail(row.id)} className="px-2 py-1 text-xs border rounded">Inspect</button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        {showRawAgg && (
+                            <pre className="mt-3 p-3 bg-gray-50 rounded text-xs overflow-auto">{JSON.stringify(aggRaw || aggregates, null, 2)}</pre>
+                        )}
+                        {Object.keys(perUserDetails).length > 0 && (
+                            <div className="mt-3 space-y-2">
+                                <h3 className="text-sm font-semibold">Per-user docs</h3>
+                                {Object.entries(perUserDetails).map(([id, data]) => (
+                                    <div key={id} className="p-2 bg-white rounded border text-xs">
+                                        <div className="flex items-center justify-between">
+                                            <div className="font-mono text-sm">{id}</div>
+                                            <div className="text-sm font-bold text-amber-600">{(data as any).total ?? '—'}</div>
+                                        </div>
+                                        <pre className="mt-2 text-xs overflow-auto">{JSON.stringify(data, null, 2)}</pre>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
             </Card>
 
         </div>
