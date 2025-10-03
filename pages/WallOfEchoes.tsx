@@ -1,7 +1,7 @@
 import React from 'react';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
-import { PlusCircle, MessageSquare } from 'lucide-react';
+import { PlusCircle, MessageSquare, Star } from 'lucide-react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { Request, RequestType, RequestStatus, Role, RequestMode } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
@@ -39,6 +39,11 @@ const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
         </div>
         <h4 className="font-bold text-gray-800 text-lg my-1">{request.title}</h4>
         <div className="text-sm font-semibold text-[#D4AF37] mb-2">{t(`requestTypes.${request.type}`)} - {request.region}</div>
+          <div className="absolute bottom-2 right-2 flex items-center gap-2">
+            <ReactRouterDOM.Link to={`/echoes/${request.id}`} onClick={(e) => e.stopPropagation()} className="p-1 rounded-full hover:bg-gray-100">
+              <Star className="w-5 h-5 text-amber-400" />
+            </ReactRouterDOM.Link>
+          </div>
         <p className="text-gray-600 text-md line-clamp-2">{request.description}</p>
       </Card>
     </ReactRouterDOM.Link>

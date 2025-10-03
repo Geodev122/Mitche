@@ -1,7 +1,7 @@
 import React from 'react';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
-import { PlusCircle, PackageSearch, ShieldCheck } from 'lucide-react';
+import { PlusCircle, PackageSearch, ShieldCheck, Star } from 'lucide-react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { Resource, ResourceCategory, Role } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
@@ -11,34 +11,41 @@ import { timeSince } from '../utils/time';
 
 const ResourceCard: React.FC<{ resource: Resource }> = ({ resource }) => {
   const { t } = useTranslation();
-  
+
   return (
-    <Card className="mb-4 transition-transform transform hover:scale-[1.02]">
-      <div className="flex items-start">
-        <div className="ml-4 rtl:mr-0 rtl:ml-4 flex-shrink-0">
-          <div className="w-12 h-12 bg-[#F1EADF] rounded-full flex items-center justify-center">
-            <SymbolIcon name={resource.organizerSymbolicIcon} className="w-7 h-7 text-[#D4AF37]" />
+    <ReactRouterDOM.Link to={`/resources/${resource.id}`} className="block">
+      <Card className="mb-4 transition-transform transform hover:scale-[1.02] relative">
+        <div className="flex items-start">
+          <div className="ml-4 rtl:mr-0 rtl:ml-4 flex-shrink-0">
+            <div className="w-12 h-12 bg-[#F1EADF] rounded-full flex items-center justify-center">
+              <SymbolIcon name={resource.organizerSymbolicIcon} className="w-7 h-7 text-[#D4AF37]" />
+            </div>
           </div>
-        </div>
-        <div className="flex-grow">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
+          <div className="flex-grow">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
                 <h3 className="font-bold text-gray-800">{resource.organizerSymbolicName}</h3>
                 {resource.organizerIsVerified && <ShieldCheck className="w-4 h-4 text-blue-500" title={t('verifiedOrg') as string} />}
+              </div>
+              <span className="text-xs text-gray-400">{timeSince(resource.timestamp, t)}</span>
             </div>
-            <span className="text-xs text-gray-400">{timeSince(resource.timestamp, t)}</span>
-          </div>
-          <span className="text-sm font-semibold text-gray-500">{resource.region}</span>
-          <h4 className="font-bold text-lg text-gray-800 mt-2">{resource.title}</h4>
-          <p className="text-gray-600 mt-1 text-md whitespace-pre-wrap">{resource.description}</p>
-          <div className="mt-3 pt-3 border-t border-gray-100 space-y-2 text-sm">
-             <div className="font-semibold text-amber-700 bg-amber-50 inline-block px-2 py-1 rounded-md">{t(`resourceCategories.${resource.category}`)}</div>
-             <p className="text-gray-600 font-medium">{resource.schedule}</p>
-             {resource.contactInfo && <p className="text-gray-500">{resource.contactInfo}</p>}
+            <span className="text-sm font-semibold text-gray-500">{resource.region}</span>
+            <h4 className="font-bold text-lg text-gray-800 mt-2">{resource.title}</h4>
+            <p className="text-gray-600 mt-1 text-md whitespace-pre-wrap">{resource.description}</p>
+
+            <div className="mt-3 pt-3 border-t border-gray-100 space-y-2 text-sm">
+              <div className="font-semibold text-amber-700 bg-amber-50 inline-block px-2 py-1 rounded-md">{t(`resourceCategories.${resource.category}`)}</div>
+              <p className="text-gray-600 font-medium">{resource.schedule}</p>
+              {resource.contactInfo && <p className="text-gray-500">{resource.contactInfo}</p>}
+            </div>
+
+            <div className="absolute bottom-2 right-2">
+              <Star className="w-5 h-5 text-amber-400" />
+            </div>
           </div>
         </div>
-      </div>
-    </Card>
+      </Card>
+    </ReactRouterDOM.Link>
   );
 };
 
@@ -86,7 +93,6 @@ const ResourceHub: React.FC = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
   const [filter, setFilter] = React.useState<ResourceCategory | 'All'>('All');
-
 
   const filteredResources = resources.filter(res => filter === 'All' || res.category === filter);
   
