@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPreaggregatedLeaderboard = exports.onHopeLedgerCreate = void 0;
+exports.adminRunLedgerTest = exports.getPreaggregatedLeaderboard = exports.onHopeLedgerCreate = void 0;
 const functions = __importStar(require("firebase-functions"));
 const admin = __importStar(require("firebase-admin"));
 // Initialize admin if not already initialized
@@ -106,6 +106,53 @@ exports.getPreaggregatedLeaderboard = functions.https.onCall(async (data, contex
     catch (err) {
         console.error('Error in getPreaggregatedLeaderboard:', err);
         return { success: false, error: err instanceof Error ? err.message : 'Unknown' };
+    }
+});
+// Callable function that allows an authenticated Admin to create sample ledger entries
+exports.adminRunLedgerTest = functions.https.onCall(async (data, context) => {
+    try {
+        // Require auth
+        if (!context.auth || !context.auth.uid) {
+            return { success: false, error: 'unauthenticated' };
+        }
+        // Basic role check via custom claims
+        const roleClaim = (context.auth.token && context.auth.token.role);
+        let isAdmin = roleClaim === 'Admin';
+        // If no claim, fallback to reading user doc
+        if (!isAdmin) {
+            const userDoc = await db.collection('users').doc(context.auth.uid).get();
+            if (userDoc.exists) {
+                const u = userDoc.data();
+                isAdmin = u?.role === 'Admin';
+            }
+        }
+        if (!isAdmin)
+            return { success: false, error: 'permission-denied' };
+        const receiverIds = Array.isArray(data?.receiverIds) && data.receiverIds.length > 0 ? data.receiverIds : ['demo_user_a', 'demo_user_b'];
+        const num = typeof data?.num === 'number' ? Math.max(1, Math.min(200, data.num)) : 6;
+        const actorId = data?.actorId || 'admin_test_agent';
+        const writes = [];
+        for (let i = 0; i < num; i++) {
+            const receiverId = receiverIds[i % receiverIds.length];
+            const amount = Math.floor(Math.random() * 5) + 1;
+            const entry = {
+                actorId,
+                receiverId,
+                category: 'CommunityGift',
+                amount,
+                reason: `admin_test_${Date.now()}_${i}`,
+                timestamp: admin.firestore.FieldValue.serverTimestamp()
+            };
+            writes.push(db.collection('hope_ledger').add(entry));
+        }
+        const refs = await Promise.all(writes);
+        const ids = refs.map(r => r.id);
+        // return created ids so caller can inspect
+        return { success: true, created: ids };
+    }
+    catch (err) {
+        console.error('Error in adminRunLedgerTest:', err);
+        return { success: false, error: err instanceof Error ? err.message : 'unknown' };
     }
 });
 //# sourceMappingURL=index.js.map
