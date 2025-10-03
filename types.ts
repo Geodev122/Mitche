@@ -100,6 +100,10 @@ export interface Request {
   isConfirmedByRequester?: boolean;
   requesterCommended?: boolean;
   helperCommended?: boolean;
+  rating?: {
+    average: number;
+    count: number;
+  };
 }
 
 export interface Offering {
@@ -170,6 +174,10 @@ export interface CommunityEvent {
   region: string;
   type: CommunityEventType;
   organizerIsVerified?: boolean;
+  rating?: {
+    average: number;
+    count: number;
+  };
 }
 
 // New Interfaces for Resource Hub
@@ -194,4 +202,8 @@ export interface Resource {
   schedule: string;
   contactInfo?: string;
   timestamp: Date;
+  rating?: {
+    average: number;
+    count: number;
+  };
 }

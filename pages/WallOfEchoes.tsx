@@ -8,9 +8,16 @@ import SymbolIcon from '../components/ui/SymbolIcon';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { timeSince } from '../utils/time';
+import { RatingSystem } from '../components/rating/RatingSystem';
 
 const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
   const { t } = useTranslation();
+  const { enhancedFirebase } = useAuth();
+
+  React.useEffect(() => {
+    // Record impression analytics
+    enhancedFirebase?.recordAnalytics?.('card_impression', { targetType: 'request', targetId: request.id });
+  }, [request.id, enhancedFirebase]);
 
   const statusStyles: { [key in RequestStatus]: { text: string; classes: string } } = {
     [RequestStatus.Open]: { text: t(`requestStatus.${RequestStatus.Open}`), classes: 'bg-green-100 text-green-700' },
@@ -40,8 +47,24 @@ const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
         <h4 className="font-bold text-gray-800 text-lg my-1">{request.title}</h4>
         <div className="text-sm font-semibold text-[#D4AF37] mb-2">{t(`requestTypes.${request.type}`)} - {request.region}</div>
           <div className="absolute bottom-2 right-2 flex items-center gap-2">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              {request.rating && (
+                <div className="flex items-center gap-1">
+                  <Star className="w-4 h-4 text-amber-400" />
+                  <span className="font-semibold">{request.rating.average ? request.rating.average.toFixed(1) : '-'}</span>
+                  <span className="text-xs text-gray-400">({request.rating.count || 0})</span>
+                </div>
+              )}
+            </div>
             <ReactRouterDOM.Link to={`/echoes/${request.id}`} onClick={(e) => e.stopPropagation()} className="p-1 rounded-full hover:bg-gray-100">
-              <Star className="w-5 h-5 text-amber-400" />
+              <Star
+                className="w-5 h-5 text-amber-400"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  enhancedFirebase?.recordAnalytics?.('star_clicked', { targetType: 'request', targetId: request.id });
+                }}
+              />
             </ReactRouterDOM.Link>
           </div>
         <p className="text-gray-600 text-md line-clamp-2">{request.description}</p>
