@@ -6,12 +6,16 @@ import { useTranslation } from 'react-i18next';
 import { AdvancedSearch } from '../../components/search/AdvancedSearch';
 import TapestryPreview from '../../components/tapestry/TapestryPreview';
 import { RatingSystem } from '../../components/rating/RatingSystem';
+import Modal from '../../components/ui/Modal';
+import { DEMO_REQUESTS, DEMO_EVENTS, DEMO_RESOURCES } from './demoData';
 
 const CitizenDashboard: React.FC = () => {
   const { user } = useAuth();
   const navigate = ReactRouterDOM.useNavigate();
   const { t } = useTranslation();
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [ratingModalOpen, setRatingModalOpen] = React.useState(false);
+  const [ratingTarget, setRatingTarget] = React.useState<{ id: string; type: any; name?: string } | null>(null);
 
   // Safety check - should not happen due to App.tsx routing, but good practice
   if (!user) {
@@ -23,9 +27,9 @@ const CitizenDashboard: React.FC = () => {
   }
 
   const navTiles = [
-    { title: t('sanctuary.tiles.echoes'), subtitle: t('sanctuary.tiles.echoesSub'), path: '/echoes', icon: MessageSquare },
-    { title: t('sanctuary.tiles.events'), subtitle: t('sanctuary.tiles.eventsSub'), path: '/events', icon: Calendar },
-    { title: t('sanctuary.tiles.tapestry'), subtitle: t('sanctuary.tiles.tapestrySub'), path: '/tapestry', icon: BookOpen },
+    { title: 'Wall of Echoes', subtitle: 'Request or respond to calls', path: '/echoes', icon: MessageSquare },
+    { title: 'Community Events', subtitle: 'Join initiatives and gatherings', path: '/events', icon: Calendar },
+    { title: 'Hope Tapestry', subtitle: 'Read stories of resilience', path: '/tapestry', icon: BookOpen },
   ];
 
   return (
@@ -42,7 +46,7 @@ const CitizenDashboard: React.FC = () => {
         <TapestryPreview />
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {navTiles.map((tile) => (
           <div 
             key={tile.path} 
@@ -107,6 +111,17 @@ const CitizenDashboard: React.FC = () => {
           <button onClick={() => navigate('/echoes')} className="px-4 py-2 bg-blue-600 text-white rounded-md">Go to Echoes</button>
         </div>
       </div>
+
+      <Modal isOpen={ratingModalOpen} onClose={() => setRatingModalOpen(false)} title={ratingTarget ? `Rate ${ratingTarget.name || ratingTarget.id}` : 'Rate'}>
+        {ratingTarget && (
+          <RatingSystem
+            targetId={ratingTarget.id}
+            targetType={ratingTarget.type}
+            targetName={ratingTarget.name}
+            onRatingSubmitted={() => setRatingModalOpen(false)}
+          />
+        )}
+      </Modal>
     </div>
   );
 };

@@ -6,12 +6,14 @@ import * as ReactRouterDOM from 'react-router-dom';
 import { Resource, ResourceCategory, Role } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
 import { useAuth } from '../context/AuthContext';
+import { useRatingModal } from '../context/RatingModalContext';
 import { useTranslation } from 'react-i18next';
 import { timeSince } from '../utils/time';
 
 const ResourceCard: React.FC<{ resource: Resource }> = ({ resource }) => {
   const { t } = useTranslation();
   const { enhancedFirebase } = useAuth();
+  const { openRatingModal } = useRatingModal();
 
   React.useEffect(() => {
     enhancedFirebase?.recordAnalytics?.('card_impression', { targetType: 'resource', targetId: resource.id });
@@ -54,11 +56,11 @@ const ResourceCard: React.FC<{ resource: Resource }> = ({ resource }) => {
               )}
               <div className="p-1 rounded-full hover:bg-gray-100">
                 <Star
-                  className="w-5 h-5 text-amber-400"
+                  className="w-5 h-5 text-amber-400 cursor-pointer"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    enhancedFirebase?.recordAnalytics?.('star_clicked', { targetType: 'resource', targetId: resource.id });
+                    openRatingModal({ id: resource.id, type: 'offering', name: resource.title });
                   }}
                 />
               </div>
