@@ -144,6 +144,28 @@ const AdminDashboard: React.FC = () => {
         }
     }, []);
 
+    // Callable function to run ledger test from Admin UI
+    const runLedgerTest = React.useCallback(async (opts?: { receiverIds?: string[]; num?: number }) => {
+        try {
+            const { getFunctions, httpsCallable } = await import('firebase/functions');
+            const functions = getFunctions();
+            const fn = httpsCallable(functions, 'adminRunLedgerTest');
+            const res = await fn({ receiverIds: opts?.receiverIds, num: opts?.num });
+            const payload = (res && (res.data as any)) || {};
+            if (payload.success) {
+                toast.show(`Created ${((payload.created || []) as any).length} ledger entries`, 'success');
+                // Refresh aggregates after a short delay to allow triggers to run
+                setTimeout(() => fetchAggregates(), 3000);
+            } else {
+                const err = payload.error || 'unknown';
+                toast.show(`Failed: ${err}`, 'error');
+            }
+        } catch (err) {
+            console.error('Error calling adminRunLedgerTest:', err);
+            toast.show('Failed to call function', 'error');
+        }
+    }, [toast, fetchAggregates]);
+
     const fetchPerUserDetail = React.useCallback(async (userId: string) => {
         try {
             const { db } = await import('../services/firebase');
@@ -348,6 +370,7 @@ const AdminDashboard: React.FC = () => {
                     <div className="flex items-center gap-2">
                         <button onClick={async () => await fetchAggregates()} className="px-3 py-1 bg-amber-500 text-white rounded">Refresh</button>
                         <button onClick={() => setShowRawAgg(s => !s)} className="px-3 py-1 border rounded">{showRawAgg ? 'Hide Raw' : 'Show Raw'}</button>
+                        <button onClick={() => { if (confirm('Create sample ledger entries?')) runLedgerTest({ num: 8 }); }} className="px-3 py-1 bg-red-100 text-red-700 rounded">Run Test</button>
                     </div>
                 </div>
 
