@@ -81,3 +81,56 @@ export const getPreaggregatedLeaderboard = functions.https.onCall(async (data, c
     return { success: false, error: err instanceof Error ? err.message : 'Unknown' };
   }
 });
+
+// Callable function that allows an authenticated Admin to create sample ledger entries
+export const adminRunLedgerTest = functions.https.onCall(async (data, context) => {
+  try {
+    // Require auth
+    if (!context.auth || !context.auth.uid) {
+      return { success: false, error: 'unauthenticated' };
+    }
+
+    // Basic role check via custom claims
+    const roleClaim = (context.auth.token && (context.auth.token as any).role) as string | undefined;
+    let isAdmin = roleClaim === 'Admin';
+
+    // If no claim, fallback to reading user doc
+    if (!isAdmin) {
+      const userDoc = await db.collection('users').doc(context.auth.uid).get();
+      if (userDoc.exists) {
+        const u = userDoc.data() as any;
+        isAdmin = u?.role === 'Admin';
+      }
+    }
+
+    if (!isAdmin) return { success: false, error: 'permission-denied' };
+
+    const receiverIds: string[] = Array.isArray(data?.receiverIds) && data.receiverIds.length > 0 ? data.receiverIds : ['demo_user_a', 'demo_user_b'];
+    const num = typeof data?.num === 'number' ? Math.max(1, Math.min(200, data.num)) : 6;
+    const actorId = data?.actorId || 'admin_test_agent';
+
+    const writes: Promise<admin.firestore.DocumentReference>[] = [];
+    for (let i = 0; i < num; i++) {
+      const receiverId = receiverIds[i % receiverIds.length];
+      const amount = Math.floor(Math.random() * 5) + 1;
+      const entry = {
+        actorId,
+        receiverId,
+        category: 'CommunityGift',
+        amount,
+        reason: `admin_test_${Date.now()}_${i}`,
+        timestamp: admin.firestore.FieldValue.serverTimestamp()
+      };
+      writes.push(db.collection('hope_ledger').add(entry));
+    }
+
+    const refs = await Promise.all(writes);
+    const ids = refs.map(r => r.id);
+
+    // return created ids so caller can inspect
+    return { success: true, created: ids };
+  } catch (err) {
+    console.error('Error in adminRunLedgerTest:', err);
+    return { success: false, error: err instanceof Error ? err.message : 'unknown' };
+  }
+});
