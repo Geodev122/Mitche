@@ -1,7 +1,7 @@
 import React from 'react';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
-import { PlusCircle, Calendar, Users, ShieldCheck } from 'lucide-react';
+import { PlusCircle, Calendar, Users, ShieldCheck, Star } from 'lucide-react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { CommunityEvent, CommunityEventType, Role } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
@@ -11,6 +11,11 @@ import { timeSince } from '../utils/time';
 
 const EventCard: React.FC<{ event: CommunityEvent }> = ({ event }) => {
   const { t } = useTranslation();
+  const { enhancedFirebase } = useAuth();
+
+  React.useEffect(() => {
+    enhancedFirebase?.recordAnalytics?.('card_impression', { targetType: 'event', targetId: event.id });
+  }, [event.id, enhancedFirebase]);
   
   const typeStyles = {
     [CommunityEventType.Volunteer]: { text: t(`communityEventTypes.${CommunityEventType.Volunteer}`), classes: 'bg-green-100 text-green-700' },
@@ -30,7 +35,7 @@ const EventCard: React.FC<{ event: CommunityEvent }> = ({ event }) => {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
                 <h3 className="font-bold text-gray-800">{event.organizerSymbolicName}</h3>
-                {event.organizerIsVerified && <ShieldCheck className="w-4 h-4 text-blue-500" title={t('verifiedOrg') as string} />}
+                {event.organizerIsVerified && <ShieldCheck className="w-4 h-4 text-blue-500" aria-label={t('verifiedOrg') as string} />}
             </div>
             <span className="text-xs text-gray-400">{timeSince(event.timestamp, t)}</span>
           </div>
@@ -39,8 +44,18 @@ const EventCard: React.FC<{ event: CommunityEvent }> = ({ event }) => {
           <p className="text-gray-600 mt-1 text-md">{event.description}</p>
         </div>
       </div>
-      <div className={`absolute top-2 right-2 text-xs ${currentTypeStyle.classes} px-2 py-1 rounded-full font-semibold`}>
-          {currentTypeStyle.text}
+      <div className="absolute top-2 right-2 flex items-center gap-2">
+        <div className={`text-xs ${currentTypeStyle.classes} px-2 py-1 rounded-full font-semibold`}>{currentTypeStyle.text}</div>
+        {event.rating && (
+          <div className="flex items-center gap-1 text-sm text-gray-600">
+            <Star className="w-4 h-4 text-amber-400" />
+            <span className="font-semibold">{event.rating.average ? event.rating.average.toFixed(1) : '-'}</span>
+            <span className="text-xs text-gray-400">({event.rating.count || 0})</span>
+          </div>
+        )}
+        <div className="p-1 rounded-full hover:bg-gray-100">
+          <Star className="w-5 h-5 text-amber-400" onClick={(e) => { e.stopPropagation(); enhancedFirebase?.recordAnalytics?.('star_clicked', { targetType: 'event', targetId: event.id }); }} />
+        </div>
       </div>
     </Card>
   );

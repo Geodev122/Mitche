@@ -11,6 +11,11 @@ import { timeSince } from '../utils/time';
 
 const ResourceCard: React.FC<{ resource: Resource }> = ({ resource }) => {
   const { t } = useTranslation();
+  const { enhancedFirebase } = useAuth();
+
+  React.useEffect(() => {
+    enhancedFirebase?.recordAnalytics?.('card_impression', { targetType: 'resource', targetId: resource.id });
+  }, [resource.id, enhancedFirebase]);
 
   return (
     <ReactRouterDOM.Link to={`/resources/${resource.id}`} className="block">
@@ -25,7 +30,7 @@ const ResourceCard: React.FC<{ resource: Resource }> = ({ resource }) => {
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <h3 className="font-bold text-gray-800">{resource.organizerSymbolicName}</h3>
-                {resource.organizerIsVerified && <ShieldCheck className="w-4 h-4 text-blue-500" title={t('verifiedOrg') as string} />}
+                {resource.organizerIsVerified && <ShieldCheck className="w-4 h-4 text-blue-500" aria-label={t('verifiedOrg') as string} />}
               </div>
               <span className="text-xs text-gray-400">{timeSince(resource.timestamp, t)}</span>
             </div>
@@ -39,8 +44,24 @@ const ResourceCard: React.FC<{ resource: Resource }> = ({ resource }) => {
               {resource.contactInfo && <p className="text-gray-500">{resource.contactInfo}</p>}
             </div>
 
-            <div className="absolute bottom-2 right-2">
-              <Star className="w-5 h-5 text-amber-400" />
+            <div className="absolute bottom-2 right-2 flex items-center gap-2">
+              {resource.rating && (
+                <div className="flex items-center gap-1 text-sm text-gray-600">
+                  <Star className="w-4 h-4 text-amber-400" />
+                  <span className="font-semibold">{resource.rating.average ? resource.rating.average.toFixed(1) : '-'}</span>
+                  <span className="text-xs text-gray-400">({resource.rating.count || 0})</span>
+                </div>
+              )}
+              <div className="p-1 rounded-full hover:bg-gray-100">
+                <Star
+                  className="w-5 h-5 text-amber-400"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    enhancedFirebase?.recordAnalytics?.('star_clicked', { targetType: 'resource', targetId: resource.id });
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
