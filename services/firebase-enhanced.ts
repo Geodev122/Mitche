@@ -411,6 +411,126 @@ export class EnhancedFirebaseService {
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
+
+  // === DEMO CONTENT MANAGEMENT (non-critical collection for admin) ===
+  async getDemoContent(): Promise<ApiResponse<any[]>> {
+    try {
+      const snapshot = await getDocs(collection(db, 'demo_content'));
+      const items = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
+      return { success: true, data: items };
+    } catch (error) {
+      console.error('Error fetching demo content:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+
+  async addDemoContent(item: any): Promise<ApiResponse<string>> {
+    try {
+      const ref = await addDoc(collection(db, 'demo_content'), { ...item, createdAt: serverTimestamp() });
+      return { success: true, data: ref.id };
+    } catch (error) {
+      console.error('Error adding demo content:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+
+  async deleteDemoContent(id: string): Promise<ApiResponse<void>> {
+    try {
+      await deleteDoc(doc(db, 'demo_content', id));
+      return { success: true };
+    } catch (error) {
+      console.error('Error deleting demo content:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+
+  // === HOPE POINTS LEDGER & LEADERBOARD ===
+  /**
+   * Record hope points transfer/event to ledger and update user's aggregate hopePoints.
+   * depthMultiplier option can weight points by depth/importance.
+   */
+  async recordHopePoints(actorId: string, receiverId: string, category: string, amount: number, reason?: string, depthMultiplier = 1): Promise<ApiResponse<void>> {
+    try {
+      const points = Math.max(0, Math.floor(amount * depthMultiplier));
+      const ledgerEntry = {
+        actorId,
+        receiverId,
+        category,
+        amount: points,
+        reason: reason || '',
+        timestamp: serverTimestamp()
+      };
+
+      // write ledger entry
+      await addDoc(collection(db, 'hope_ledger'), ledgerEntry);
+
+      // atomically update receiver's hopePoints total and history
+      const userRef = doc(db, 'users', receiverId);
+      await updateDoc(userRef, {
+        hopePoints: increment(points),
+        updatedAt: serverTimestamp()
+      });
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error recording hope points:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+
+  /**
+   * Get leaderboard. Supports role filter and time range and a depth-based scoring flag.
+   */
+  async getLeaderboard(opts?: { role?: string; startDate?: string; endDate?: string; depthBased?: boolean; limit?: number; }): Promise<ApiResponse<any[]>> {
+    try {
+      // Simple implementation: aggregate hope_ledger entries in the time window and sum per receiverId
+      let ledgerQuery = query(collection(db, 'hope_ledger'));
+
+      // If time filters provided, filter by timestamp range using date strings stored as ISO date in ledger? Ledger uses serverTimestamp; fall back to client-side filter
+      const snapshot = await getDocs(ledgerQuery);
+      const entries = snapshot.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+
+      // Filter by date range if provided (compare by timestamp.toDate or timestamp.seconds when available)
+      let filtered = entries;
+      if (opts?.startDate || opts?.endDate) {
+        const start = opts?.startDate ? new Date(opts.startDate) : new Date('1970-01-01');
+        const end = opts?.endDate ? new Date(opts.endDate) : new Date();
+        filtered = filtered.filter(e => {
+          const ts = e.timestamp && e.timestamp.toDate ? e.timestamp.toDate() : (e.timestamp ? new Date(e.timestamp) : null);
+          if (!ts) return false;
+          return ts >= start && ts <= end;
+        });
+      }
+
+      // Aggregate
+      const totals: Record<string, number> = {};
+      filtered.forEach(e => {
+        const rid = e.receiverId;
+        const amt = Number(e.amount || 0);
+        // depthBased could apply a non-linear weighting; for now assume already applied when recorded
+        totals[rid] = (totals[rid] || 0) + amt;
+      });
+
+      // Convert to array and optionally filter by role (requires fetching users)
+      const rows = Object.entries(totals).map(([id, points]) => ({ id, points }));
+
+      if (opts?.role) {
+        // fetch user docs and filter
+        const usersSnapshot = await getDocs(collection(db, 'users'));
+        const users = usersSnapshot.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+        const roleSet = new Set(users.filter(u => u.role === opts.role).map(u => u.id));
+        const rowsFiltered = rows.filter(r => roleSet.has(r.id));
+        const sorted = rowsFiltered.sort((a, b) => b.points - a.points).slice(0, opts.limit || 100);
+        return { success: true, data: sorted };
+      }
+
+      const sorted = rows.sort((a, b) => b.points - a.points).slice(0, opts?.limit || 100);
+      return { success: true, data: sorted };
+    } catch (error) {
+      console.error('Error getting leaderboard:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
 }
 
 export const enhancedFirebaseService = new EnhancedFirebaseService();

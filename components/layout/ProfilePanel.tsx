@@ -234,6 +234,9 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
                 </Card>
                  <Card className="!p-2">
                     <div className="space-y-1">
+                        {user.role === Role.Admin && (
+                            <SettingsButton icon={ShieldCheck} label={t('nav.admin', 'Admin')} onClick={() => handleNavigation('/admin')} />
+                        )}
                         {isPushSupportedState && (
                              <SettingsButton
                                 icon={isSubscribed ? BellOff : Bell}
