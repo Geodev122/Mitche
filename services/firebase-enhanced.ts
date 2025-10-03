@@ -531,6 +531,23 @@ export class EnhancedFirebaseService {
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
+
+  // Read pre-aggregated global leaderboard doc
+  async getPreaggregatedGlobal(): Promise<ApiResponse<any[]>> {
+    try {
+      const docRef = doc(db, 'leaderboard_aggregates', 'global');
+      const snap = await getDoc(docRef as any);
+      if (!snap.exists()) return { success: true, data: [] };
+  const data = snap.data() as any || {};
+  const totals = (data.totals || {}) as Record<string, number>;
+  const rows = Object.entries(totals).map(([id, points]) => ({ id, points: Number(points || 0) }));
+  const sorted = rows.sort((a, b) => b.points - a.points);
+      return { success: true, data: sorted };
+    } catch (err) {
+      console.error('Error reading preaggregated global leaderboard:', err);
+      return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
+    }
+  }
 }
 
 export const enhancedFirebaseService = new EnhancedFirebaseService();
