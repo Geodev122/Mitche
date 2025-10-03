@@ -901,6 +901,18 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!isFirebaseEnabled) return null;
     try {
       const { enhancedFirebaseService } = await import('../services/firebase-enhanced');
+      // First, try to read pre-aggregated global document for fast leaderboard
+      try {
+        if (typeof enhancedFirebaseService.getPreaggregatedGlobal === 'function') {
+          const aggRes = await enhancedFirebaseService.getPreaggregatedGlobal();
+          if (aggRes && aggRes.success && Array.isArray(aggRes.data)) {
+            return aggRes.data.slice(0, opts?.limit || 100);
+          }
+        }
+      } catch (innerErr) {
+        // ignore and fall back to ledger aggregation
+      }
+
       const res = await enhancedFirebaseService.getLeaderboard(opts);
       if (res && res.success) return res.data as any[] || [];
       return null;
