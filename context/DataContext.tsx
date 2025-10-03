@@ -28,6 +28,8 @@ interface DataContextType {
   getOfferingsForRequest: (requestId: string) => Offering[];
   leaveCommendation: (requestId: string, fromRole: 'requester' | 'helper', commendations: CommendationType[]) => void;
   addTapestryThread: (thread: Omit<TapestryThread, 'id' | 'timestamp'>) => Promise<string | null>;
+  recordHopePoints?: (actorId: string, receiverId: string, category: string, amount: number, reason?: string, depthMultiplier?: number) => Promise<{ success: boolean } | undefined>;
+  getLeaderboard?: (opts?: { role?: string; startDate?: string; endDate?: string; depthBased?: boolean; limit?: number; }) => Promise<any[] | null>;
 }
 
 const DataContext = React.createContext<DataContextType | undefined>(undefined);
@@ -740,6 +742,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
               isRead: false,
               type: 'Generic'
             };
+
+            
             await firebaseService.createNotification(newNotification as any);
             // Optimistically update local auth state via updateUser from context
             updateUser(giverUpdatedPartial);
@@ -880,9 +884,35 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+  // Hope points ledger wrappers (provider scope)
+  const recordHopePoints = async (actorId: string, receiverId: string, category: string, amount: number, reason?: string, depthMultiplier = 1) => {
+    if (!isFirebaseEnabled) return { success: false };
+    try {
+      const { enhancedFirebaseService } = await import('../services/firebase-enhanced');
+      const res = await enhancedFirebaseService.recordHopePoints(actorId, receiverId, category, amount, reason, depthMultiplier);
+      return { success: res.success };
+    } catch (err) {
+      console.error('Error recording hope points wrapper', err);
+      return { success: false };
+    }
+  };
+
+  const getLeaderboard = async (opts?: { role?: string; startDate?: string; endDate?: string; depthBased?: boolean; limit?: number; }) => {
+    if (!isFirebaseEnabled) return null;
+    try {
+      const { enhancedFirebaseService } = await import('../services/firebase-enhanced');
+      const res = await enhancedFirebaseService.getLeaderboard(opts);
+      if (res && res.success) return res.data as any[] || [];
+      return null;
+    } catch (err) {
+      console.error('Error fetching leaderboard', err);
+      return null;
+    }
+  };
+
 
   return (
-    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, communityEvents, addCommunityEvent, getRequestById, getOfferingsForRequest, resources, addResource, leaveCommendation, addTapestryThread }}>
+    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, communityEvents, addCommunityEvent, getRequestById, getOfferingsForRequest, resources, addResource, leaveCommendation, addTapestryThread, recordHopePoints, getLeaderboard }}>
       {children}
     </DataContext.Provider>
   );

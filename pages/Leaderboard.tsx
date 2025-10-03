@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useData } from '../context/DataContext';
 import { useTranslation } from 'react-i18next';
 import { User } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
@@ -24,15 +25,15 @@ const PodiumCard: React.FC<{ user: User; rank: number; isCurrentUser: boolean }>
     const highlightClass = isCurrentUser ? 'ring-2 ring-offset-2 ring-[#D4AF37]' : '';
     return (
         <div className={`text-center p-4 rounded-xl border-2 ${getPodiumClass(rank)} ${highlightClass}`}>
-            {rank === 1 && <Crown className="w-8 h-8 mx-auto text-yellow-500 -mt-8 mb-2" />}
-            {rank === 2 && <Trophy className="w-6 h-6 mx-auto text-gray-400 -mt-7 mb-1" />}
-            {rank === 3 && <Trophy className="w-6 h-6 mx-auto text-amber-500 -mt-7 mb-1" />}
+            {rank === 1 && <Crown className="w-8 h-8 mx-auto text-yellow-500 -mt-8 mb-2" aria-label={t('leaderboard.first') || 'First'} />}
+                {rank === 2 && <Trophy className="w-6 h-6 mx-auto text-gray-400 -mt-7 mb-1" aria-label={t('leaderboard.second') || 'Second'} />}
+                {rank === 3 && <Trophy className="w-6 h-6 mx-auto text-amber-500 -mt-7 mb-1" aria-label={t('leaderboard.third') || 'Third'} />}
             <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-2 border-2 ${getPodiumClass(rank)} bg-white`}>
                 <SymbolIcon name={user.symbolicIcon} className="w-8 h-8 text-gray-700" />
             </div>
             <div className="flex items-center justify-center gap-1">
                 <p className="font-bold text-gray-800 truncate">{user.symbolicName}</p>
-                {user.isVerified && <ShieldCheck className="w-4 h-4 text-blue-500 flex-shrink-0" title={t('verifiedOrg') as string} />}
+                {user.isVerified && <ShieldCheck className="w-4 h-4 text-blue-500 flex-shrink-0" aria-label={t('verifiedOrg') as string} />}
             </div>
             <p className="text-sm font-bold text-[#D4AF37]">{user.hopePoints} pts</p>
         </div>
@@ -40,16 +41,41 @@ const PodiumCard: React.FC<{ user: User; rank: number; isCurrentUser: boolean }>
 };
 
 const Leaderboard: React.FC = () => {
-    const { getAllUsers, user: currentUser } = useAuth();
+    const { getAllUsers, user: currentUser, isFirebaseEnabled } = useAuth();
+    const { getLeaderboard } = useData();
     const { t } = useTranslation();
 
     if (!currentUser) return null;
 
-    const users = getAllUsers().sort((a, b) => b.hopePoints - a.hopePoints);
+    const [users, setUsers] = React.useState<any[]>([]);
+    const [loading, setLoading] = React.useState(false);
+
+    React.useEffect(() => {
+        let mounted = true;
+        const load = async () => {
+            setLoading(true);
+            if (isFirebaseEnabled && getLeaderboard) {
+                const rows = await getLeaderboard({ limit: 100 });
+                if (mounted && rows) {
+                    // rows are {id, points}
+                    // Fetch user details for display
+                    const detailed = rows.map(r => ({ id: r.id, hopePoints: r.points }));
+                    setUsers(detailed);
+                }
+            } else {
+                const local = getAllUsers().sort((a, b) => b.hopePoints - a.hopePoints);
+                setUsers(local as any[]);
+            }
+            setLoading(false);
+        };
+        load();
+        return () => { mounted = false; };
+    }, [getAllUsers, isFirebaseEnabled, getLeaderboard]);
+
     const topThree = users.slice(0, 3);
     const restOfUsers = users.slice(3);
 
-    const currentUserRank = users.findIndex(u => u.id === currentUser.id) + 1;
+    const currentUserRank = users.findIndex((u: any) => u.id === currentUser.id) + 1;
     const isCurrentUserInTop3 = currentUserRank > 0 && currentUserRank <= 3;
 
     return (
@@ -97,7 +123,7 @@ const Leaderboard: React.FC = () => {
                                 <SymbolIcon name={user.symbolicIcon} className="w-6 h-6 text-gray-500" />
                                 <div className="flex items-center gap-1">
                                     <span className="font-semibold text-gray-800 truncate">{user.symbolicName}</span>
-                                    {user.isVerified && <ShieldCheck className="w-4 h-4 text-blue-500 flex-shrink-0" title={t('verifiedOrg') as string} />}
+                                    {user.isVerified && <ShieldCheck className="w-4 h-4 text-blue-500 flex-shrink-0" aria-label={t('verifiedOrg') as string} />}
                                 </div>
                             </div>
                             <div className="w-2/6 text-right font-bold text-[#3A3A3A]">{user.hopePoints}</div>

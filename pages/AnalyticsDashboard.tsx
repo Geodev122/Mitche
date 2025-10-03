@@ -5,6 +5,8 @@ import Card from '../components/ui/Card';
 import { useNavigate } from 'react-router-dom';
 import { Role } from '../types';
 import { enhancedFirebaseService } from '../services/firebase-enhanced';
+import { db } from '../services/firebase';
+import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 
 const AnalyticsDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -12,25 +14,41 @@ const AnalyticsDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [summary, setSummary] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
+  const [startDate, setStartDate] = React.useState<string>(() => new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]);
+  const [endDate, setEndDate] = React.useState<string>(() => new Date().toISOString().split('T')[0]);
+  const [daily, setDaily] = React.useState<Record<string, { card_impression: number; star_clicked: number }>>({});
+
+  const loadSummary = React.useCallback(async (start: string, end: string) => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const res = await enhancedFirebaseService.getAnalyticsSummary(start, end);
+      if (res.success) setSummary(res.data);
+
+      // Also fetch raw analytics docs for daily breakdown
+      const analyticsRef = collection(db, 'analytics');
+      const q = query(analyticsRef, where('date', '>=', start), where('date', '<=', end), orderBy('date', 'asc'));
+      const snap = await getDocs(q);
+      const dailyAgg: Record<string, { card_impression: number; star_clicked: number }> = {};
+      snap.docs.forEach(d => {
+        const doc = d.data() as any;
+        const date = doc.date as string;
+        if (!dailyAgg[date]) dailyAgg[date] = { card_impression: 0, star_clicked: 0 };
+        if (doc.eventType === 'card_impression') dailyAgg[date].card_impression += 1;
+        if (doc.eventType === 'star_clicked') dailyAgg[date].star_clicked += 1;
+      });
+      setDaily(dailyAgg);
+    } catch (err) {
+      console.error('Error loading analytics summary', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [user]);
 
   React.useEffect(() => {
     if (!user || [Role.Citizen].includes(user.role)) return;
-    (async () => {
-      setLoading(true);
-      try {
-        // Simple server-side summary helper if available
-        const today = new Date();
-        const start = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
-        const end = new Date().toISOString().split('T')[0];
-        const res = await enhancedFirebaseService.getAnalyticsSummary(start, end);
-        if (res.success) setSummary(res.data);
-      } catch (err) {
-        console.error('Error loading analytics summary', err);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [user]);
+    loadSummary(startDate, endDate);
+  }, [user, startDate, endDate, loadSummary]);
 
   if (!user) return null;
   if ([Role.Citizen].includes(user.role)) return <div className="p-4">Access denied</div>;
@@ -42,25 +60,75 @@ const AnalyticsDashboard: React.FC = () => {
         <p className="text-sm text-gray-500 mt-1">{t('analytics.subtitle', 'Engagement and event tracking')}</p>
       </header>
 
+      <div className="bg-white rounded-lg p-4 mb-6">
+        <div className="flex flex-col md:flex-row md:items-end md:space-x-4">
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-600">Start</label>
+            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="px-3 py-2 border rounded" />
+          </div>
+          <div className="flex items-center gap-2 mt-2 md:mt-0">
+            <label className="text-sm text-gray-600">End</label>
+            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="px-3 py-2 border rounded" />
+          </div>
+          <div className="mt-2 md:mt-0">
+            <button onClick={() => loadSummary(startDate, endDate)} className="px-4 py-2 bg-blue-600 text-white rounded-md">Load</button>
+          </div>
+        </div>
+      </div>
+
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <Card>
+              <h3 className="font-semibold">Total Events</h3>
+              <p className="text-2xl font-bold mt-2">{summary?.totalEvents ?? 0}</p>
+            </Card>
+            <Card>
+              <h3 className="font-semibold">Card Impressions</h3>
+              <p className="text-2xl font-bold mt-2">{summary?.eventsByType?.card_impression ?? 0}</p>
+            </Card>
+            <Card>
+              <h3 className="font-semibold">Star Clicks</h3>
+              <p className="text-2xl font-bold mt-2">{summary?.eventsByType?.star_clicked ?? 0}</p>
+            </Card>
+          </div>
+
           <Card>
-            <h3 className="font-semibold">Total Events</h3>
-            <p className="text-2xl font-bold mt-2">{summary?.totalEvents ?? 0}</p>
+            <h3 className="font-semibold mb-3">Daily Breakdown</h3>
+            <div className="w-full h-48">
+              <DailyBarChart data={daily} />
+            </div>
           </Card>
-          <Card>
-            <h3 className="font-semibold">Card Impressions</h3>
-            <p className="text-2xl font-bold mt-2">{summary?.eventsByType?.card_impression ?? 0}</p>
-          </Card>
-          <Card>
-            <h3 className="font-semibold">Star Clicks</h3>
-            <p className="text-2xl font-bold mt-2">{summary?.eventsByType?.star_clicked ?? 0}</p>
-          </Card>
-        </div>
+        </>
       )}
     </div>
+  );
+};
+
+const DailyBarChart: React.FC<{ data: Record<string, { card_impression: number; star_clicked: number }> }> = ({ data }) => {
+  const dates = Object.keys(data).sort();
+  if (dates.length === 0) return <div className="text-sm text-gray-500">No data for selected range</div>;
+
+  const maxVal = Math.max(...dates.map(d => Math.max(data[d].card_impression, data[d].star_clicked, 0)) , 1);
+  const barWidth = Math.floor(100 / dates.length);
+
+  return (
+    <svg viewBox={`0 0 100 50`} className="w-full h-full">
+      {dates.map((date, i) => {
+        const x = i * barWidth;
+        const cardH = (data[date].card_impression / maxVal) * 40;
+        const starH = (data[date].star_clicked / maxVal) * 40;
+        return (
+          <g key={date} transform={`translate(${x},0)` }>
+            <rect x={2} y={45 - cardH} width={barWidth - 6} height={cardH} fill="#D4AF37" opacity={0.9} />
+            <rect x={2} y={45 - cardH - starH - 1} width={barWidth - 6} height={starH} fill="#3A3A3A" opacity={0.9} />
+            <text x={barWidth/2} y={49} fontSize={3} fill="#666" textAnchor="middle">{date.slice(5)}</text>
+          </g>
+        );
+      })}
+    </svg>
   );
 };
 
