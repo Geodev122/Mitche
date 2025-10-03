@@ -372,6 +372,17 @@
     "reject": "Reject",
     "noPendingRequests": "No pending verification requests."
   },
+  "demo": {
+    "title": "Demo Content",
+    "searchPlaceholder": "Search demo items...",
+    "noItems": "No demo items",
+    "addSuccess": "Demo item added",
+    "addError": "Failed to add demo item",
+    "deleteSuccess": "Demo item deleted",
+    "deleteError": "Failed to delete demo item",
+    "confirmDelete": "Delete demo item? This cannot be undone.",
+    "showing": "Showing"
+  },
   "leaderboard": {
     "title": "Hope Leaderboard",
     "subtitle": "Celebrating the most active bearers of hope",
