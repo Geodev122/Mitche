@@ -9,10 +9,12 @@ import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { timeSince } from '../utils/time';
 import { RatingSystem } from '../components/rating/RatingSystem';
+import { useRatingModal } from '../context/RatingModalContext';
 
 const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
   const { t } = useTranslation();
   const { enhancedFirebase } = useAuth();
+  const { openRatingModal } = useRatingModal();
 
   React.useEffect(() => {
     // Record impression analytics
@@ -56,16 +58,16 @@ const RequestCard: React.FC<{ request: Request }> = ({ request }) => {
                 </div>
               )}
             </div>
-            <ReactRouterDOM.Link to={`/echoes/${request.id}`} onClick={(e) => e.stopPropagation()} className="p-1 rounded-full hover:bg-gray-100">
+            <div className="p-1 rounded-full hover:bg-gray-100">
               <Star
-                className="w-5 h-5 text-amber-400"
+                className="w-5 h-5 text-amber-400 cursor-pointer"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  enhancedFirebase?.recordAnalytics?.('star_clicked', { targetType: 'request', targetId: request.id });
+                  openRatingModal({ id: request.id, type: 'request', name: request.title });
                 }}
               />
-            </ReactRouterDOM.Link>
+            </div>
           </div>
         <p className="text-gray-600 text-md line-clamp-2">{request.description}</p>
       </Card>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
+import { DEMO_REQUESTS, DEMO_EVENTS } from './demoData';
 import * as ReactRouterDOM from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Card from '../../components/ui/Card';
@@ -42,10 +43,12 @@ const OrganizationDashboard: React.FC = () => {
         return <ReactRouterDOM.Navigate to="/onboarding" replace />;
     }
 
-    const openRequests = requests.filter(r => r.status === RequestStatus.Open);
+    const dataRequests = requests.length ? requests : (DEMO_REQUESTS as any[]);
+    const dataEvents = communityEvents.length ? communityEvents : (DEMO_EVENTS as any[]);
+    const openRequests = dataRequests.filter(r => r.status === RequestStatus.Open);
     const silentRequests = openRequests.filter(r => r.mode === RequestMode.Silent);
     const loudRequests = openRequests.filter(r => r.mode === RequestMode.Loud);
-    const orgEvents = communityEvents.filter(e => e.organizerId === user.id);
+    const orgEvents = dataEvents.filter(e => e.organizerId === user.id);
 
     return (
         <div className="p-4 pb-24 space-y-6">

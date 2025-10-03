@@ -5,6 +5,7 @@ import { DataProvider } from './context/DataContext';
 import LanguageManager from './components/LanguageManager';
 import { ToastProvider } from './components/ui/Toast';
 import { Role } from './types';
+import { RatingModalProvider } from './context/RatingModalContext';
 
 import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
@@ -27,6 +28,7 @@ import ResourceHub from './pages/ResourceHub';
 import CreateResource from './pages/CreateResource';
 import ResourceDetail from './pages/ResourceDetail';
 import EnhancedPlatformDemo from './pages/EnhancedPlatformDemo';
+import AnalyticsDashboard from './pages/AnalyticsDashboard';
 
 const LoadingFallback: React.FC = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-[#FBF9F4]">
@@ -53,7 +55,10 @@ const App: React.FC = () => {
           <ReactRouterDOM.HashRouter>
             <LanguageManager>
               <React.Suspense fallback={<LoadingFallback />}>
-                <Main />
+                {/* Rating modal provider makes inline rating modal available to all pages */}
+                <RatingModalProvider>
+                  <Main />
+                </RatingModalProvider>
               </React.Suspense>
             </LanguageManager>
           </ReactRouterDOM.HashRouter>
@@ -118,6 +123,7 @@ const Main: React.FC = () => {
   <ReactRouterDOM.Route path="events/:eventId" element={<CommunityEventDetail />} />
         <ReactRouterDOM.Route path="events/new" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]}><CreateEvent /></ProtectedRoute>} />
         <ReactRouterDOM.Route path="leaderboard" element={<Leaderboard />} />
+  <ReactRouterDOM.Route path="analytics" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]}><AnalyticsDashboard /></ProtectedRoute>} />
         <ReactRouterDOM.Route path="constellation" element={<Constellation />} />
         <ReactRouterDOM.Route path="resources" element={<ResourceHub />} />
   <ReactRouterDOM.Route path="resources/:resourceId" element={<ResourceDetail />} />

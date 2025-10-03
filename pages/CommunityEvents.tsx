@@ -6,12 +6,14 @@ import * as ReactRouterDOM from 'react-router-dom';
 import { CommunityEvent, CommunityEventType, Role } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
 import { useAuth } from '../context/AuthContext';
+import { useRatingModal } from '../context/RatingModalContext';
 import { useTranslation } from 'react-i18next';
 import { timeSince } from '../utils/time';
 
 const EventCard: React.FC<{ event: CommunityEvent }> = ({ event }) => {
   const { t } = useTranslation();
   const { enhancedFirebase } = useAuth();
+  const { openRatingModal } = useRatingModal();
 
   React.useEffect(() => {
     enhancedFirebase?.recordAnalytics?.('card_impression', { targetType: 'event', targetId: event.id });
@@ -54,7 +56,7 @@ const EventCard: React.FC<{ event: CommunityEvent }> = ({ event }) => {
           </div>
         )}
         <div className="p-1 rounded-full hover:bg-gray-100">
-          <Star className="w-5 h-5 text-amber-400" onClick={(e) => { e.stopPropagation(); enhancedFirebase?.recordAnalytics?.('star_clicked', { targetType: 'event', targetId: event.id }); }} />
+          <Star className="w-5 h-5 text-amber-400 cursor-pointer" onClick={(e) => { e.stopPropagation(); openRatingModal({ id: event.id, type: 'event', name: event.title }); }} />
         </div>
       </div>
     </Card>
