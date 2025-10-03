@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import Card from '../ui/Card';
 import SymbolIcon from '../ui/SymbolIcon';
-import { Award, ShieldCheck, LogOut, Download, Pencil, MapPin, QrCode, ScanLine, Bell, BellOff, Send, ChevronRight, X, Info, Camera } from 'lucide-react';
+import { Award, ShieldCheck, LogOut, Download, Pencil, MapPin, QrCode, ScanLine, Bell, BellOff, Send, ChevronRight, X, Info, Camera, Zap } from 'lucide-react';
 import { HopePointCategory, Role } from '../../types';
 import { useTranslation } from 'react-i18next';
 import Modal from '../ui/Modal';
@@ -143,6 +143,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
   if (!user) return null;
 
   const isOrg = user.role === Role.NGO || user.role === Role.PublicWorker;
+    const showAnalytics = [Role.Admin, Role.NGO, Role.PublicWorker].includes(user.role as Role);
   const showInstallButton = deferredPrompt && !isAppInstalled;
 
   return (
@@ -227,6 +228,8 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
                         <SettingsButton icon={Pencil} label={t('constellation.editProfile.title')} onClick={() => setIsEditModalOpen(true)} />
                         <SettingsButton icon={Award} label={t('constellation.awardNominations')} onClick={() => handleNavigation('/nomination')} />
                         <SettingsButton icon={ShieldCheck} label={t('constellation.privacySettings')} />
+                        {/* Integrate Advanced Search into sidebar */}
+                        <SettingsButton icon={MapPin} label={t('search.advanced', 'Advanced Search')} onClick={() => handleNavigation('/search')} />
                     </div>
                 </Card>
                  <Card className="!p-2">
@@ -246,7 +249,10 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
                                 </div>
                             )}
                         </SettingsButton>
-                        <SettingsButton icon={LogOut} label={t('constellation.logout')} onClick={logout} isDestructive />
+                                {showAnalytics && (
+                                    <SettingsButton icon={Zap} label={t('analytics.title', 'Analytics')} onClick={() => handleNavigation('/analytics')} />
+                                )}
+                                <SettingsButton icon={LogOut} label={t('constellation.logout')} onClick={logout} isDestructive />
                     </div>
                 </Card>
 
