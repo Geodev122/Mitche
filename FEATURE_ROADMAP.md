@@ -42,7 +42,7 @@ This document outlines the comprehensive feature enhancement plan for the Mitch√
 **Implementation:**
 ```typescript
 // New components needed:
-- ChatInterface.tsx
+<!-- ChatInterface removed from Phase 1 roadmap -->
 - MessageThread.tsx
 - FileUploader.tsx
 - EmojiPicker.tsx
