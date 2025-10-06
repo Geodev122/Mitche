@@ -326,7 +326,9 @@ exports.generateSymbolicIcon = functions.https.onCall(async (data, context) => {
         const prompt = typeof data?.prompt === 'string' ? data.prompt : `A symbolic minimal icon representing a caring community in warm gold tones.`;
         if (!userId)
             throw new functions.https.HttpsError('invalid-argument', 'userId required');
-        const openaiKey = process.env.OPENAI_API_KEY;
+        // Prefer functions config (`firebase functions:config:set openai.key="..."`) but fall back to env var
+        const cfg = functions.config && functions.config();
+        const openaiKey = (cfg && cfg.openai && cfg.openai.key) || process.env.OPENAI_API_KEY;
         if (!openaiKey)
             throw new functions.https.HttpsError('failed-precondition', 'OpenAI API key not configured in functions environment');
         // Call OpenAI Images generation endpoint (request base64) - model selection may vary
