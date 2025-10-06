@@ -1,0 +1,12 @@
+Mitche is a civic/community engagement platform for users, organizations (NGOs), and public workers to create and join events, share resources, submit requests, nominate contributions, and upload documents for identity/role verification. The database needs to model user accounts, roles and permissions, a document verification workflow, events, resources, requests/offers, nominations, ratings/leaderboards, and admin audits.
+
+Entities and fields to generate:
+- users: { username (string), displayName (string), email (string, indexed), role (enum: Citizen|NGO|PublicWorker|Admin), bio (text), avatar {url, storagePath}, createdAt (timestamp), lastLogin (timestamp), score (number, for leaderboard), submittedDocuments (array of objects { url, storagePath, filename, contentType, size, uploadedAt, status: Pending|Approved|Rejected }), verificationStatus (Pending|Approved|Rejected|None), metadata (map) }
+- organizations (NGO profiles): { ownerUserId, name, description, website, contact, createdAt, members: array of userRefs, verified (bool) }
+- events: { title, description, hostId (user or org ref), startAt (timestamp), endAt (timestamp), location (geo or text), capacity (number), tags (array), createdAt, updatedAt, attendeesCount (number), attendeesRefs (subcollection or array) } — include common queries: list upcoming events, events by host, events by tag.
+- resources: { title, description, authorId, type (link/file), tags (array), attachments: array of {url, storagePath, filename, size, contentType}, createdAt, visibility (public/private/org), searchKeywords } — support search by tag/title/author.
+- requests/offers: { requesterId, title, description, status (open/closed/assigned), location, tags, createdAt, responses (subcollection) }.
+- nominations and responses: { nominatorId, nomineeId, itemId, reason, createdAt, status }.
+- ratings/comments: subcollections on items (events/resources) with { userId, rating (number), comment, createdAt } and aggregated fields on parent docs (avgRating, ratingCount).
+- verification_audits: { userId, documentRef (storagePath), action (uploaded|scanned|promoted|approved|rejected), actorId (admin/system), reason, timestamp, scanResult (map) } — append-only audit log for compliance.
+- admin notifications: { type, targetRef, createdAt, readBy: array }.
