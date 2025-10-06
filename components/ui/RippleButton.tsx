@@ -1,10 +1,12 @@
 import React from 'react';
 
-const RippleButton: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = ({ children, className = '', ...props }) => {
-  const ref = React.useRef<HTMLButtonElement | null>(null);
+const RippleButton = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(({ children, className = '', ...props }, ref) => {
+  const innerRef = React.useRef<HTMLButtonElement | null>(null);
+  // If a ref was passed, assign it
+  React.useImperativeHandle(ref, () => innerRef.current as HTMLButtonElement);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const btn = ref.current;
+    const btn = innerRef.current;
     if (!btn) return;
     const rect = btn.getBoundingClientRect();
     const ripple = document.createElement('span');
@@ -19,10 +21,10 @@ const RippleButton: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = ({
   };
 
   return (
-    <button {...props} ref={ref} onClick={handleClick} className={`relative overflow-hidden ${className}`}>
+    <button {...props} ref={innerRef} onClick={handleClick} className={`relative overflow-hidden ${className}`}>
       {children}
     </button>
   );
-};
+});
 
 export default RippleButton;
