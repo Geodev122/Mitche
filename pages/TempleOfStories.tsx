@@ -2,6 +2,7 @@ import React from 'react';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
 import { BookOpen, Zap, Wind, Users, Heart } from 'lucide-react';
+import RippleButton from '../components/ui/RippleButton';
 import SymbolIcon from '../components/ui/SymbolIcon';
 import { TapestryThread, TapestryThreadColor, TapestryThreadPattern } from '../types';
 import { useTranslation } from 'react-i18next';
@@ -79,10 +80,10 @@ const ThreadCard: React.FC<{ thread: TapestryThread }> = ({ thread }) => {
                         <Zap className="w-4 h-4 mr-1 rtl:mr-0 rtl:ml-1 text-blue-400" />
                         <span>{thread.rippleTag}</span>
                     </div>
-                    <button onClick={handleEcho} className="flex items-center hover:text-green-500 transition-colors active:scale-95" title="Echo this Story">
+                    <RippleButton onClick={handleEcho} className="flex items-center hover:text-green-500 transition-colors active:scale-95" title="Echo this Story">
                         <Wind className="w-4 h-4 mr-1 rtl:mr-0 rtl:ml-1" />
                         <span>{t('tapestry.echoStory', { count: thread.echoes })}</span>
-                    </button>
+                    </RippleButton>
                 </div>
             </div>
         </Card>

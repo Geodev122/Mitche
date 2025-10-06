@@ -4,6 +4,7 @@ import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { RequestType, RequestMode } from '../types';
 import { ArrowRight, ArrowLeft, Eye, Shield } from 'lucide-react';
+import RippleButton from '../components/ui/RippleButton';
 import ConfirmationModal from '../components/ui/ConfirmationModal';
 import { useTranslation } from 'react-i18next';
 
@@ -89,9 +90,9 @@ const CreateRequest: React.FC = () => {
           </div>
 
           <div className="fixed bottom-16 left-0 right-0 bg-[#FBF9F4]/80 backdrop-blur-sm p-4 border-t border-[#F1EADF]">
-            <button type="submit" className="w-full bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors">
+            <RippleButton type="submit" className="w-full bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors">
               {t('createRequest.form.submit')}
-            </button>
+            </RippleButton>
           </div>
         </form>
       </div>

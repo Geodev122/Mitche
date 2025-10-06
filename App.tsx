@@ -5,6 +5,7 @@ import { DataProvider } from './context/DataContext';
 import LanguageManager from './components/LanguageManager';
 import { ToastProvider } from './components/ui/Toast';
 import BadgeWatcher from './components/ui/BadgeWatcher';
+import Atmosphere from './components/ui/Atmosphere';
 import { Role } from './types';
 import { RatingModalProvider } from './context/RatingModalContext';
 
@@ -56,6 +57,7 @@ const App: React.FC = () => {
       <DataProvider>
         <ToastProvider>
           <BadgeWatcher />
+          <Atmosphere>
           <ReactRouterDOM.HashRouter>
             <LanguageManager>
               <React.Suspense fallback={<LoadingFallback />}>
@@ -66,10 +68,11 @@ const App: React.FC = () => {
                   </OnErrorBoundary>
                 </RatingModalProvider>
               </React.Suspense>
-            </LanguageManager>
-          </ReactRouterDOM.HashRouter>
-        </ToastProvider>
-      </DataProvider>
+                  </LanguageManager>
+                </ReactRouterDOM.HashRouter>
+              </Atmosphere>
+            </ToastProvider>
+          </DataProvider>
     </AuthProvider>
   );
 };
