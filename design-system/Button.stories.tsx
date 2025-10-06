@@ -1,0 +1,16 @@
+import React from 'react';
+import { Meta, Story } from '@storybook/react';
+import { Button, ButtonProps } from './Button';
+
+export default {
+  title: 'Design System/Button',
+  component: Button,
+} as Meta;
+
+const Template: Story<ButtonProps> = (args) => <Button {...args}>Example</Button>;
+
+export const Primary = Template.bind({});
+Primary.args = { variant: 'primary' };
+
+export const Secondary = Template.bind({});
+Secondary.args = { variant: 'secondary' };

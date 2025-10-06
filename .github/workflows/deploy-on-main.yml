@@ -1,0 +1,94 @@
+name: Deploy on main (disabled auto-run)
+
+# Automatic deploys are disabled temporarily to prevent failing automation.
+# Re-enable by changing this to `on: push` after configuring OIDC/provider and secrets.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  preflight:
+    name: Preflight checks
+    runs-on: ubuntu-latest
+    outputs:
+      auth_method: ${{ steps.set-auth.outputs.auth_method }}
+    steps:
+      - name: Determine auth method
+        id: set-auth
+        run: |
+          echo "Checking for OIDC provider and service account secrets..."
+          if [ -n "${{ secrets.GCP_WORKLOAD_PROVIDER }}" ] && [ -n "${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}" ]; then
+            echo "auth_method=oidc" >> $GITHUB_OUTPUT
+          elif [ -n "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" ] && [ -n "${{ secrets.FIREBASE_PROJECT }}" ]; then
+            echo "auth_method=service_account" >> $GITHUB_OUTPUT
+          else
+            echo "auth_method=none" >> $GITHUB_OUTPUT
+          fi
+
+  build-and-deploy:
+    name: Build and deploy
+    needs: preflight
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies (root)
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Install & build functions
+        run: |
+          npm --prefix functions ci
+          npm --prefix functions run build
+
+      - name: Run Lighthouse CI (gating)
+        if: ${{ always() }}
+        run: |
+          npm install -g @lhci/cli@0.8.0
+          npx lhci autorun --collect.staticDistDir=dist --assert.performance=90 --assert.accessibility=95 || (echo "Lighthouse thresholds not met" && exit 1)
+
+
+      - name: Authenticate to Google Cloud (OIDC, preferred)
+        id: auth
+        if: "${{ needs.preflight.outputs.auth_method == 'oidc' }}"
+        uses: google-github-actions/auth@v1
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
+
+      - name: Fallback: Authenticate with service account JSON (if provided)
+        if: "${{ needs.preflight.outputs.auth_method == 'service_account' }}"
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Install Firebase CLI
+        if: "${{ needs.preflight.outputs.auth_method == 'oidc' || needs.preflight.outputs.auth_method == 'service_account' }}"
+        run: npm install -g firebase-tools
+
+      - name: Deploy to Firebase (hosting + functions)
+        if: "${{ needs.preflight.outputs.auth_method == 'oidc' || needs.preflight.outputs.auth_method == 'service_account' }}"
+        env:
+          FIREBASE_PROJECT: ${{ secrets.FIREBASE_PROJECT }}
+        run: |
+          firebase deploy --project "$FIREBASE_PROJECT" --only "hosting,functions"
+
+      - name: Skip deploy (missing auth or project)
+        if: "${{ needs.preflight.outputs.auth_method == 'none' }}"
+        run: echo "No GCP auth available (workload identity or service account). Skipping deploy."

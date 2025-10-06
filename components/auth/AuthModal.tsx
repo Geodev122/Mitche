@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Role } from '../../types';
 import { RefreshCw } from 'lucide-react';
 import { useToast } from '../ui/Toast';
+import { Button } from '../../design-system/Button';
 import { firebaseService, auth as firebaseAuth } from '../../services/firebase';
 
 interface AuthModalProps {
@@ -331,10 +332,18 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                                         return (
                                             <div key={f.name + idx} className="p-2 bg-white rounded border">
                                                 <div className="flex items-center justify-between gap-2">
-                                                    <div className="min-w-0">
-                                                        <div className="text-sm font-medium truncate">{f.name}</div>
-                                                        <div className="text-xs text-gray-500">{ctrl.status === 'done' ? (ctrl.url ? 'Uploaded' : 'Completed') : ctrl.status === 'error' ? `Error: ${ctrl.error}` : ''}</div>
-                                                    </div>
+                                                        <div className="min-w-0 flex items-center gap-3">
+                                                            {/* thumbnail */}
+                                                            {f.type.startsWith('image/') ? (
+                                                                <img src={URL.createObjectURL(f)} alt={f.name} className="w-12 h-8 object-cover rounded" />
+                                                            ) : (
+                                                                <div className="w-12 h-8 bg-gray-100 rounded flex items-center justify-center text-xs text-gray-500">{f.name.split('.').pop()}</div>
+                                                            )}
+                                                            <div className="flex-1 min-w-0">
+                                                                <div className="text-sm font-medium truncate">{f.name}</div>
+                                                                <div className="text-xs text-gray-500">{ctrl.status === 'done' ? (ctrl.url ? 'Uploaded' : 'Completed') : ctrl.status === 'error' ? `Error: ${ctrl.error}` : ''}</div>
+                                                            </div>
+                                                        </div>
                                                     <div className="w-32">
                                                         <div className="h-2 bg-gray-200 rounded overflow-hidden">
                                                             <div className="h-2 bg-amber-500" style={{ width: `${pct}%` }} />
@@ -342,9 +351,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                                                         <div className="text-xs text-right text-gray-500 mt-1">{pct}%</div>
                                                     </div>
                                                 </div>
-                                                <div className="mt-2 flex items-center gap-2 justify-end">
+                                                    <div className="mt-2 flex items-center gap-2 justify-end">
                                                     {ctrl.status === 'uploading' && (
-                                                        <button type="button" onClick={() => {
+                                                        <Button variant="ghost" onClick={() => {
                                                             // cancel
                                                             try {
                                                                 uploadControllers[idx]?.cancel && uploadControllers[idx].cancel();
@@ -353,11 +362,16 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                                                                     next[idx] = { ...(next[idx] || {}), status: 'error', error: 'cancelled' };
                                                                     return next;
                                                                 });
+                                                                toast.show('Upload cancelled', 'info', { label: 'Undo', cb: () => {
+                                                                    // a soft undo: re-add file to the list for retry
+                                                                    setUploadControllers(prev => { const n = [...prev]; n[idx] = { status: 'idle' }; return n; });
+                                                                    setUploadProgress(prev => { const n = [...(prev || [])]; n[idx] = 0; return n; });
+                                                                }});
                                                             } catch (e) { console.warn(e); }
-                                                        }} className="px-2 py-1 text-xs bg-red-100 text-red-600 rounded">Cancel</button>
+                                                        }}>Cancel</Button>
                                                     )}
                                                     {ctrl.status === 'error' && (
-                                                        <button type="button" onClick={async () => {
+                                                        <Button variant="secondary" onClick={async () => {
                                                             // retry single file
                                                             setUploadControllers(prev => { const n = [...prev]; n[idx] = { status: 'uploading' }; return n; });
                                                             setUploadProgress(prev => { const n = [...(prev || [])]; n[idx] = 0; return n; });
@@ -377,7 +391,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                                                                 setUploadControllers(prev => { const n = [...(prev || [])]; n[idx] = { status: 'error', error: String(err) }; return n; });
                                                                 toast.show('Upload failed', 'error');
                                                             }
-                                                        }} className="px-2 py-1 text-xs bg-amber-100 text-amber-700 rounded">Retry</button>
+                                                        }}>Retry</Button>
                                                     )}
                                                 </div>
                                             </div>
