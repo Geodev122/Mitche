@@ -53,7 +53,8 @@ async function getSecretValue(name) {
     try {
         // The resource name follows: projects/{project}/secrets/{secret}/versions/latest
         // Determine project from env (FIREBASE_PROJECT) or from functions.config
-        const projectId = process.env.FIREBASE_PROJECT || process.env.GCP_PROJECT || (functions.config && functions.config().project && functions.config().project.id) || process.env.GCLOUD_PROJECT;
+        // Prefer environment variables set by the runtime or Build/CI. Avoid functions.config() (deprecated).
+        const projectId = process.env.FIREBASE_PROJECT || process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT || process.env.GCP_PROJECT_ID || null;
         if (!projectId) {
             secretCache[name] = null;
             return null;
@@ -408,10 +409,9 @@ exports.generateSymbolicIcon = functions.runWith({ secrets: ['OPENAI_API_KEY'] }
         if (!openaiKey) {
             openaiKey = await getSecretValue('OPENAI_API_KEY');
         }
-        // Last-resort fallback to legacy functions.config or env
+        // Last-resort fallback to environment variables only (avoid functions.config())
         if (!openaiKey) {
-            const cfg = functions.config && functions.config();
-            openaiKey = (cfg && cfg.openai && cfg.openai.key) || process.env.OPENAI_API_KEY || null;
+            openaiKey = process.env.OPENAI_API_KEY || null;
         }
         if (!openaiKey)
             throw new functions.https.HttpsError('failed-precondition', 'OpenAI API key not configured in functions environment');
