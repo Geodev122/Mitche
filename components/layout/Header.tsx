@@ -52,7 +52,7 @@ const Header: React.FC = () => {
         <>
             <header className="sticky top-0 bg-[#FBF9F4]/80 backdrop-blur-sm z-20 p-2 sm:p-4 flex justify-between items-center border-b border-[#F1EADF]">
                 <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                    <img src="/awardlogo.png" alt="Mitché Logo" className="h-8 w-8" />
+                    <img src="/awardlogo.png" alt="Mitché Logo" width={32} height={32} className="h-8 w-8" />
                     <span className="text-lg font-bold text-[#3A3A3A] hidden sm:inline">{t('appName')}</span>
                 </div>
                 <div className="flex items-center gap-2">

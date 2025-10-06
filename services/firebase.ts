@@ -1,5 +1,6 @@
 // Firebase service layer for Mitché Platform
 import { initializeApp } from 'firebase/app';
+import { log, info, warn, error as loggerError } from '../utils/logger';
 import { 
   getFirestore, 
   collection, 
@@ -50,12 +51,12 @@ import { enableIndexedDbPersistence } from 'firebase/firestore';
 // Enable offline support
 try {
   enableIndexedDbPersistence(db);
-  console.log('Offline persistence enabled');
+  import('../utils/logger').then(({ log }) => log('Offline persistence enabled'));
 } catch (err: any) {
   if (err.code === 'failed-precondition') {
-    console.warn('Multiple tabs open, offline persistence disabled');
+  import('../utils/logger').then(({ warn }) => warn('Multiple tabs open, offline persistence disabled'));
   } else if (err.code === 'unimplemented') {
-    console.warn('Browser doesn\'t support offline persistence');
+  import('../utils/logger').then(({ warn }) => warn('Browser doesn\'t support offline persistence'));
   }
 }
 
@@ -96,7 +97,7 @@ class FirebaseService {
 
       return { success: true, user: newUser };
     } catch (error: any) {
-      console.error('Error creating user:', error);
+      loggerError('Error creating user:', error);
       return { success: false, message: error.message };
     }
   }
@@ -107,7 +108,7 @@ class FirebaseService {
       const userData = await this.getUser(userCredential.user.uid);
       return { success: true, user: userData };
     } catch (error: any) {
-      console.error('Error signing in:', error);
+      loggerError('Error signing in:', error);
       return { success: false, message: error.message };
     }
   }
@@ -154,14 +155,14 @@ class FirebaseService {
           return { success: true, user: existingUser };
         }
       } catch (popupErr) {
-        console.warn('Popup sign-in failed or blocked, trying redirect flow:', popupErr);
+        warn('Popup sign-in failed or blocked, trying redirect flow:', popupErr);
         // Fallback to redirect-based sign-in; caller should handle redirect result separately
         await import('firebase/auth').then(({ signInWithRedirect }) => signInWithRedirect(auth, googleProvider));
         return { success: false, message: 'Redirecting for Google sign-in; complete sign-in in the opened window.' };
       }
       
     } catch (error: any) {
-      console.error('Error signing in with Google:', error);
+      loggerError('Error signing in with Google:', error);
       return { success: false, message: error.message };
     }
   }
@@ -171,7 +172,7 @@ class FirebaseService {
       await signOut(auth);
       return { success: true };
     } catch (error: any) {
-      console.error('Error signing out:', error);
+      loggerError('Error signing out:', error);
       return { success: false, message: error.message };
     }
   }
@@ -185,7 +186,7 @@ class FirebaseService {
       }
       return null;
     } catch (error) {
-      console.error('Error getting user:', error);
+      loggerError('Error getting user:', error);
       return null;
     }
   }
@@ -198,7 +199,7 @@ class FirebaseService {
       });
       return true;
     } catch (error) {
-      console.error('Error updating user:', error);
+      loggerError('Error updating user:', error);
       return false;
     }
   }
@@ -208,7 +209,7 @@ class FirebaseService {
       const usersSnapshot = await getDocs(collection(db, 'users'));
       return usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
     } catch (error) {
-      console.error('Error getting users:', error);
+      loggerError('Error getting users:', error);
       return [];
     }
   }
@@ -225,7 +226,7 @@ class FirebaseService {
       });
       return true;
     } catch (error) {
-      console.error('Error creating request:', error);
+      loggerError('Error creating request:', error);
       return false;
     }
   }
@@ -239,7 +240,7 @@ class FirebaseService {
       const requestsSnapshot = await getDocs(requestsQuery);
       return requestsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Request));
     } catch (error) {
-      console.error('Error getting requests:', error);
+      loggerError('Error getting requests:', error);
       return [];
     }
   }
@@ -259,7 +260,7 @@ class FirebaseService {
       } as Request));
       callback(requests);
     }, (error) => {
-      console.error('Error in requests subscription:', error);
+      loggerError('Error in requests subscription:', error);
     });
   }
 
@@ -271,7 +272,7 @@ class FirebaseService {
       });
       return true;
     } catch (error) {
-      console.error('Error updating request:', error);
+      loggerError('Error updating request:', error);
       return false;
     }
   }
@@ -288,7 +289,7 @@ class FirebaseService {
       });
       return true;
     } catch (error) {
-      console.error('Error creating event:', error);
+      loggerError('Error creating event:', error);
       return false;
     }
   }
@@ -321,7 +322,7 @@ class FirebaseService {
       });
       return true;
     } catch (error) {
-      console.error('Error creating resource:', error);
+      loggerError('Error creating resource:', error);
       return false;
     }
   }
@@ -354,7 +355,7 @@ class FirebaseService {
       });
       return true;
     } catch (error) {
-      console.error('Error creating offering:', error);
+      loggerError('Error creating offering:', error);
       return false;
     }
   }
@@ -386,7 +387,7 @@ class FirebaseService {
       });
       return true;
     } catch (error) {
-      console.error('Error creating offering:', error);
+      loggerError('Error creating offering:', error);
       return false;
     }
   }
@@ -405,7 +406,7 @@ class FirebaseService {
         timestamp: doc.data().timestamp?.toDate() || new Date()
       } as Offering));
     } catch (error) {
-      console.error('Error getting offerings:', error);
+      loggerError('Error getting offerings:', error);
       return [];
     }
   }
@@ -422,7 +423,7 @@ class FirebaseService {
       });
       return true;
     } catch (error) {
-      console.error('Error creating notification:', error);
+      loggerError('Error creating notification:', error);
       return false;
     }
   }
@@ -439,8 +440,8 @@ class FirebaseService {
       }
       const snap = await getDocs(nominationsQuery as any);
       return snap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
-    } catch (err) {
-      console.error('Error getting nominations:', err);
+      } catch (err) {
+      loggerError('Error getting nominations:', err);
       return [];
     }
   }
@@ -454,9 +455,9 @@ class FirebaseService {
       return onSnapshot(nominationsQuery as any, (snap: any) => {
         const items = snap.docs.map((d: any) => ({ id: d.id, ...(d.data() as any) }));
         callback(items);
-      }, (err: any) => console.error('Nominations subscription error:', err));
+      }, (err: any) => loggerError('Nominations subscription error:', err));
     } catch (err) {
-      console.error('subscribeToNominations failed:', err);
+      loggerError('subscribeToNominations failed:', err);
       return () => {};
     }
   }
@@ -478,7 +479,7 @@ class FirebaseService {
       });
       return true;
     } catch (err) {
-      console.error('Error adding nomination:', err);
+      loggerError('Error adding nomination:', err);
       return false;
     }
   }
@@ -492,7 +493,7 @@ class FirebaseService {
       });
       return true;
     } catch (err) {
-      console.error('Error updating nomination:', err);
+      loggerError('Error updating nomination:', err);
       return false;
     }
   }
@@ -513,7 +514,7 @@ class FirebaseService {
       });
       return true;
     } catch (err) {
-      console.error('Error adding nomination comment:', err);
+      loggerError('Error adding nomination comment:', err);
       return false;
     }
   }
@@ -532,7 +533,7 @@ class FirebaseService {
         timestamp: doc.data().timestamp?.toDate() || new Date()
       } as Notification));
     } catch (error) {
-      console.error('Error getting notifications:', error);
+      loggerError('Error getting notifications:', error);
       return [];
     }
   }
@@ -548,7 +549,7 @@ class FirebaseService {
       });
       return true;
     } catch (error) {
-      console.error('Error adding notification:', error);
+      loggerError('Error adding notification:', error);
       return false;
     }
   }
@@ -581,7 +582,7 @@ class FirebaseService {
         }
       });
     } catch (err) {
-      console.error('subscribeToUser failed:', err);
+      loggerError('subscribeToUser failed:', err);
       return () => {};
     }
   }
@@ -595,7 +596,7 @@ class FirebaseService {
       });
       return true;
     } catch (error) {
-      console.error('Error updating notification:', error);
+      loggerError('Error updating notification:', error);
       return false;
     }
   }
@@ -612,7 +613,7 @@ class FirebaseService {
       });
       return threadRef.id;
     } catch (error) {
-      console.error('Error adding tapestry thread:', error);
+      loggerError('Error adding tapestry thread:', error);
       return null;
     }
   }
@@ -642,7 +643,7 @@ class FirebaseService {
       });
       return true;
     } catch (error) {
-      console.error('Error updating tapestry thread:', error);
+      loggerError('Error updating tapestry thread:', error);
       return false;
     }
   }
@@ -659,7 +660,7 @@ class FirebaseService {
       });
       return true;
     } catch (error) {
-      console.error('Error adding community event:', error);
+      loggerError('Error adding community event:', error);
       return false;
     }
   }
@@ -692,7 +693,7 @@ class FirebaseService {
       });
       return true;
     } catch (error) {
-      console.error('Error adding resource:', error);
+      loggerError('Error adding resource:', error);
       return false;
     }
   }
@@ -705,7 +706,7 @@ class FirebaseService {
       const url = await controller.promise;
       return { url };
     } catch (err) {
-      console.error('Error uploading document:', err);
+      loggerError('Error uploading document:', err);
       return { error: err };
     }
   }
@@ -720,7 +721,7 @@ class FirebaseService {
       }
       return urls;
     } catch (err) {
-      console.error('Error uploading documents:', err);
+      loggerError('Error uploading documents:', err);
       return [];
     }
   }
@@ -737,7 +738,7 @@ class FirebaseService {
       });
       return true;
     } catch (error) {
-      console.error('Error adding request:', error);
+      loggerError('Error adding request:', error);
       return false;
     }
   }
@@ -745,7 +746,7 @@ class FirebaseService {
   // Migration from localStorage
   async migrateFromLocalStorage(): Promise<void> {
     try {
-      console.log('Starting migration from localStorage to Firestore...');
+      log('Starting migration from localStorage to Firestore...');
       
       // Get existing data from localStorage
       const existingUsers = localStorage.getItem('mitcheUsers');
@@ -763,7 +764,7 @@ class FirebaseService {
             updatedAt: new Date()
           });
         }
-        console.log(`Migrated ${users.length} users`);
+        log(`Migrated ${users.length} users`);
       }
 
       // Migrate requests
@@ -776,7 +777,7 @@ class FirebaseService {
             createdAt: new Date()
           });
         }
-        console.log(`Migrated ${requests.length} requests`);
+        log(`Migrated ${requests.length} requests`);
       }
 
       // Migrate events
@@ -789,7 +790,7 @@ class FirebaseService {
             createdAt: new Date()
           });
         }
-        console.log(`Migrated ${events.length} events`);
+        log(`Migrated ${events.length} events`);
       }
 
       // Migrate resources
@@ -802,12 +803,12 @@ class FirebaseService {
             createdAt: new Date()
           });
         }
-        console.log(`Migrated ${resources.length} resources`);
+        log(`Migrated ${resources.length} resources`);
       }
 
-      console.log('Migration completed successfully!');
+      log('Migration completed successfully!');
     } catch (error) {
-      console.error('Migration failed:', error);
+      loggerError('Migration failed:', error);
     }
   }
 

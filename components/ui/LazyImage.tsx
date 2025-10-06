@@ -5,13 +5,17 @@ interface LazyImageProps {
   alt: string;
   className?: string;
   placeholder?: string;
+  width?: number;
+  height?: number;
 }
 
 const LazyImage: React.FC<LazyImageProps> = ({ 
   src, 
   alt, 
   className = '', 
-  placeholder = '/awardlogo.png' 
+  placeholder = '/awardlogo.png',
+  width,
+  height
 }) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [isInView, setIsInView] = React.useState(false);
@@ -41,6 +45,8 @@ const LazyImage: React.FC<LazyImageProps> = ({
         ref={imgRef}
         src={isInView ? src : placeholder}
         alt={alt}
+        width={width}
+        height={height}
         className={`transition-opacity duration-300 ${
           isLoaded ? 'opacity-100' : 'opacity-0'
         } ${className}`}

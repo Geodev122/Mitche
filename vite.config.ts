@@ -20,8 +20,11 @@ export default defineConfig({
         // This prevents a single massive vendor chunk and lets the browser cache common libs separately.
         manualChunks(id: string) {
           if (id.includes('node_modules')) {
-            // If module is part of Firebase packages, place into a dedicated 'firebase' chunk.
-            if (id.includes('/firebase/') || id.includes('/@firebase/')) return 'firebase';
+            // Separate @firebase scoped packages into their own chunk
+            if (id.includes('/@firebase/')) return 'firebase_scoped';
+
+            // If module is part of firebase (non-scoped) packages, put into firebase chunk
+            if (id.includes('/firebase/')) return 'firebase_plain';
 
             // try to extract package name from path
             const parts = id.split('node_modules/').pop()?.split('/');
@@ -29,7 +32,7 @@ export default defineConfig({
             // scoped packages start with @scope/pkg
             const pkg = parts[0].startsWith('@') && parts.length > 1 ? `${parts[0]}/${parts[1]}` : parts[0];
             // keep some important groups together
-            const largeVendors = ['firebase-admin', 'lucide-react', 'date-fns', 'i18next', 'react-router-dom'];
+            const largeVendors = ['lucide-react', 'date-fns', 'i18next', 'react-router-dom'];
             if (largeVendors.includes(pkg)) return pkg.replace('/', '_');
             // default to vendor for small packages to avoid too many tiny chunks
             return 'vendor';
@@ -37,14 +40,14 @@ export default defineConfig({
         }
       }
     },
-    sourcemap: false,
+  sourcemap: true,
     cssCodeSplit: true,
     minify: 'esbuild',
     target: 'es2020',
     commonjsOptions: {
       include: [/node_modules/]
     },
-    chunkSizeWarningLimit: 400
+    chunkSizeWarningLimit: 600
   },
   resolve: {
     alias: {

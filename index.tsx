@@ -2,23 +2,24 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './i18n'; // Initialize i18next
+import { info, warn } from './utils/logger';
 
 // Register Service Worker for PWA with proper error handling
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js', {
-      scope: '/'
+    scope: '/'
     })
       .then(registration => {
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        info('ServiceWorker registration successful with scope: ', registration.scope);
       })
       .catch(error => {
-        console.warn('ServiceWorker registration failed: ', error);
+        warn('ServiceWorker registration failed: ', error);
         // Continue without service worker - app should still work
       });
   });
 } else {
-  console.warn('Service Worker not supported in this browser');
+  warn('Service Worker not supported in this browser');
 }
 
 const rootElement = document.getElementById('root');

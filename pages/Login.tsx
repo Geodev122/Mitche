@@ -21,7 +21,7 @@ const Login: React.FC = () => {
                 <div className="w-full max-w-5xl flex justify-end p-4">
                     <LanguageSwitcher />
                 </div>
-                <img src="/awardlogo.png" alt="Mitché Logo" className="w-40 h-40 mx-auto mb-4 animate-fade-in-down" />
+                <img src="/awardlogo.png" alt="Mitché Logo" width={160} height={160} className="w-40 h-40 mx-auto mb-4 animate-fade-in-down" />
                 <h1 className="text-3xl font-bold text-[#3A3A3A]">{t('login.welcome')}</h1>
                 <p className="text-gray-500 text-lg mt-2 mb-8">{t('appSlogan')}</p>
 

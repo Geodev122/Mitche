@@ -14,7 +14,7 @@ const Dashboard: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FBF9F4]">
         <div className="text-center">
-          <img src="/awardlogo.png" alt="Mitché Logo" className="w-16 h-16 mx-auto mb-4 animate-pulse" />
+          <img src="/awardlogo.png" alt="Mitché Logo" width={64} height={64} className="w-16 h-16 mx-auto mb-4 animate-pulse" />
           <p className="text-gray-500">Loading dashboard...</p>
         </div>
       </div>

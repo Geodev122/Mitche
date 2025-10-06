@@ -51,7 +51,7 @@ const AchievementsPanel: React.FC = () => {
         <div className="space-y-2">
           {items.map(it => (
             <div key={it.id} className="flex items-center gap-3 p-2 bg-white rounded border">
-              {it.meta?.iconUrl ? <img src={it.meta.iconUrl} alt={it.meta?.title || it.achievementId} className="w-10 h-10 rounded" /> : <div className="w-10 h-10 rounded bg-amber-50 flex items-center justify-center text-amber-600">🏅</div>}
+              {it.meta?.iconUrl ? <img src={it.meta.iconUrl} alt={it.meta?.title || it.achievementId} width={40} height={40} className="w-10 h-10 rounded" /> : <div className="w-10 h-10 rounded bg-amber-50 flex items-center justify-center text-amber-600">🏅</div>}
               <div className="min-w-0">
                 <div className="font-semibold text-sm truncate">{it.meta?.title || it.achievementId}</div>
                 <div className="text-xs text-gray-500 truncate">{it.meta?.description || ''}</div>

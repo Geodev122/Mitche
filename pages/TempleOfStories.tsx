@@ -61,8 +61,8 @@ const ThreadCard: React.FC<{ thread: TapestryThread }> = ({ thread }) => {
                          <div className={`w-14 h-14 ${colors.bg} rounded-full flex items-center justify-center flex-shrink-0`}>
                             <SymbolIcon name={thread.honoreeSymbolicIcon} className={`w-8 h-8 ${colors.text}`} />
                          </div>
-                    ) : (
-                        <img src={thread.honoreePhotoUrl || `https://api.dicebear.com/8.x/initials/svg?seed=${thread.honoreeRealName}`} alt={thread.honoreeRealName || ''} className="w-14 h-14 rounded-full object-cover flex-shrink-0" />
+                        ) : (
+                        <img src={thread.honoreePhotoUrl || `https://api.dicebear.com/8.x/initials/svg?seed=${thread.honoreeRealName}`} alt={thread.honoreeRealName || ''} width={56} height={56} className="w-14 h-14 rounded-full object-cover flex-shrink-0" />
                     )}
                    
                     <div className="mx-4">

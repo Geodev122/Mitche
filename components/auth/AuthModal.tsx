@@ -173,7 +173,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                             toast.show(t('auth.uploadSuccess') || 'Documents uploaded', 'success');
                         }
                     } catch (err) {
-                        console.error('Upload failed', err);
+                        // log in dev, show toast in UI
+                        import('../../utils/logger').then(({ error }) => error('Upload failed', err));
                         toast.show(t('auth.uploadFailed') || 'Document upload failed', 'error');
                     }
                 }
@@ -184,7 +185,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 setError(result.message || t('auth.errorExists'));
             }
         } catch (error) {
-            console.error(error);
+            import('../../utils/logger').then(({ error }) => error(error));
             setError('An unexpected error occurred');
         } finally {
             setLoading(false);
@@ -334,8 +335,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                                                 <div className="flex items-center justify-between gap-2">
                                                         <div className="min-w-0 flex items-center gap-3">
                                                             {/* thumbnail */}
-                                                            {f.type.startsWith('image/') ? (
-                                                                <img src={URL.createObjectURL(f)} alt={f.name} className="w-12 h-8 object-cover rounded" />
+                                                                {f.type.startsWith('image/') ? (
+                                                                <img src={URL.createObjectURL(f)} alt={f.name} width={48} height={32} className="w-12 h-8 object-cover rounded" />
                                                             ) : (
                                                                 <div className="w-12 h-8 bg-gray-100 rounded flex items-center justify-center text-xs text-gray-500">{f.name.split('.').pop()}</div>
                                                             )}

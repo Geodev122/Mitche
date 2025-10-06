@@ -227,7 +227,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
                         <div className="flex flex-wrap gap-2">
                             {user.badges.map((b: string) => (
                                 <div key={b} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-white to-amber-50 text-amber-700 text-sm font-semibold shadow-sm">
-                                    <img src={`/badges/${b}.png`} alt={b} className="w-5 h-5 rounded-full" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                    <img src={`/badges/${b}.png`} alt={b} width={20} height={20} className="w-5 h-5 rounded-full" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                                     {b}
                                 </div>
                             ))}

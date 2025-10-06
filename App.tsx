@@ -37,7 +37,7 @@ const EnhancedPlatformDemo = ReactLazy.lazy(() => import('./pages/EnhancedPlatfo
 const LoadingFallback: React.FC = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-[#FBF9F4]">
     <div className="flex flex-col items-center text-center">
-      <img src="/awardlogo.png" alt="Mitché Logo" className="w-24 h-24 mx-auto mb-4 animate-pulse" />
+      <img src="/awardlogo.png" alt="Mitché Logo" width={96} height={96} className="w-24 h-24 mx-auto mb-4 animate-pulse" />
       <p className="text-gray-500">Loading...</p>
     </div>
   </div>
