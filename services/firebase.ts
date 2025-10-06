@@ -484,6 +484,27 @@ class FirebaseService {
     }
   }
 
+  async addNominationComment(nominationId: string, comment: { authorId: string; text: string; attachmentUrl?: string }): Promise<boolean> {
+    try {
+      const { updateDoc, doc, arrayUnion } = await import('firebase/firestore');
+      const payload = {
+        id: `${Date.now()}_${Math.random().toString(36).slice(2,9)}`,
+        authorId: comment.authorId,
+        text: comment.text,
+        attachmentUrl: comment.attachmentUrl || null,
+        createdAt: new Date().toISOString()
+      };
+      await updateDoc(doc(db, 'nominations', nominationId), {
+        comments: arrayUnion(payload),
+        updatedAt: new Date()
+      });
+      return true;
+    } catch (err) {
+      console.error('Error adding nomination comment:', err);
+      return false;
+    }
+  }
+
   async getUserNotifications(userId: string): Promise<Notification[]> {
     try {
       const notificationsQuery = query(
