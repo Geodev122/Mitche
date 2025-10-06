@@ -1,4 +1,3 @@
-
 {
   "appName": "Mitché",
   "appSlogan": "Où l'espoir résonne",
@@ -36,48 +35,52 @@
     "errorUsernameRequired": "Veuillez entrer un nom d'utilisateur.",
     "errorSymbolicName": "Veuillez choisir un nom symbolique.",
     "identityChoiceInfo": "Vous choisirez votre identité symbolique après avoir créé votre compte.",
-  "role": "Rôle",
-  "uploadDocs": "Téléversez les documents de vérification (si nécessaire)",
-  "documentsSelected": "documents sélectionnés",
-  "pendingApproval": "Votre compte a été soumis pour examen. Un administrateur examinera vos documents et approuvera votre compte sous peu.",
+    "role": "Rôle",
+    "uploadDocs": "Téléversez les documents de vérification (si nécessaire)",
+    "documentsSelected": "documents sélectionnés",
+    "pendingApproval": "Votre compte a été soumis pour examen. Un administrateur examinera vos documents et approuvera votre compte sous peu.",
     "errorUsernameNotSelected": "Veuillez sélectionner un nom d'utilisateur.",
     "generatingUsernames": "Génération de noms uniques...",
     "chooseUsername": "Choisissez votre nom d'utilisateur",
-    "refreshUsernames": "Rafraîchir les noms"
+    "refreshUsernames": "Rafraîchir les noms",
+    "googleSignIn": "[MISSING TRANSLATION] Continue with Google",
+    "googleSignInLoading": "[MISSING TRANSLATION] Signing in with Google...",
+    "orDivider": "[MISSING TRANSLATION] or",
+    "errorGoogleSignIn": "[MISSING TRANSLATION] Failed to sign in with Google. Please try again."
   },
   "onboarding": {
     "step1": {
-        "title": "Bienvenue à Mitché",
-        "subtitle": "Un sanctuaire où l'espoir résonne. Parcourons les principes fondamentaux qui façonnent notre monde."
+      "title": "Bienvenue à Mitché",
+      "subtitle": "Un sanctuaire où l'espoir résonne. Parcourons les principes fondamentaux qui façonnent notre monde."
     },
     "step2": {
-        "title": "Échos : Appels d'Espoir",
-        "description": "Lorsque vous avez besoin d'aide, vous lancez un 'Écho'. C'est votre demande anonyme qui atteint la communauté, comme une onde dans un étang tranquille."
+      "title": "Échos : Appels d'Espoir",
+      "description": "Lorsque vous avez besoin d'aide, vous lancez un 'Écho'. C'est votre demande anonyme qui atteint la communauté, comme une onde dans un étang tranquille."
     },
     "step3": {
-        "title": "Offrandes : Graines de Compassion",
-        "description": "Vous pouvez répondre aux Échos avec des 'Offrandes' - une aide matérielle ou des mots d'encouragement. Chaque offrande est une lumière dans l'obscurité."
+      "title": "Offrandes : Graines de Compassion",
+      "description": "Vous pouvez répondre aux Échos avec des 'Offrandes' - une aide matérielle ou des mots d'encouragement. Chaque offrande est une lumière dans l'obscurité."
     },
     "step4": {
-        "title": "Votre Identité : Un Porteur d'Espoir",
-        "description": "Ici, vous êtes connu par le nom et le symbole que vous avez choisis, garantissant la dignité et la sécurité pour tous. C'est le bouclier qui protège votre véritable identité."
+      "title": "Votre Identité : Un Porteur d'Espoir",
+      "description": "Ici, vous êtes connu par le nom et le symbole que vous avez choisis, garantissant la dignité et la sécurité pour tous. C'est le bouclier qui protège votre véritable identité."
     },
     "step5": {
-        "title": "Créez Votre Identité Symbolique",
-        "subtitle": "Choisissez le nom et le symbole qui représenteront votre lumière dans cette communauté.",
-        "chooseName": "Choisissez Votre Nom",
-        "chooseIcon": "Choisissez Votre Symbole"
+      "title": "Créez Votre Identité Symbolique",
+      "subtitle": "Choisissez le nom et le symbole qui représenteront votre lumière dans cette communauté.",
+      "chooseName": "Choisissez Votre Nom",
+      "chooseIcon": "Choisissez Votre Symbole"
     },
     "step6": {
-        "title": "Vous Faites Maintenant Partie de la Tapisserie",
-        "subtitle": "Ceci est votre identité en tant que Porteur d'Espoir. Souvenez-vous, derrière chaque symbole se cache un cœur humain."
+      "title": "Vous Faites Maintenant Partie de la Tapisserie",
+      "subtitle": "Ceci est votre identité en tant que Porteur d'Espoir. Souvenez-vous, derrière chaque symbole se cache un cœur humain."
     },
     "buttons": {
-        "begin": "Commencer",
-        "next": "Suivant",
-        "back": "Retour",
-        "createIdentity": "Créez Votre Identité",
-        "complete": "Entrer dans le Sanctuaire"
+      "begin": "Commencer",
+      "next": "Suivant",
+      "back": "Retour",
+      "createIdentity": "Créez Votre Identité",
+      "complete": "Entrer dans le Sanctuaire"
     },
     "selectName": "-- Choisissez un Nom --",
     "symbolicNames": {
@@ -308,10 +311,10 @@
     "CommunityGift": "Don de la Communauté",
     "Ritual": "Rituel"
   },
-    "ritual": {
-      "success": "Rituel quotidien complété — Point d'espoir attribué !",
-      "error": "Impossible de compléter le rituel."
-    },
+  "ritual": {
+    "success": "Rituel quotidien complété — Point d'espoir attribué !",
+    "error": "Impossible de compléter le rituel."
+  },
   "requestStatus": {
     "title": "Statut",
     "Open": "Ouvert",
@@ -470,5 +473,16 @@
   "profile": {
     "verificationPending": "Votre compte est en attente de vérification. Vous serez averti lorsque l'examen sera terminé.",
     "verificationRejected": "La vérification de votre compte a été rejetée. Veuillez contacter le support si vous pensez qu'il s'agit d'une erreur."
+  },
+  "demo": {
+    "title": "[MISSING TRANSLATION] Demo Content",
+    "searchPlaceholder": "[MISSING TRANSLATION] Search demo items...",
+    "noItems": "[MISSING TRANSLATION] No demo items",
+    "addSuccess": "[MISSING TRANSLATION] Demo item added",
+    "addError": "[MISSING TRANSLATION] Failed to add demo item",
+    "deleteSuccess": "[MISSING TRANSLATION] Demo item deleted",
+    "deleteError": "[MISSING TRANSLATION] Failed to delete demo item",
+    "confirmDelete": "[MISSING TRANSLATION] Delete demo item? This cannot be undone.",
+    "showing": "[MISSING TRANSLATION] Showing"
   }
 }
