@@ -184,7 +184,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signup = async (username: string, password: string, meta?: { role?: Role; submittedDocuments?: string[] }): Promise<{ success: boolean; message?: string }> => {
+  const signup = async (username: string, password: string, meta?: { role?: Role; submittedDocuments?: string[]; submittedFiles?: File[] }): Promise<{ success: boolean; message?: string }> => {
     if (!username.trim() || !password.trim()) {
       return { success: false, message: i18n.t('auth.errorInvalid') };
     }

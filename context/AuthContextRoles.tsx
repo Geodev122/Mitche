@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import type { User as AppUser, Role as AppRole } from '../types';
+import type { User as FirebaseUserType } from 'firebase/auth';
 // Dynamically import firebase pieces when needed to keep SDK out of initial bundle
 let _auth: any = null;
 let _db: any = null;
@@ -19,8 +21,8 @@ import { PermissionManager } from '../utils/permissions';
 import { PermissionType } from '../types-roles-enhanced';
 
 interface AuthContextType {
-  user: User | null;
-  firebaseUser: FirebaseUser | null;
+  user: AppUser | null;
+  firebaseUser: FirebaseUserType | null;
   loading: boolean;
   signOutUser: () => Promise<void>;
   updateUserProfile: (updates: Partial<User>) => Promise<void>;
@@ -36,19 +38,19 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
+  const [firebaseUser, setFirebaseUser] = useState<FirebaseUserType | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Initialize or update user profile in Firestore
   const initializeUserProfile = async (firebaseUser: any): Promise<User> => {
-    const { db: dynDb, firestoreModule } = await ensureAuthDb();
-    const userRef = firestoreModule.doc(dynDb, 'users', firebaseUser.uid);
-    const userSnap = await firestoreModule.getDoc(userRef);
+  const { db: dynDb, firestoreModule } = await ensureAuthDb();
+  const userRef = firestoreModule.doc(dynDb, 'users', firebaseUser.uid);
+  const userSnap = await firestoreModule.getDoc(userRef);
 
     if (userSnap.exists()) {
       // Update last login
-      await updateDoc(userRef, {
+      await firestoreModule.updateDoc(userRef, {
         lastActiveAt: new Date(),
         updatedAt: new Date()
       });
@@ -57,7 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // Ensure all required fields exist for role system
       if (!userData.hasOwnProperty('isVerified')) {
-        await updateDoc(userRef, {
+        await firestoreModule.updateDoc(userRef, {
           isVerified: false,
           verificationStatus: 'NotRequested'
         });
@@ -82,7 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         commendations: { Kind: 0, Punctual: 0, Respectful: 0 }
       };
 
-      await _firestoreModule.setDoc(userRef, {
+      await firestoreModule.setDoc(userRef, {
         ...newUser,
         createdAt: new Date(),
         updatedAt: new Date()
@@ -97,9 +99,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!firebaseUser) return;
 
     try {
-      const { db: dynDb, firestoreModule } = await ensureAuthDb();
-      const userRef = firestoreModule.doc(dynDb, 'users', firebaseUser.uid);
-      const userSnap = await firestoreModule.getDoc(userRef);
+  const { db: dynDb, firestoreModule } = await ensureAuthDb();
+  const userRef = firestoreModule.doc(dynDb, 'users', firebaseUser.uid);
+  const userSnap = await firestoreModule.getDoc(userRef);
       
       if (userSnap.exists()) {
         const userData = { id: firebaseUser.uid, ...userSnap.data() } as User;
@@ -150,13 +152,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
 
     try {
-      const userRef = doc(db, 'users', user.id);
+      const { db: dynDb, firestoreModule } = await ensureAuthDb();
+      const userRef = firestoreModule.doc(dynDb, 'users', user.id);
       const updateData = {
         ...updates,
         updatedAt: new Date()
       };
 
-      await updateDoc(userRef, updateData);
+      await firestoreModule.updateDoc(userRef, updateData);
       
       // Update local state
       setUser(prev => prev ? { ...prev, ...updateData } : null);
