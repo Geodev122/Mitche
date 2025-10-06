@@ -4,8 +4,22 @@ import { useTranslation } from 'react-i18next';
 import Card from '../components/ui/Card';
 import { useNavigate } from 'react-router-dom';
 import { Role } from '../types';
-import { enhancedFirebaseService } from '../services/firebase-enhanced';
-import { db } from '../services/firebase';
+// Lazy-load firebase and enhanced service to keep SDK out of the main bundle
+let _db_cached: any = null;
+async function getDb() {
+  if (_db_cached) return _db_cached;
+  const m = await import('../services/firebase');
+  _db_cached = m.db;
+  return _db_cached;
+}
+
+let _efs_cached: any = null;
+async function getEnhancedFs() {
+  if (_efs_cached) return _efs_cached;
+  const m = await import('../services/firebase-enhanced');
+  _efs_cached = m.enhancedFirebaseService;
+  return _efs_cached;
+}
 import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 
 const AnalyticsDashboard: React.FC = () => {
@@ -22,11 +36,13 @@ const AnalyticsDashboard: React.FC = () => {
     if (!user) return;
     setLoading(true);
     try {
-      const res = await enhancedFirebaseService.getAnalyticsSummary(start, end);
+  const efs = await getEnhancedFs();
+  const res = await efs.getAnalyticsSummary(start, end);
       if (res.success) setSummary(res.data);
 
       // Also fetch raw analytics docs for daily breakdown
-      const analyticsRef = collection(db, 'analytics');
+  const dbRef = await getDb();
+  const analyticsRef = collection(dbRef, 'analytics');
       const q = query(analyticsRef, where('date', '>=', start), where('date', '<=', end), orderBy('date', 'asc'));
       const snap = await getDocs(q);
       const dailyAgg: Record<string, { card_impression: number; star_clicked: number }> = {};
@@ -111,7 +127,7 @@ const DailyBarChart: React.FC<{ data: Record<string, { card_impression: number; 
   const dates = Object.keys(data).sort();
   if (dates.length === 0) return <div className="text-sm text-gray-500">No data for selected range</div>;
 
-  const maxVal = Math.max(...dates.map(d => Math.max(data[d].card_impression, data[d].star_clicked, 0)) , 1);
+  const maxVal = Math.max(...dates.map(d => Math.max(data[d].card_impression, data[d].star_clicked, 0)), 1);
   const barWidth = Math.floor(100 / dates.length);
 
   return (
@@ -124,7 +140,7 @@ const DailyBarChart: React.FC<{ data: Record<string, { card_impression: number; 
           <g key={date} transform={`translate(${x},0)` }>
             <rect x={2} y={45 - cardH} width={barWidth - 6} height={cardH} fill="#D4AF37" opacity={0.9} />
             <rect x={2} y={45 - cardH - starH - 1} width={barWidth - 6} height={starH} fill="#3A3A3A" opacity={0.9} />
-            <text x={barWidth/2} y={49} fontSize={3} fill="#666" textAnchor="middle">{date.slice(5)}</text>
+            <text x={barWidth / 2} y={49} fontSize={3} fill="#666" textAnchor="middle">{date.slice(5)}</text>
           </g>
         );
       })}

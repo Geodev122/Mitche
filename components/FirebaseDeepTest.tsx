@@ -4,9 +4,22 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { firebaseService } from '../services/firebase';
-import { enhancedFirebaseService } from '../services/firebase-enhanced';
-import { auth, db } from '../services/firebase';
+// Lazy-load firebase services to avoid bundling SDK in the main chunk
+let _fs_lazy: any = null;
+async function getFs() {
+  if (_fs_lazy) return _fs_lazy;
+  const m = await import('../services/firebase');
+  _fs_lazy = m.firebaseService;
+  return _fs_lazy;
+}
+
+let _efs_lazy: any = null;
+async function getEfs() {
+  if (_efs_lazy) return _efs_lazy;
+  const m = await import('../services/firebase-enhanced');
+  _efs_lazy = m.enhancedFirebaseService || m.EnhancedFirebaseService;
+  return _efs_lazy;
+}
 import { useAuth } from '../context/AuthContext';
 
 interface TestResult {
@@ -33,7 +46,10 @@ const FirebaseDeepTest: React.FC = () => {
     try {
       // Test 1: Firebase Configuration
       setCurrentTest('Testing Firebase Configuration...');
-      if (auth && db) {
+  const fs = await getFs();
+  const auth = (await import('../services/firebase')).auth;
+  const db = (await import('../services/firebase')).db;
+  if (auth && db) {
         addTestResult({
           test: 'Firebase Configuration',
           status: 'success',
@@ -66,7 +82,8 @@ const FirebaseDeepTest: React.FC = () => {
       // Test 3: Firestore Read Operations
       setCurrentTest('Testing Firestore Read Operations...');
       try {
-        const users = await firebaseService.getAllUsers();
+  const fs2 = await getFs();
+  const users = await fs2.getAllUsers();
         addTestResult({
           test: 'Firestore Read Operations',
           status: 'success',
@@ -86,7 +103,8 @@ const FirebaseDeepTest: React.FC = () => {
       setCurrentTest('Testing Real-time Listeners...');
       try {
         let listenerWorking = false;
-        const unsubscribe = firebaseService.subscribeToRequests((requests) => {
+  const fs3 = await getFs();
+  const unsubscribe = fs3.subscribeToRequests((requests: any[]) => {
           if (!listenerWorking) {
             listenerWorking = true;
             addTestResult({
@@ -123,7 +141,8 @@ const FirebaseDeepTest: React.FC = () => {
       setCurrentTest('Testing Enhanced Firebase Service...');
       try {
         // Test enhanced service initialization
-        if (enhancedFirebaseService) {
+    const efs = await getEfs();
+    if (efs) {
           addTestResult({
             test: 'Enhanced Firebase Service',
             status: 'success',
@@ -181,7 +200,8 @@ const FirebaseDeepTest: React.FC = () => {
       if (user) {
         try {
           // Try to read own user data
-          const userData = await firebaseService.getUser(user.id);
+    const fs4 = await getFs();
+    const userData = await fs4.getUser(user.id);
           addTestResult({
             test: 'Security Rules - User Data',
             status: userData ? 'success' : 'warning',
@@ -233,7 +253,8 @@ const FirebaseDeepTest: React.FC = () => {
       setCurrentTest('Running Final Network Test...');
       try {
         const startTime = Date.now();
-        await firebaseService.getRequests();
+  const fs5 = await getFs();
+  await fs5.getRequests();
         const endTime = Date.now();
         
         addTestResult({

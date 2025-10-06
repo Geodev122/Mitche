@@ -9,7 +9,13 @@ import { useTranslation } from 'react-i18next';
 import { timeSince } from '../utils/time';
 import { RatingSystem } from '../components/rating/RatingSystem';
 import { doc as docRef, getDoc } from 'firebase/firestore';
-import { db } from '../services/firebase';
+let _db_lazy_res: any = null;
+async function getDbRes() {
+  if (_db_lazy_res) return _db_lazy_res;
+  const m = await import('../services/firebase');
+  _db_lazy_res = m.db;
+  return _db_lazy_res;
+}
 
 const ResourceDetail: React.FC = () => {
   const { resourceId } = useParams<{ resourceId: string }>();
@@ -34,7 +40,8 @@ const ResourceDetail: React.FC = () => {
           if (mounted) setResource(null);
           return;
         }
-        const snap = await getDoc(docRef(db, 'resources', resourceId));
+  const dbInst = await getDbRes();
+  const snap = await getDoc(docRef(dbInst, 'resources', resourceId));
         if (mounted) {
           if (snap.exists()) setResource({ id: snap.id, ...(snap.data() as any) });
           else setResource(null);
