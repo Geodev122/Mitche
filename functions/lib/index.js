@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateSymbolicIcon = exports.onHopeLedgerCreateEvaluateAchievements = exports.awardRitual = exports.adminRunLedgerTest = exports.getPreaggregatedLeaderboard = exports.onHopeLedgerCreate = void 0;
+exports.generateSymbolicIcon = exports.onHopeLedgerCreateEvaluateAchievements = exports.awardRitual = exports.adminRunLedgerTest = exports.getPreaggregatedLeaderboard = exports.onStagingUploadFinalize = exports.onHopeLedgerCreate = void 0;
 const functions = __importStar(require("firebase-functions"));
 const admin = __importStar(require("firebase-admin"));
 // Secret Manager client
@@ -110,6 +110,48 @@ exports.onHopeLedgerCreate = functions.firestore
     }
     catch (err) {
         console.error('Error in onHopeLedgerCreate:', err);
+        return null;
+    }
+});
+// Storage trigger: when a file is uploaded to staging_uploads/{userId}/..., validate and move it to protected area
+exports.onStagingUploadFinalize = functions.storage.object().onFinalize(async (object, context) => {
+    try {
+        const name = object.name || '';
+        if (!name.startsWith('staging_uploads/'))
+            return null;
+        // Extract userId from path staging_uploads/{userId}/filename
+        const parts = name.split('/');
+        if (parts.length < 2)
+            return null;
+        const userId = parts[1];
+        const srcBucket = admin.storage().bucket(object.bucket);
+        const srcFile = srcBucket.file(name);
+        // Simple validation placeholder: skip files > 20MB
+        const size = Number(object.size || 0);
+        if (size > 20 * 1024 * 1024) {
+            console.warn('Rejecting large staging upload', name, size);
+            // Optionally remove
+            await srcFile.delete().catch(() => { });
+            return null;
+        }
+        // Move into protected area
+        const destPath = name.replace('staging_uploads/', 'protected/user_uploads/');
+        const destFile = srcBucket.file(destPath);
+        await srcFile.copy(destFile);
+        // Delete staging file to avoid double storage
+        await srcFile.delete().catch(() => { });
+        // Make a signed URL valid for a short time (7 days) so admins can review
+        const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000;
+        const [signedUrl] = await destFile.getSignedUrl({ action: 'read', expires: new Date(expiresAt) });
+        // Update user doc with the protected asset reference and set verificationStatus to Pending
+        const userRef = db.collection('users').doc(userId);
+        await userRef.set({ submittedDocuments: admin.firestore.FieldValue.arrayUnion(signedUrl), verificationStatus: 'Pending' }, { merge: true });
+        // Optionally create an audit doc
+        await db.collection('verification_audits').add({ userId, path: destPath, signedUrl, createdAt: admin.firestore.FieldValue.serverTimestamp() });
+        return null;
+    }
+    catch (err) {
+        console.error('Error in onStagingUploadFinalize:', err);
         return null;
     }
 });
