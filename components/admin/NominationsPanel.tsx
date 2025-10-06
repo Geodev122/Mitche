@@ -1,6 +1,13 @@
 import React from 'react';
 import Card from '../../components/ui/Card';
-import { firebaseService } from '../../services/firebase';
+// Lazy-load firebase service to keep SDK out of main bundle
+let _fs: any = null;
+async function getFs() {
+  if (_fs) return _fs;
+  const m = await import('../../services/firebase');
+  _fs = m.firebaseService;
+  return _fs;
+}
 import { useToast } from '../../components/ui/Toast';
 
 const STATUS_ORDER = ['longlist', 'shortlist', 'finalist', 'winner'];
@@ -13,10 +20,14 @@ const NominationsPanel: React.FC = () => {
 
   React.useEffect(() => {
     setLoading(true);
-    const unsub = firebaseService.subscribeToNominations((items) => {
-      setNominations(items);
-      setLoading(false);
-    });
+    let unsub: any = () => {};
+    (async () => {
+      const fs = await getFs();
+      unsub = fs.subscribeToNominations((items: any[]) => {
+        setNominations(items);
+        setLoading(false);
+      });
+    })();
     return () => unsub();
   }, []);
 
@@ -27,7 +38,8 @@ const NominationsPanel: React.FC = () => {
 
   const addNomination = async () => {
     if (!newUserId) return toast.show('Enter a user id', 'error');
-    const ok = await firebaseService.addNomination({ userId: newUserId, reason: newReason });
+  const fs = await getFs();
+  const ok = await fs.addNomination({ userId: newUserId, reason: newReason });
     if (ok) {
       toast.show('Nomination added', 'success');
       setNewUserId('');
@@ -39,7 +51,8 @@ const NominationsPanel: React.FC = () => {
 
   const addComment = async (nomId: string) => {
     if (!commentText) return toast.show('Enter a comment', 'error');
-    const ok = await firebaseService.addNominationComment(nomId, { authorId: 'system', text: commentText, attachmentUrl: newAttachment || undefined });
+  const fs = await getFs();
+  const ok = await fs.addNominationComment(nomId, { authorId: 'system', text: commentText, attachmentUrl: newAttachment || undefined });
     if (ok) {
       toast.show('Comment added', 'success');
       setCommentText(''); setNewAttachment('');
@@ -51,7 +64,8 @@ const NominationsPanel: React.FC = () => {
   const advance = async (id: string, current: string) => {
     const idx = STATUS_ORDER.indexOf(current);
     const next = STATUS_ORDER[Math.min(idx + 1, STATUS_ORDER.length - 1)];
-    const ok = await firebaseService.updateNomination(id, { status: next });
+  const fs = await getFs();
+  const ok = await fs.updateNomination(id, { status: next });
     if (ok) toast.show(`Moved to ${next}`, 'success');
     else toast.show('Failed to update', 'error');
     // If moved to winner, emit ritual locally
@@ -78,7 +92,8 @@ const NominationsPanel: React.FC = () => {
   const regress = async (id: string, current: string) => {
     const idx = STATUS_ORDER.indexOf(current);
     const prev = STATUS_ORDER[Math.max(idx - 1, 0)];
-    const ok = await firebaseService.updateNomination(id, { status: prev });
+  const fs = await getFs();
+  const ok = await fs.updateNomination(id, { status: prev });
     if (ok) toast.show(`Moved to ${prev}`, 'success');
     else toast.show('Failed to update', 'error');
   };

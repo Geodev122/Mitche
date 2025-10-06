@@ -1,8 +1,8 @@
 import React from 'react';
 import Card from './Card';
 import { useAuth } from '../../context/AuthContext';
-import { db } from '../../services/firebase';
-import { collection, query, where, orderBy, onSnapshot, getDocs, doc, getDoc } from 'firebase/firestore';
+// Avoid static firebase imports here to keep the main bundle small.
+// We'll dynamically import the firebase service and firestore helpers when needed.
 
 const AchievementsPanel: React.FC = () => {
   const { user } = useAuth();
@@ -10,22 +10,32 @@ const AchievementsPanel: React.FC = () => {
 
   React.useEffect(() => {
     if (!user) return;
-    // Listen to userAchievements collection for this user
-    const q = query(collection(db, 'userAchievements'), where('userId', '==', user.id), orderBy('completedAt', 'desc')) as any;
-    const unsub = onSnapshot(q, async (snap: any) => {
-      const docs = snap.docs.map((d: any) => ({ id: d.id, ...(d.data() as any) }));
-      // Enrich with achievement metadata
-      const enriched = await Promise.all(docs.map(async (d: any) => {
-        try {
-          const achSnap = await getDoc(doc(db, 'achievements', d.achievementId) as any);
-          const meta = achSnap.exists() ? (achSnap.data() as any) : null;
-          return { ...d, meta };
-        } catch (err) {
-          return d;
-        }
-      }));
-      setItems(enriched);
-    });
+    let unsub: any = () => {};
+    (async () => {
+      try {
+        const [{ db: dynamicDb }, firestore] = await Promise.all([
+          import('../../services/firebase'),
+          import('firebase/firestore')
+        ]);
+        const q = firestore.query(firestore.collection(dynamicDb, 'userAchievements'), firestore.where('userId', '==', user.id), firestore.orderBy('completedAt', 'desc')) as any;
+        unsub = firestore.onSnapshot(q, async (snap: any) => {
+          const docs = snap.docs.map((d: any) => ({ id: d.id, ...(d.data() as any) }));
+          // Enrich with achievement metadata
+          const enriched = await Promise.all(docs.map(async (d: any) => {
+            try {
+              const achSnap = await firestore.getDoc(firestore.doc(dynamicDb, 'achievements', d.achievementId) as any);
+              const meta = achSnap.exists() ? (achSnap.data() as any) : null;
+              return { ...d, meta };
+            } catch (err) {
+              return d;
+            }
+          }));
+          setItems(enriched);
+        });
+      } catch (err) {
+        console.error('Failed to load firestore for AchievementsPanel', err);
+      }
+    })();
 
     return () => unsub();
   }, [user]);

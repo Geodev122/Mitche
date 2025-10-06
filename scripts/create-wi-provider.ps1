@@ -40,7 +40,7 @@ param(
 
     [Parameter(Mandatory=$false)]
     [string] $ProjectNumber
-n)
+)
 
 $ErrorActionPreference = 'Stop'
 
@@ -104,12 +104,7 @@ $allowedAudience = "https://github.com/$RepoOwner/$RepoName"
 
 if (-not $prov) {
     Write-Output "Creating OIDC provider '$ProviderId'..."
-    gcloud iam workload-identity-pools providers create-oidc $ProviderId \
-      --project=$Project --location=global --workload-identity-pool=$PoolId \
-      --display-name="GitHub Actions provider for $RepoName" \
-      --issuer-uri="$issuer" \
-      --allowed-audiences="$allowedAudience" \
-      --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository"
+    gcloud iam workload-identity-pools providers create-oidc $ProviderId --project=$Project --location=global --workload-identity-pool=$PoolId --display-name="GitHub Actions provider for $RepoName" --issuer-uri="$issuer" --allowed-audiences="$allowedAudience" --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository"
 } else {
     Write-Output "OIDC provider '$ProviderId' already exists."
 }
@@ -124,10 +119,7 @@ $Principal = "principalSet://iam.googleapis.com/$PoolFull/attribute.repository/$
 
 Write-Output "Binding workload identity user role to service account for principal: $Principal"
 
-gcloud iam service-accounts add-iam-policy-binding $ServiceAccountEmail \
-  --project=$Project \
-  --role="roles/iam.workloadIdentityUser" \
-  --member="$Principal"
+gcloud iam service-accounts add-iam-policy-binding $ServiceAccountEmail --project=$Project --role="roles/iam.workloadIdentityUser" --member="$Principal"
 
 # Grant deploy roles (adjust as needed for least privilege)
 Write-Output "Granting deploy roles to $ServiceAccountEmail"

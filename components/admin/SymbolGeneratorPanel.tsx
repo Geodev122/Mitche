@@ -1,6 +1,12 @@
 import React from 'react';
 import Card from '../../components/ui/Card';
-import { firebaseService } from '../../services/firebase';
+let _fs2: any = null;
+async function getFs2() {
+  if (_fs2) return _fs2;
+  const m = await import('../../services/firebase');
+  _fs2 = m.firebaseService;
+  return _fs2;
+}
 import { useToast } from '../../components/ui/Toast';
 
 const SymbolGeneratorPanel: React.FC = () => {
@@ -11,7 +17,8 @@ const SymbolGeneratorPanel: React.FC = () => {
   React.useEffect(() => {
     (async () => {
       setLoading(true);
-      const all = await firebaseService.getAllUsers();
+      const fs = await getFs2();
+      const all = await fs.getAllUsers();
       setUsers(all || []);
       setLoading(false);
     })();
