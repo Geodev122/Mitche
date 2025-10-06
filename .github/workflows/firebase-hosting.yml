@@ -24,13 +24,10 @@ jobs:
     - name: Build project
       run: npm run build
     
-    - name: Deploy to Firebase
-      if: env.FIREBASE_SERVICE_ACCOUNT_MITCHE_PLATFORM != ''
-      uses: FirebaseExtended/action-hosting-deploy@v0
+    - name: Deploy to Firebase (script)
+      if: ${{ github.event_name == 'push' }}
+      run: |
+        chmod +x ./scripts/deploy-hosting.sh
+        ./scripts/deploy-hosting.sh
       env:
-        FIREBASE_SERVICE_ACCOUNT_MITCHE_PLATFORM: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MITCHE_PLATFORM }}
-      with:
-        repoToken: ${{ secrets.GITHUB_TOKEN }}
-        firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MITCHE_PLATFORM }}
-        channelId: live
-        projectId: mitche-platform
+        FIREBASE_SERVICE_ACCOUNT_MITCHE_PLATFORM: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MITCHE_PLATFORM || '' }}
