@@ -111,42 +111,52 @@ class FirebaseService {
 
   async signInWithGoogle() {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const firebaseUser = result.user;
-      
-      // Check if user already exists
-      let existingUser = await this.getUser(firebaseUser.uid);
-      
-      if (!existingUser) {
-        // Create new user document for Google sign-up
-        const newUser: User = {
-          id: firebaseUser.uid,
-          username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-          password: '', // Google auth doesn't use password
-          symbolicName: '',
-          symbolicIcon: '',
-          role: Role.Citizen,
-          hopePoints: 0,
-          hopePointsBreakdown: {},
-          hasCompletedOnboarding: false,
-          isVerified: false,
-          verificationStatus: 'NotRequested',
-          joinDate: new Date().toISOString(),
-          lastActive: new Date().toISOString(),
-          languagePreference: 'en',
-          avatar: firebaseUser.photoURL || '',
-        };
+      // Try popup sign-in first; if blocked (popup blocked by browser or environment), fall back to redirect
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const firebaseUser = result.user;
+        // ... existing logic follows
         
-        await setDoc(doc(db, 'users', firebaseUser.uid), newUser);
-        return { success: true, user: newUser };
-      } else {
-        // Update last active for existing user
-        await updateDoc(doc(db, 'users', firebaseUser.uid), {
-          lastActive: new Date().toISOString(),
-          avatar: firebaseUser.photoURL || existingUser.avatar,
-        });
-        return { success: true, user: existingUser };
+        // Check if user already exists
+        let existingUser = await this.getUser(firebaseUser.uid);
+        
+        if (!existingUser) {
+          // Create new user document for Google sign-up
+          const newUser: User = {
+            id: firebaseUser.uid,
+            username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+            password: '', // Google auth doesn't use password
+            symbolicName: '',
+            symbolicIcon: '',
+            role: Role.Citizen,
+            hopePoints: 0,
+            hopePointsBreakdown: {},
+            hasCompletedOnboarding: false,
+            isVerified: false,
+            verificationStatus: 'NotRequested',
+            joinDate: new Date().toISOString(),
+            lastActive: new Date().toISOString(),
+            languagePreference: 'en',
+            avatar: firebaseUser.photoURL || '',
+          };
+          
+          await setDoc(doc(db, 'users', firebaseUser.uid), newUser);
+          return { success: true, user: newUser };
+        } else {
+          // Update last active for existing user
+          await updateDoc(doc(db, 'users', firebaseUser.uid), {
+            lastActive: new Date().toISOString(),
+            avatar: firebaseUser.photoURL || existingUser.avatar,
+          });
+          return { success: true, user: existingUser };
+        }
+      } catch (popupErr) {
+        console.warn('Popup sign-in failed or blocked, trying redirect flow:', popupErr);
+        // Fallback to redirect-based sign-in; caller should handle redirect result separately
+        await import('firebase/auth').then(({ signInWithRedirect }) => signInWithRedirect(auth, googleProvider));
+        return { success: false, message: 'Redirecting for Google sign-in; complete sign-in in the opened window.' };
       }
+      
     } catch (error: any) {
       console.error('Error signing in with Google:', error);
       return { success: false, message: error.message };

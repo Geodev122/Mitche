@@ -46,6 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         // Try to initialize Firebase auth listener
         authUnsubscribe.current = firebaseService.onAuthStateChange((firebaseUser) => {
+          console.debug('Auth state changed, firebaseUser:', firebaseUser);
           setIsFirebaseEnabled(!!firebaseUser);
           setIsLoading(false);
           if (firebaseUser) {
@@ -62,6 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         });
 
+        console.debug('Initialized auth listener; waiting briefly for Firebase to populate state');
         // Give Firebase a moment to initialize
         setTimeout(() => {
           if (!isFirebaseEnabled) {
