@@ -5,6 +5,9 @@ import { Role } from '../types';
 import CitizenDashboard from './dashboards/CitizenDashboard';
 import OrganizationDashboard from './dashboards/OrganizationDashboard';
 import MigrationNotice from '../components/ui/MigrationNotice';
+import ResponsiveLogo from '../components/ui/ResponsiveLogo';
+import useIsMobile from '../hooks/useIsMobile';
+import MobileDashboard from './dashboards/MobileDashboard';
 
 const Dashboard: React.FC = () => {
   const { user, isLoading } = useAuth();
@@ -14,7 +17,7 @@ const Dashboard: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FBF9F4]">
         <div className="text-center">
-          <img src="/awardlogo.png" alt="Mitché Logo" width={64} height={64} className="w-16 h-16 mx-auto mb-4 animate-pulse" />
+          <ResponsiveLogo className="w-16 h-16 mx-auto mb-4 animate-pulse" />
           <p className="text-gray-500">Loading dashboard...</p>
         </div>
       </div>
@@ -39,6 +42,10 @@ const Dashboard: React.FC = () => {
   // Route to appropriate dashboard based on role
   switch (user.role) {
     case Role.Citizen:
+      // Mobile-first experience
+      if (useIsMobile()) {
+        return <MobileDashboard />;
+      }
       return (
         <div>
           <MigrationNotice />

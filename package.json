@@ -12,6 +12,7 @@
   "storybook": "storybook dev -p 6006 -s public",
   "build-storybook": "storybook build",
   "lighthouse-ci": "lhci autorun --collect.staticDistDir=dist",
+  "optimize-images": "node scripts/optimize-images.cjs --input=public/awardlogo.png --output=public/optimized --name=awardlogo",
   "test:e2e": "node ./scripts/e2e-client-auth-test.mjs"
   },
   "dependencies": {
@@ -35,6 +36,8 @@
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.0",
     "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "vite": "^6.2.0",
+    "minimist": "^1.2.8",
+    "sharp": "^0.33.0"
   }
 }

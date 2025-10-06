@@ -34,10 +34,12 @@ const AnalyticsDashboard = ReactLazy.lazy(() => import('./pages/AnalyticsDashboa
 const Constellation = ReactLazy.lazy(() => import('./pages/Constellation'));
 const EnhancedPlatformDemo = ReactLazy.lazy(() => import('./pages/EnhancedPlatformDemo'));
 
+import ResponsiveLogo from './components/ui/ResponsiveLogo';
+
 const LoadingFallback: React.FC = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-[#FBF9F4]">
     <div className="flex flex-col items-center text-center">
-      <img src="/awardlogo.png" alt="Mitché Logo" width={96} height={96} className="w-24 h-24 mx-auto mb-4 animate-pulse" />
+      <ResponsiveLogo className="w-24 h-24 mx-auto mb-4 animate-pulse" />
       <p className="text-gray-500">Loading...</p>
     </div>
   </div>

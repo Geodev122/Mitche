@@ -3,6 +3,7 @@ import * as ReactRouterDOM from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import SymbolIcon from '../components/ui/SymbolIcon';
+import ResponsiveLogo from '../components/ui/ResponsiveLogo';
 import { MessageSquare, HeartHandshake, User, ArrowRight, CheckCircle, ArrowLeft, Shield } from 'lucide-react';
 
 const symbolicNameKeys = ["hopeBearer", "voiceOfLight", "helpingHand", "morningStar", "braveHeart"];
@@ -63,7 +64,7 @@ const Onboarding: React.FC = () => {
       case 1:
         return (
           <StepWrapper>
-            <img src="/awardlogo.png" alt="Mitché Logo" width={96} height={96} className="w-24 h-24 mx-auto" />
+            <ResponsiveLogo className="w-24 h-24 mx-auto" />
             <h1 className="text-3xl font-bold text-gray-800">{t('onboarding.step1.title')}</h1>
             <p className="text-gray-600 px-4">{t('onboarding.step1.subtitle')}</p>
             <button onClick={handleNext} className="w-full mt-6 bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 flex items-center justify-center">
