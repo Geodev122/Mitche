@@ -29,14 +29,14 @@ import {
 } from 'firebase/auth';
 import { firebaseConfig } from '../firebase.config';
 import { User, Request, CommunityEvent, Resource, Offering, Notification, TapestryThread, Role } from '../types';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export { app };
 export const db = getFirestore(app);
 export const auth = getAuth(app);
-export const storage = getStorage(app);
+// Note: storage is intentionally not imported at module load so the storage SDK
+// is not included in the main bundle. Upload helpers dynamically import storage.
 
 // Initialize Google Auth Provider
 const googleProvider = new GoogleAuthProvider();
@@ -698,16 +698,26 @@ class FirebaseService {
   }
 
   // Upload multiple documents for a user; accepts browser File objects and returns download URLs
-  async uploadDocuments(userId: string, files: File[]): Promise<string[]> {
+  async uploadSingleDocument(userId: string, file: File, onProgress?: (percent: number) => void): Promise<{ url?: string; error?: any; cancel?: () => void }> {
     try {
-      const promises = files.map(async (file, idx) => {
-        const path = `user_uploads/${userId}/${Date.now()}_${idx}_${file.name}`;
-        const ref = storageRef(storage, path);
-        const snap = await uploadBytes(ref, file as any);
-        const url = await getDownloadURL(snap.ref);
-        return url;
-      });
-      const urls = await Promise.all(promises);
+      const helper = await import('./storage-helper');
+      const controller = await helper.uploadFileToStaging(userId, file, onProgress);
+      const url = await controller.promise;
+      return { url };
+    } catch (err) {
+      console.error('Error uploading document:', err);
+      return { error: err };
+    }
+  }
+
+  async uploadDocuments(userId: string, files: File[], onProgress?: (fileIndex: number, percent: number) => void): Promise<string[]> {
+    try {
+      const urls: string[] = [];
+      for (let idx = 0; idx < files.length; idx++) {
+        const f = files[idx];
+        const res = await this.uploadSingleDocument(userId, f, (p) => onProgress && onProgress(idx, p));
+        if (res.url) urls.push(res.url);
+      }
       return urls;
     } catch (err) {
       console.error('Error uploading documents:', err);

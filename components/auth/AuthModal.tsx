@@ -4,14 +4,25 @@ import Modal from '../ui/Modal';
 import { useTranslation } from 'react-i18next';
 import { Role } from '../../types';
 import { RefreshCw } from 'lucide-react';
+import { useToast } from '../ui/Toast';
+import { firebaseService, auth as firebaseAuth } from '../../services/firebase';
 
 interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
+const InputField: React.FC<{id: string, label: string, type: string, value: string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, required?: boolean}> = 
+({id, label, type, value, onChange, required}) => (
+    <div>
+        <label htmlFor={id} className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
+        <input id={id} type={type} value={value} onChange={onChange} required={required}
+            className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]" />
+    </div>
+);
+
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
-    const { login, signup, signInWithGoogle, generateUniqueUsernames } = useAuth();
+    const { login, signup, signInWithGoogle, generateUniqueUsernames, isFirebaseEnabled } = useAuth();
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = React.useState<'login' | 'signup'>('login');
     
@@ -27,6 +38,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     const [isGenerating, setIsGenerating] = React.useState(false);
     const [selectedRole, setSelectedRole] = React.useState<Role>(Role.Citizen);
     const [documents, setDocuments] = React.useState<File[]>([]);
+    const [uploadProgress, setUploadProgress] = React.useState<number[]>([]);
+    const [uploadControllers, setUploadControllers] = React.useState<Array<{ cancel?: () => void; status?: 'idle'|'uploading'|'done'|'error'; url?: string; error?: string }>>([]);
+    const toast = useToast();
 
     const handleGenerateUsernames = React.useCallback(() => {
         setIsGenerating(true);
@@ -77,42 +91,99 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!selectedUsername) {
             setError(t('auth.errorUsernameNotSelected'));
             return;
         }
-        
+
         if (!password.trim()) {
             setError(t('auth.errorPassword'));
             return;
         }
-        
+
         if (password.length < 4) {
             setError('Password must be at least 4 characters');
             return;
         }
-        
+
         setError('');
         setLoading(true);
-        
+
         try {
-            // Prepare document upload placeholders (client will upload files to storage in a later step)
-            const result = await signup(selectedUsername, password.trim(), {
-                role: selectedRole,
-                submittedFiles: documents
-            });
+            // For local fallback, include submitted document names so they are recorded.
+            const meta: any = { role: selectedRole };
+            if (!isFirebaseEnabled && documents.length > 0) {
+                meta.submittedDocuments = documents.map(f => f.name);
+            }
+
+            // Create account first (without files) so we get the user id
+            const result = await signup(selectedUsername, password.trim(), meta);
             if (result.success) {
                 // If role requires admin approval, inform the user
-                if (selectedRole === 'NGO' || selectedRole === 'PublicWorker') {
-                    alert(t('auth.pendingApproval'));
+                if (selectedRole === Role.NGO || selectedRole === Role.PublicWorker) {
+                    toast.show(t('auth.pendingApproval'), 'info');
                 }
+
+                // If there are documents and Firebase is available, upload after account creation to track progress
+                if (documents.length > 0 && isFirebaseEnabled) {
+                    try {
+                        const userId = firebaseAuth?.currentUser?.uid;
+                        if (!userId) throw new Error('Unable to determine user id after signup');
+
+                        // initialize controllers and progress
+                        setUploadProgress(documents.map(() => 0));
+                        setUploadControllers(documents.map(() => ({ status: 'uploading' })));
+
+                        const uploadPromises: Promise<any>[] = [];
+
+                        for (let i = 0; i < documents.length; i++) {
+                            const f = documents[i];
+                            const idx = i;
+
+                            const p = firebaseService.uploadSingleDocument(userId, f, (pct) => {
+                                setUploadProgress(prev => { const n = [...(prev || [])]; n[idx] = pct; return n; });
+                            }).then(res => {
+                                if (res && res.url) {
+                                    setUploadControllers(prev => { const n = [...(prev || [])]; n[idx] = { status: 'done', url: res.url }; return n; });
+                                    return { success: true, url: res.url };
+                                } else {
+                                    setUploadControllers(prev => { const n = [...(prev || [])]; n[idx] = { status: 'error', error: String(res?.error || 'upload failed') }; return n; });
+                                    return { success: false, error: res?.error };
+                                }
+                            }).catch(err => {
+                                setUploadControllers(prev => { const n = [...(prev || [])]; n[idx] = { status: 'error', error: String(err) }; return n; });
+                                return { success: false, error: err };
+                            });
+
+                            uploadPromises.push(p);
+                        }
+
+                        const settled = await Promise.allSettled(uploadPromises);
+                        const finalUrls: string[] = [];
+                        settled.forEach((s, idx) => {
+                            if (s.status === 'fulfilled' && s.value && s.value.success && s.value.url) {
+                                finalUrls.push(s.value.url);
+                            }
+                        });
+
+                        if (finalUrls.length > 0) {
+                            await firebaseService.updateUser(userId, { submittedDocuments: finalUrls, verificationStatus: 'Pending' });
+                            toast.show(t('auth.uploadSuccess') || 'Documents uploaded', 'success');
+                        }
+                    } catch (err) {
+                        console.error('Upload failed', err);
+                        toast.show(t('auth.uploadFailed') || 'Document upload failed', 'error');
+                    }
+                }
+
                 onClose();
                 resetForm();
             } else {
                 setError(result.message || t('auth.errorExists'));
             }
         } catch (error) {
+            console.error(error);
             setError('An unexpected error occurred');
         } finally {
             setLoading(false);
@@ -249,8 +320,71 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                             <input type="file" multiple onChange={(e) => {
                                 const files = e.target.files ? Array.from(e.target.files) : [];
                                 setDocuments(files);
+                                setUploadProgress(files.map(() => 0));
                             }} className="w-full text-sm" />
                             {documents.length > 0 && <p className="text-xs text-gray-600 mt-1">{documents.length} {t('auth.documentsSelected')}</p>}
+                            {documents.length > 0 && (
+                                <div className="space-y-3 mt-2">
+                                    {documents.map((f, idx) => {
+                                        const pct = uploadProgress[idx] ?? 0;
+                                        const ctrl = uploadControllers[idx] || { status: 'idle' };
+                                        return (
+                                            <div key={f.name + idx} className="p-2 bg-white rounded border">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <div className="min-w-0">
+                                                        <div className="text-sm font-medium truncate">{f.name}</div>
+                                                        <div className="text-xs text-gray-500">{ctrl.status === 'done' ? (ctrl.url ? 'Uploaded' : 'Completed') : ctrl.status === 'error' ? `Error: ${ctrl.error}` : ''}</div>
+                                                    </div>
+                                                    <div className="w-32">
+                                                        <div className="h-2 bg-gray-200 rounded overflow-hidden">
+                                                            <div className="h-2 bg-amber-500" style={{ width: `${pct}%` }} />
+                                                        </div>
+                                                        <div className="text-xs text-right text-gray-500 mt-1">{pct}%</div>
+                                                    </div>
+                                                </div>
+                                                <div className="mt-2 flex items-center gap-2 justify-end">
+                                                    {ctrl.status === 'uploading' && (
+                                                        <button type="button" onClick={() => {
+                                                            // cancel
+                                                            try {
+                                                                uploadControllers[idx]?.cancel && uploadControllers[idx].cancel();
+                                                                setUploadControllers(prev => {
+                                                                    const next = [...prev];
+                                                                    next[idx] = { ...(next[idx] || {}), status: 'error', error: 'cancelled' };
+                                                                    return next;
+                                                                });
+                                                            } catch (e) { console.warn(e); }
+                                                        }} className="px-2 py-1 text-xs bg-red-100 text-red-600 rounded">Cancel</button>
+                                                    )}
+                                                    {ctrl.status === 'error' && (
+                                                        <button type="button" onClick={async () => {
+                                                            // retry single file
+                                                            setUploadControllers(prev => { const n = [...prev]; n[idx] = { status: 'uploading' }; return n; });
+                                                            setUploadProgress(prev => { const n = [...(prev || [])]; n[idx] = 0; return n; });
+                                                            try {
+                                                                const userId = firebaseAuth?.currentUser?.uid;
+                                                                if (!userId) throw new Error('No user id');
+                                                                // call uploadSingleDocument
+                                                                const res = await firebaseService.uploadSingleDocument(userId, f, (p) => setUploadProgress(prev => { const n = [...(prev || [])]; n[idx] = p; return n; }));
+                                                                if (res.url) {
+                                                                    setUploadControllers(prev => { const n = [...(prev || [])]; n[idx] = { status: 'done', url: res.url }; return n; });
+                                                                    toast.show('Upload succeeded', 'success');
+                                                                } else {
+                                                                    setUploadControllers(prev => { const n = [...(prev || [])]; n[idx] = { status: 'error', error: String(res.error || 'upload failed') }; return n; });
+                                                                    toast.show('Upload failed', 'error');
+                                                                }
+                                                            } catch (err) {
+                                                                setUploadControllers(prev => { const n = [...(prev || [])]; n[idx] = { status: 'error', error: String(err) }; return n; });
+                                                                toast.show('Upload failed', 'error');
+                                                            }
+                                                        }} className="px-2 py-1 text-xs bg-amber-100 text-amber-700 rounded">Retry</button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
                     </div>
                     <InputField id="signup-password" label={t('auth.password')} type="password" value={password} onChange={e => setPassword(e.target.value)} required />
@@ -290,14 +424,5 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         </Modal>
     );
 };
-
-const InputField: React.FC<{id: string, label: string, type: string, value: string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, required?: boolean}> = 
-({id, label, type, value, onChange, required}) => (
-    <div>
-        <label htmlFor={id} className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
-        <input id={id} type={type} value={value} onChange={onChange} required={required}
-            className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]" />
-    </div>
-);
 
 export default AuthModal;
