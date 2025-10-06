@@ -19,15 +19,23 @@ const SymbolGeneratorPanel: React.FC = () => {
 
   const generateForUser = async (u: any) => {
     try {
-      // For now use DiceBear initials SVG as a placeholder generator
-      const svgUrl = `https://api.dicebear.com/8.x/initials/svg?seed=${encodeURIComponent(u.username || u.id)}`;
-      // Store the chosen url as user's symbolicIcon (delegated)
-      const ok = await firebaseService.updateUser(u.id, { symbolicIcon: svgUrl });
-      if (ok) toast.show('Symbol stored', 'success');
-      else toast.show('Failed to store symbol', 'error');
+      toast.show('Generating symbol…', 'info');
+      // Call functions callable generateSymbolicIcon
+      const { getFunctions, httpsCallable } = await import('firebase/functions');
+      const functions = getFunctions();
+      const fn = httpsCallable(functions, 'generateSymbolicIcon');
+      const res = await fn({ userId: u.id, prompt: `A warm gold-tone symbolic icon representing community care for ${u.username || u.id}` });
+      const payload = (res && (res.data as any)) || {};
+      if (payload.success && payload.url) {
+        toast.show('Generated symbol', 'success');
+        // update local list
+        setUsers(prev => prev.map(p => p.id === u.id ? { ...p, symbolicIcon: payload.url } : p));
+      } else {
+        toast.show(`Generation failed: ${payload.error || 'unknown'}`, 'error');
+      }
     } catch (err) {
+      console.error('Generation error', err);
       toast.show('Generation failed', 'error');
-      console.error(err);
     }
   };
 
