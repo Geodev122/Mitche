@@ -20,7 +20,6 @@ import Scanner from './pages/Scanner';
 import CommunityEvents from './pages/CommunityEvents';
 import CreateEvent from './pages/CreateEvent';
 import CommunityEventDetail from './pages/CommunityEventDetail';
-import ChatPage from './pages/ChatPage';
 import AdminDashboard from './pages/AdminDashboard';
 import Leaderboard from './pages/Leaderboard';
 import Constellation from './pages/Constellation';
@@ -116,7 +115,6 @@ const Main: React.FC = () => {
         <ReactRouterDOM.Route path="echoes/:requestId" element={<RequestDetail />} />
         <ReactRouterDOM.Route path="echoes/new" element={<ProtectedRoute roles={[Role.Citizen]}><CreateRequest /></ProtectedRoute>} />
         <ReactRouterDOM.Route path="tapestry" element={<TempleOfStories />} />
-  <ReactRouterDOM.Route path="chat/:conversationId" element={<ChatPage />} />
         <ReactRouterDOM.Route path="nomination" element={<NominationResponse />} />
         <ReactRouterDOM.Route path="scanner" element={<Scanner />} />
         <ReactRouterDOM.Route path="events" element={<CommunityEvents />} />
@@ -129,7 +127,7 @@ const Main: React.FC = () => {
   <ReactRouterDOM.Route path="resources/:resourceId" element={<ResourceDetail />} />
         <ReactRouterDOM.Route path="resources/new" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]} verifiedOnly={true}><CreateResource /></ProtectedRoute>} />
         <ReactRouterDOM.Route path="admin" element={<ProtectedRoute roles={[Role.Admin]}><AdminDashboard /></ProtectedRoute>} />
-  {/* Phase1Demo was a developer demo; Phase1 features are embedded into main pages (search/chat/rating). */}
+  {/* Phase1Demo was a developer demo; Phase1 features are embedded into main pages (search/rating). */}
         <ReactRouterDOM.Route path="enhanced" element={<EnhancedPlatformDemo />} />
       </ReactRouterDOM.Route>
       {/* Catch-all route for authenticated users */}

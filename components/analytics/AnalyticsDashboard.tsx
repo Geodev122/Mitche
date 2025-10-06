@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// FIX: Import useState and useEffect directly from 'react'.
+import React, { useState, useEffect, FC, ReactNode } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
 interface AnalyticsDashboardProps {
@@ -14,31 +15,32 @@ interface AnalyticsSummary {
   dailyBreakdown: { [key: string]: number };
 }
 
-const ChartIcon: React.FC<{ className?: string }> = ({ className }) => (
+// FIX: Cast className to any to avoid type errors with SVG props
+const ChartIcon: FC<{ className?: any }> = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
   </svg>
 );
 
-const UsersIcon: React.FC<{ className?: string }> = ({ className }) => (
+const UsersIcon: FC<{ className?: any }> = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
   </svg>
 );
 
-const HeartIcon: React.FC<{ className?: string }> = ({ className }) => (
+const HeartIcon: FC<{ className?: any }> = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
   </svg>
 );
 
-const CalendarIcon: React.FC<{ className?: string }> = ({ className }) => (
+const CalendarIcon: FC<{ className?: any }> = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
   </svg>
 );
 
-export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ 
+export const AnalyticsDashboard: FC<AnalyticsDashboardProps> = ({ 
   dateRange = {
     start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     end: new Date().toISOString().split('T')[0]
@@ -95,14 +97,16 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
   const getTopEventTypes = () => {
     if (!analytics?.eventsByType) return [];
-    return Object.entries(analytics.eventsByType)
+    // FIX: Explicitly cast the result of Object.entries to avoid type errors.
+    return (Object.entries(analytics.eventsByType) as [string, number][])
       .sort(([,a], [,b]) => b - a)
       .slice(0, 5);
   };
 
   const getRecentDays = () => {
     if (!analytics?.dailyBreakdown) return [];
-    return Object.entries(analytics.dailyBreakdown)
+    // FIX: Explicitly cast the result of Object.entries to avoid type errors.
+    return (Object.entries(analytics.dailyBreakdown) as [string, number][])
       .sort(([a], [b]) => b.localeCompare(a))
       .slice(0, 7);
   };
@@ -224,11 +228,13 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                         <div 
                           className="bg-blue-600 h-2 rounded-full" 
                           style={{ 
-                            width: `${((count / (analytics?.totalEvents || 1)) * 100)}%` 
+                            // FIX: Ensure arithmetic operation is performed on numbers.
+                            width: `${(((count || 0) / (analytics?.totalEvents || 1)) * 100)}%` 
                           }}
                         ></div>
                       </div>
-                      <span className="text-sm font-medium">{count}</span>
+                      {/* FIX: Cast count to ReactNode to satisfy type requirements. */}
+                      <span className="text-sm font-medium">{count as ReactNode}</span>
                     </div>
                   </div>
                 ))}
@@ -240,7 +246,8 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               <h3 className="text-lg font-semibold mb-4">Recent Daily Activity</h3>
               <div className="space-y-3">
                 {getRecentDays().map(([date, count]) => {
-                  const maxDailyCount = Math.max(...Object.values(analytics?.dailyBreakdown || {}));
+                  // FIX: Cast Object.values to number[] to use with Math.max.
+                  const maxDailyCount = Math.max(...(Object.values(analytics?.dailyBreakdown || {}) as number[]), 1);
                   return (
                     <div key={date} className="flex items-center justify-between">
                       <span className="text-sm text-gray-700">{new Date(date).toLocaleDateString()}</span>
@@ -249,11 +256,13 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                           <div 
                             className="bg-green-600 h-2 rounded-full" 
                             style={{ 
-                              width: `${((count / maxDailyCount) * 100)}%` 
+                              // FIX: Ensure arithmetic operation is performed on numbers.
+                              width: `${(((count || 0) / maxDailyCount) * 100)}%` 
                             }}
                           ></div>
                         </div>
-                        <span className="text-sm font-medium">{count}</span>
+                        {/* FIX: Cast count to ReactNode to satisfy type requirements. */}
+                        <span className="text-sm font-medium">{count as ReactNode}</span>
                       </div>
                     </div>
                   );
