@@ -134,3 +134,167 @@ export const adminRunLedgerTest = functions.https.onCall(async (data, context) =
     return { success: false, error: err instanceof Error ? err.message : 'unknown' };
   }
 });
+
+// Callable function to authoritatively award a Daily Ritual point to the authenticated user
+export const awardRitual = functions.https.onCall(async (data, context) => {
+  try {
+    if (!context.auth || !context.auth.uid) {
+      throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
+    }
+
+    const uid = context.auth.uid;
+    const prompt = typeof data?.prompt === 'string' && data.prompt.length > 0 ? data.prompt : undefined;
+    const requestId = typeof data?.requestId === 'string' && data.requestId.length > 0 ? data.requestId : undefined;
+    const amount = 1;
+
+    // Compute UTC midnight (start of current UTC day)
+    const now = new Date();
+    const utcMidnightMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0);
+
+    const userRef = db.collection('users').doc(uid);
+    const ledgerColl = db.collection('hope_ledger');
+    const ledgerRef = requestId ? ledgerColl.doc(requestId) : ledgerColl.doc();
+
+    // If requestId provided, quick pre-check to return idempotently
+    if (requestId) {
+      const existing = await ledgerRef.get();
+      if (existing.exists) {
+        // Already applied
+        return { success: true, alreadyApplied: true, ledgerId: ledgerRef.id };
+      }
+    }
+
+    // Run transaction to ensure atomicity: check lastRitualTimestamp, create ledger, update user
+    const result = await db.runTransaction(async (tx) => {
+      const userSnap = await tx.get(userRef);
+      if (!userSnap.exists) {
+        throw new functions.https.HttpsError('not-found', 'User document not found');
+      }
+      const userData: any = userSnap.data() || {};
+      const lastRitualTs = typeof userData.lastRitualTimestamp === 'number' ? userData.lastRitualTimestamp : null;
+
+      if (lastRitualTs && lastRitualTs >= utcMidnightMs) {
+        throw new functions.https.HttpsError('failed-precondition', 'already-completed', { lastRitualTimestamp: lastRitualTs });
+      }
+
+      // If requestId provided, double-check inside transaction
+      if (requestId) {
+        const ledgerSnap = await tx.get(ledgerRef);
+        if (ledgerSnap.exists) {
+          return { success: true, alreadyApplied: true, ledgerId: ledgerRef.id };
+        }
+      }
+
+      const nowTs = admin.firestore.Timestamp.now();
+
+      // Create ledger entry
+      const ledgerData: any = {
+        actorId: uid,
+        receiverId: uid,
+        category: 'Ritual',
+        amount,
+        prompt: prompt || null,
+        timestamp: nowTs,
+      };
+      if (requestId) ledgerData.requestId = requestId;
+
+      tx.set(ledgerRef, ledgerData);
+
+      // Update user aggregates
+      const newHopePoints = (userData.hopePoints || 0) + amount;
+      const breakdown = { ...(userData.hopePointsBreakdown || {}) };
+      breakdown['Ritual'] = (breakdown['Ritual'] || 0) + amount;
+
+      tx.update(userRef, {
+        hopePoints: newHopePoints,
+        hopePointsBreakdown: breakdown,
+        lastRitualTimestamp: Date.now(),
+      });
+
+      return { success: true, ledgerId: ledgerRef.id, newHopePoints, newBreakdown: breakdown };
+    });
+
+    // Write analytics as best-effort (outside transaction) to keep transaction small
+    try {
+      await db.collection('analytics').add({
+        eventType: 'daily_ritual_completed',
+        userId: uid,
+        prompt: prompt || null,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        date: new Date().toISOString().split('T')[0]
+      });
+    } catch (err) {
+      console.warn('Failed to write analytics for awardRitual:', err);
+    }
+
+    return result;
+  } catch (err: any) {
+    if (err instanceof functions.https.HttpsError) throw err;
+    console.error('Error in awardRitual:', err);
+    throw new functions.https.HttpsError('internal', err instanceof Error ? err.message : 'unknown');
+  }
+});
+
+// When a ledger entry is created, evaluate achievements for the receiver and award if thresholds crossed
+export const onHopeLedgerCreateEvaluateAchievements = functions.firestore
+  .document('hope_ledger/{entryId}')
+  .onCreate(async (snap, context) => {
+    try {
+      const data = snap.data();
+      if (!data || !data.receiverId) return null;
+      const receiverId = data.receiverId as string;
+      const ledgerId = context.params.entryId as string;
+
+      const userRef = db.collection('users').doc(receiverId);
+      const userSnap = await userRef.get();
+      if (!userSnap.exists) return null;
+      const userData: any = userSnap.data() || {};
+      const userHopePoints = Number(userData.hopePoints || 0);
+
+      // Query achievements that are of type 'hopePoints'
+      const achQuery = await db.collection('achievements').where('criteria.type', '==', 'hopePoints').get();
+      if (achQuery.empty) return null;
+
+      const batch = db.batch();
+      let anyWrites = false;
+
+      for (const achDoc of achQuery.docs) {
+        const ach = achDoc.data() as any;
+        const criteria = ach?.criteria || {};
+        const target = Number(criteria.value || 0);
+        if (userHopePoints >= target) {
+          const uaId = `${receiverId}_${achDoc.id}`;
+          const uaRef = db.collection('userAchievements').doc(uaId);
+          const uaSnap = await uaRef.get();
+          if (!uaSnap.exists) {
+            const now = admin.firestore.FieldValue.serverTimestamp();
+            batch.set(uaRef, {
+              id: uaId,
+              userId: receiverId,
+              achievementId: achDoc.id,
+              currentProgress: target,
+              targetProgress: target,
+              isCompleted: true,
+              completedAt: now,
+              notificationSent: false,
+              earnedContext: { ledgerId, category: data.category || null },
+              createdAt: now,
+              updatedAt: now,
+            });
+            // Ensure user's badges include this achievement id (denormalized)
+            batch.update(userRef, { badges: admin.firestore.FieldValue.arrayUnion(achDoc.id) });
+            anyWrites = true;
+          }
+        }
+      }
+
+      if (anyWrites) {
+        await batch.commit();
+      }
+
+      return null;
+    } catch (err) {
+      console.error('Error in onHopeLedgerCreateEvaluateAchievements:', err);
+      return null;
+    }
+  });

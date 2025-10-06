@@ -24,7 +24,7 @@ interface DataContextType {
   echoThread: (threadId: string) => void;
   loading: boolean;
   giveDailyPoint: (receiverId: string) => Promise<{ success: boolean; messageKey: string; receiverName?: string }>;
-  giveRitualPoint: (opts?: { prompt?: string }) => Promise<{ success: boolean; messageKey: string }>; 
+  giveRitualPoint: (opts?: { prompt?: string; requestId?: string }) => Promise<{ success: boolean; messageKey: string }>; 
   getRequestById: (requestId: string) => Request | undefined;
   getOfferingsForRequest: (requestId: string) => Offering[];
   leaveCommendation: (requestId: string, fromRole: 'requester' | 'helper', commendations: CommendationType[]) => void;
@@ -932,20 +932,43 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (isFirebaseEnabled) {
         try {
-          await firebaseService.updateUser(user.id, updated as any);
-        } catch (err) {
-          console.error('Failed to update user ritual timestamp:', err);
-        }
-
-        // record analytics event
-        try {
-          const { enhancedFirebaseService } = await import('../services/firebase-enhanced');
-          enhancedFirebaseService.recordAnalytics('daily_ritual_completed', analyticsPayload);
-        } catch (err) {
-          console.error('Failed to record ritual analytics:', err);
+          // Use callable function to authoritatively award ritual (server enforces once-per-day UTC)
+          const { getFunctions, httpsCallable } = await import('firebase/functions');
+          const functions = getFunctions();
+          const fn = httpsCallable(functions, 'awardRitual');
+          const payload = { prompt: opts?.prompt };
+          const res = await fn(payload);
+          const data = res && (res.data as any);
+          if (data && data.success) {
+            // Update local user state with returned totals if present
+            if (data.newHopePoints || data.newBreakdown) {
+              const updatedFromServer: Partial<typeof user> = {} as any;
+              if (typeof data.newHopePoints === 'number') updatedFromServer.hopePoints = data.newHopePoints;
+              if (data.newBreakdown) updatedFromServer.hopePointsBreakdown = data.newBreakdown;
+              updatedFromServer.lastRitualTimestamp = Date.now();
+              updateUser(updatedFromServer);
+            } else {
+              // Fallback optimistic update
+              updateUser(updated);
+            }
+            return { success: true, messageKey: 'ritual.success' };
+          } else {
+            // If function responded with standard structured error, surface friendly message
+            console.warn('awardRitual returned unexpected payload', data);
+            return { success: false, messageKey: 'ritual.error' };
+          }
+        } catch (err: any) {
+          // If callable returns a HttpsError with code 'failed-precondition' and message 'already-completed', map to user-facing text
+          const code = err?.code || err?.status || null;
+          if (code === 'failed-precondition' || code === 'already-completed') {
+            return { success: false, messageKey: 'scanner.error.alreadyGiven' };
+          }
+          console.error('Failed to call awardRitual:', err);
+          return { success: false, messageKey: 'ritual.error' };
         }
       }
 
+      // local fallback
       updateUser(updated);
       return { success: true, messageKey: 'ritual.success' };
     } catch (err) {

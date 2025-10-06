@@ -27,7 +27,8 @@ const DailyRitual: React.FC = () => {
     setLoading(true);
     try {
       // Award ritual point to the performer (actor-only) and record analytics
-  const res = await data.giveRitualPoint({ prompt });
+  const requestId = `ritual_${user.id}_${Date.now()}`;
+  const res = await data.giveRitualPoint({ prompt, requestId });
       if (res.success) {
         toast.show('Daily ritual completed — Hope point awarded!', 'success');
         setCompleted(true);
