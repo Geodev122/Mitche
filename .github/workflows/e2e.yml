@@ -47,10 +47,14 @@ jobs:
         with:
           node-version: '18'
       - name: Run Puppeteer UI E2E
-        if: ${{ secrets.FIREBASE_ADMIN_SA_B64 != '' }}
         env:
           FIREBASE_ADMIN_SA_B64: ${{ secrets.FIREBASE_ADMIN_SA_B64 }}
-        run: node ./scripts/puppeteer-e2e.mjs
+        run: |
+          if [ -n "$FIREBASE_ADMIN_SA_B64" ]; then
+            node ./scripts/puppeteer-e2e.mjs
+          else
+            echo "FIREBASE_ADMIN_SA_B64 secret not set, skipping UI E2E test."
+          fi
       - name: Upload UI report
         if: always()
         uses: actions/upload-artifact@v4

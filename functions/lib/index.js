@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onHopeLedgerCreateEvaluateAchievements = exports.awardRitual = exports.adminRunLedgerTest = exports.getPreaggregatedLeaderboard = exports.onHopeLedgerCreate = void 0;
+exports.generateSymbolicIcon = exports.onHopeLedgerCreateEvaluateAchievements = exports.awardRitual = exports.adminRunLedgerTest = exports.getPreaggregatedLeaderboard = exports.onHopeLedgerCreate = void 0;
 const functions = __importStar(require("firebase-functions"));
 const admin = __importStar(require("firebase-admin"));
 // Initialize admin if not already initialized
@@ -302,6 +302,81 @@ exports.onHopeLedgerCreateEvaluateAchievements = functions.firestore
     catch (err) {
         console.error('Error in onHopeLedgerCreateEvaluateAchievements:', err);
         return null;
+    }
+});
+// Callable function to generate a symbolic icon for a user using OpenAI Images API
+exports.generateSymbolicIcon = functions.https.onCall(async (data, context) => {
+    try {
+        // Only authenticated admins may call this
+        if (!context.auth || !context.auth.uid) {
+            throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
+        }
+        const roleClaim = (context.auth.token && context.auth.token.role);
+        let isAdmin = roleClaim === 'Admin';
+        if (!isAdmin) {
+            const userDoc = await db.collection('users').doc(context.auth.uid).get();
+            if (userDoc.exists) {
+                const u = userDoc.data();
+                isAdmin = u?.role === 'Admin';
+            }
+        }
+        if (!isAdmin)
+            return { success: false, error: 'permission-denied' };
+        const userId = typeof data?.userId === 'string' ? data.userId : null;
+        const prompt = typeof data?.prompt === 'string' ? data.prompt : `A symbolic minimal icon representing a caring community in warm gold tones.`;
+        if (!userId)
+            throw new functions.https.HttpsError('invalid-argument', 'userId required');
+        const openaiKey = process.env.OPENAI_API_KEY;
+        if (!openaiKey)
+            throw new functions.https.HttpsError('failed-precondition', 'OpenAI API key not configured in functions environment');
+        // Call OpenAI Images generation endpoint (request base64) - model selection may vary
+        const resp = await fetch('https://api.openai.com/v1/images/generations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${openaiKey}`
+            },
+            body: JSON.stringify({
+                prompt: `${prompt} Simple flat-style icon, square canvas, transparent background, centered symbol, 512x512`,
+                n: 1,
+                size: '512x512',
+                response_format: 'b64_json'
+            })
+        });
+        if (!resp.ok) {
+            const t = await resp.text();
+            console.error('OpenAI images error:', resp.status, t);
+            throw new functions.https.HttpsError('internal', `OpenAI error: ${resp.status}`);
+        }
+        const payload = await resp.json();
+        const b64 = payload?.data?.[0]?.b64_json;
+        if (!b64) {
+            console.error('Invalid OpenAI response', payload);
+            throw new functions.https.HttpsError('internal', 'Invalid OpenAI response');
+        }
+        const buffer = Buffer.from(b64, 'base64');
+        // Save to Firebase Storage
+        const bucket = admin.storage().bucket();
+        const filePath = `symbolic-icons/${userId}_${Date.now()}.png`;
+        const file = bucket.file(filePath);
+        await file.save(buffer, { metadata: { contentType: 'image/png' } });
+        // Make file public (icons are not considered sensitive); alternatively, store signed URLs
+        try {
+            await file.makePublic();
+        }
+        catch (err) {
+            console.warn('makePublic failed, continuing with storage media link', err);
+        }
+        const publicUrl = file.publicUrl();
+        // Update user doc to reference the generated icon
+        await db.collection('users').doc(userId).update({ symbolicIcon: publicUrl, updatedAt: admin.firestore.FieldValue.serverTimestamp() });
+        return { success: true, url: publicUrl };
+    }
+    catch (err) {
+        console.error('Error in generateSymbolicIcon:', err);
+        if (err instanceof functions.https.HttpsError)
+            throw err;
+        throw new functions.https.HttpsError('internal', err instanceof Error ? err.message : 'unknown');
     }
 });
 //# sourceMappingURL=index.js.map
