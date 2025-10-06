@@ -28,6 +28,8 @@ jobs:
             echo "auth_method=none" >> $GITHUB_OUTPUT
           fi
 
+      # preflight debug moved to build-and-deploy job
+
   build-and-deploy:
     name: Build and deploy
     needs: preflight
@@ -39,6 +41,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Preflight debug (CI)
+        run: |
+          echo "=== Preflight debug (CI) ==="
+          echo "Computed auth_method: ${{ needs.preflight.outputs.auth_method }}"
+          if [ -n "$GCP_WORKLOAD_PROVIDER" ]; then echo "GCP_WORKLOAD_PROVIDER: set"; else echo "GCP_WORKLOAD_PROVIDER: not set"; fi
+          if [ -n "$GCP_SERVICE_ACCOUNT_EMAIL" ]; then echo "GCP_SERVICE_ACCOUNT_EMAIL: set"; else echo "GCP_SERVICE_ACCOUNT_EMAIL: not set"; fi
+          if [ -n "$FIREBASE_SERVICE_ACCOUNT" ]; then echo "FIREBASE_SERVICE_ACCOUNT: set"; else echo "FIREBASE_SERVICE_ACCOUNT: not set"; fi
+          if [ -n "$FIREBASE_PROJECT" ]; then echo "FIREBASE_PROJECT: set"; else echo "FIREBASE_PROJECT: not set"; fi
 
       - name: Use Node.js 18
         uses: actions/setup-node@v4
@@ -68,21 +79,20 @@ jobs:
 
       - name: Authenticate to Google Cloud (OIDC, preferred)
         id: auth
-        if: "${{ needs.preflight.outputs.auth_method == 'oidc' }}"
+        if: ${{ needs.preflight.outputs.auth_method == 'oidc' }}
         uses: google-github-actions/auth@v1
         with:
           token_format: 'access_token'
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
-
-      - name: Fallback: Authenticate with service account JSON (if provided)
-        if: "${{ needs.preflight.outputs.auth_method == 'service_account' }}"
+      - name: Fallback - Authenticate with service account JSON (if provided)
+        if: ${{ needs.preflight.outputs.auth_method == 'service_account' }}
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Install Firebase CLI
-        if: "${{ needs.preflight.outputs.auth_method == 'oidc' || needs.preflight.outputs.auth_method == 'service_account' }}"
+        if: ${{ needs.preflight.outputs.auth_method == 'oidc' || needs.preflight.outputs.auth_method == 'service_account' }}
         run: npm install -g firebase-tools
 
       - name: Upload Lighthouse reports
@@ -93,12 +103,12 @@ jobs:
           path: .lighthouseci
 
       - name: Deploy to Firebase (hosting + functions)
-        if: "${{ needs.preflight.outputs.auth_method == 'oidc' || needs.preflight.outputs.auth_method == 'service_account' }}"
+        if: ${{ needs.preflight.outputs.auth_method == 'oidc' || needs.preflight.outputs.auth_method == 'service_account' }}
         env:
           FIREBASE_PROJECT: ${{ secrets.FIREBASE_PROJECT }}
         run: |
           firebase deploy --project "$FIREBASE_PROJECT" --only "hosting,functions"
 
       - name: Skip deploy (missing auth or project)
-        if: "${{ needs.preflight.outputs.auth_method == 'none' }}"
+        if: ${{ needs.preflight.outputs.auth_method == 'none' }}
         run: echo "No GCP auth available (workload identity or service account). Skipping deploy."
