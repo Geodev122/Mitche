@@ -18,15 +18,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Set service account
-        if: ${{ secrets.FIREBASE_ADMIN_SA_B64 != '' }}
+        if: ${{ env.FIREBASE_ADMIN_SA_B64 != '' }}
         env:
           FIREBASE_ADMIN_SA_B64: ${{ secrets.FIREBASE_ADMIN_SA_B64 }}
         run: echo "Service account provided via secret"
       - name: Run E2E client-auth test
-        if: ${{ secrets.FIREBASE_ADMIN_SA_B64 != '' }}
         env:
           FIREBASE_ADMIN_SA_B64: ${{ secrets.FIREBASE_ADMIN_SA_B64 }}
-        run: npm run test:e2e
+        run: |
+          if [ -n "$FIREBASE_ADMIN_SA_B64" ]; then
+            npm run test:e2e
+          else
+            echo "FIREBASE_ADMIN_SA_B64 secret not set, skipping E2E client-auth test."
+          fi
       - name: Upload e2e report
         if: always()
         uses: actions/upload-artifact@v4
@@ -42,10 +46,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - name: Install dependencies
-        run: npm ci
-      - name: Install puppeteer
-        run: npm install puppeteer --no-audit --no-fund
       - name: Run Puppeteer UI E2E
         if: ${{ secrets.FIREBASE_ADMIN_SA_B64 != '' }}
         env:
