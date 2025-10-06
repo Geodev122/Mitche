@@ -24,6 +24,7 @@ interface DataContextType {
   echoThread: (threadId: string) => void;
   loading: boolean;
   giveDailyPoint: (receiverId: string) => Promise<{ success: boolean; messageKey: string; receiverName?: string }>;
+  giveRitualPoint: (opts?: { prompt?: string }) => Promise<{ success: boolean; messageKey: string }>; 
   getRequestById: (requestId: string) => Request | undefined;
   getOfferingsForRequest: (requestId: string) => Offering[];
   leaveCommendation: (requestId: string, fromRole: 'requester' | 'helper', commendations: CommendationType[]) => void;
@@ -897,6 +898,62 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Give a ritual-only point to the current user (performer) and record analytics
+  const giveRitualPoint = async (opts?: { prompt?: string }): Promise<{ success: boolean; messageKey: string }> => {
+    if (!user) return { success: false, messageKey: 'scanner.error.notLoggedIn' };
+    try {
+      // enforce once-per-day
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (user.lastRitualTimestamp && user.lastRitualTimestamp >= today.getTime()) {
+        return { success: false, messageKey: 'scanner.error.alreadyGiven' };
+      }
+
+      // Update user locally and remotely
+      const updated = {
+        hopePoints: (user.hopePoints || 0) + 1,
+        hopePointsBreakdown: {
+          ...(user.hopePointsBreakdown || {}),
+          [HopePointCategory.Ritual]: ((user.hopePointsBreakdown && user.hopePointsBreakdown[HopePointCategory.Ritual]) || 0) + 1
+        },
+        lastRitualTimestamp: Date.now()
+      } as Partial<typeof user>;
+
+      // Build analytics payload with optional context
+      const analyticsPayload: any = {
+        userId: user.id,
+        timestamp: new Date().toISOString(),
+        prompt: opts?.prompt || undefined,
+        locale: (typeof navigator !== 'undefined' && navigator.language) ? navigator.language : (user.preferredLanguage || 'en'),
+        userAgent: typeof navigator !== 'undefined' ? (navigator.userAgent || '') : '',
+      };
+
+      // If we can dynamically import the DailyRitual prompt text (not required), leave undefined — UI will pass prompt via enhanced call if needed
+
+      if (isFirebaseEnabled) {
+        try {
+          await firebaseService.updateUser(user.id, updated as any);
+        } catch (err) {
+          console.error('Failed to update user ritual timestamp:', err);
+        }
+
+        // record analytics event
+        try {
+          const { enhancedFirebaseService } = await import('../services/firebase-enhanced');
+          enhancedFirebaseService.recordAnalytics('daily_ritual_completed', analyticsPayload);
+        } catch (err) {
+          console.error('Failed to record ritual analytics:', err);
+        }
+      }
+
+      updateUser(updated);
+      return { success: true, messageKey: 'ritual.success' };
+    } catch (err) {
+      console.error('Error giving ritual point', err);
+      return { success: false, messageKey: 'ritual.error' };
+    }
+  };
+
   const getLeaderboard = async (opts?: { role?: string; startDate?: string; endDate?: string; depthBased?: boolean; limit?: number; }) => {
     if (!isFirebaseEnabled) return null;
     try {
@@ -924,7 +981,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 
   return (
-    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, communityEvents, addCommunityEvent, getRequestById, getOfferingsForRequest, resources, addResource, leaveCommendation, addTapestryThread, recordHopePoints, getLeaderboard }}>
+    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, giveRitualPoint, communityEvents, addCommunityEvent, getRequestById, getOfferingsForRequest, resources, addResource, leaveCommendation, addTapestryThread, recordHopePoints, getLeaderboard }}>
       {children}
     </DataContext.Provider>
   );

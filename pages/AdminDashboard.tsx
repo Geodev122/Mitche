@@ -178,6 +178,74 @@ const AdminDashboard: React.FC = () => {
         }
     }, []);
 
+    // Ritual analytics state
+    const [ritualTotal, setRitualTotal] = React.useState<number | null>(null);
+    const [ritualToday, setRitualToday] = React.useState<number | null>(null);
+    const [ritualRecent, setRitualRecent] = React.useState<any[]>([]);
+    const [ritualLoading, setRitualLoading] = React.useState(false);
+
+    const fetchRitualAnalytics = React.useCallback(async () => {
+        setRitualLoading(true);
+        try {
+            const { db } = await import('../services/firebase');
+            const { collection, query, where, orderBy, getDocs } = await import('firebase/firestore');
+            const q = query(collection(db, 'analytics'), where('eventType', '==', 'daily_ritual_completed'), orderBy('timestamp', 'desc'));
+            const snap = await getDocs(q as any);
+            const events = snap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+            setRitualRecent(events.slice(0, 30));
+            setRitualTotal(events.length);
+            const today = new Date().toISOString().split('T')[0];
+            const todayCount = events.filter(e => e.date === today).length;
+            setRitualToday(todayCount);
+        } catch (err) {
+            console.error('Error fetching ritual analytics:', err);
+            setRitualTotal(null);
+            setRitualToday(null);
+            setRitualRecent([]);
+        } finally {
+            setRitualLoading(false);
+        }
+    }, []);
+
+    React.useEffect(() => { fetchRitualAnalytics(); }, [fetchRitualAnalytics]);
+
+    const RitualAnalyticsPanel: React.FC = () => {
+        return (
+            <div>
+                {ritualLoading ? <p className="text-sm text-gray-500">Loading ritual analytics...</p> : (
+                    <div className="space-y-3">
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="p-3 bg-white rounded border">
+                                <p className="text-sm text-gray-500">Total Ritual Completions</p>
+                                <p className="text-2xl font-bold">{ritualTotal ?? '—'}</p>
+                            </div>
+                            <div className="p-3 bg-white rounded border">
+                                <p className="text-sm text-gray-500">Today</p>
+                                <p className="text-2xl font-bold">{ritualToday ?? '—'}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-semibold mb-2">Recent Ritual Events</h3>
+                            {ritualRecent.length === 0 ? <p className="text-sm text-gray-500">No recent rituals.</p> : (
+                                <div className="space-y-2">
+                                    {ritualRecent.map(ev => (
+                                        <div key={ev.id} className="p-2 bg-white rounded border text-xs">
+                                            <div className="flex items-center justify-between">
+                                                <div className="text-sm">{ev.data?.userId || ev.data?.userId}</div>
+                                                <div className="text-xs text-gray-400">{new Date(ev.timestamp && ev.timestamp.seconds ? ev.timestamp.toDate() : ev.timestamp).toLocaleString()}</div>
+                                            </div>
+                                            <div className="text-xs text-gray-500 mt-1">Prompt: {ev.data?.prompt || '—'}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
     const handleAddDemo = async () => {
         if (!demoTitle) {
             toast.show('Please enter a title', 'error');
@@ -277,6 +345,17 @@ const AdminDashboard: React.FC = () => {
                         <p>{t('admin.noPendingRequests')}</p>
                     </div>
                 )}
+            </Card>
+
+            {/* Ritual analytics panel */}
+            <Card>
+                <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-xl font-bold text-gray-800">Ritual Analytics</h2>
+                    <div className="flex items-center gap-2">
+                        <button onClick={async () => await fetchRitualAnalytics()} className="px-3 py-1 bg-amber-500 text-white rounded">Refresh</button>
+                    </div>
+                </div>
+                <RitualAnalyticsPanel />
             </Card>
             
              <Card>

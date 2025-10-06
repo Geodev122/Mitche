@@ -107,6 +107,32 @@
       .animate-pulse-glow {
         animation: pulse-glow 0.8s ease-in-out;
       }
+      /* sparkle particle */
+      @keyframes sparkle {
+        0% { opacity: 0; transform: translateY(0) scale(0.6); }
+        30% { opacity: 1; transform: translateY(-6px) scale(1); }
+        100% { opacity: 0; transform: translateY(-14px) scale(0.3); }
+      }
+      .sparkle {
+        position: absolute; width: 8px; height: 8px; border-radius: 9999px; box-shadow: 0 0 8px rgba(255,255,255,0.9); animation: sparkle 800ms ease-out forwards;
+      }
+      .ritual-sparkle { background: radial-gradient(circle at 30% 30%, #FFF7ED, #FDE68A 40%); width: 8px; height: 8px; border-radius: 9999px; }
+
+      /* ripple effect */
+      .ripple {
+        position: absolute; border-radius: 9999px; pointer-events: none; transform: translate(-50%, -50%);
+        background: radial-gradient(circle at center, rgba(212,175,55,0.18), rgba(212,175,55,0.06) 30%, transparent 60%);
+        animation: ripple 700ms ease-out forwards;
+      }
+      @keyframes ripple { from { opacity: 0.9; transform: translate(-50%, -50%) scale(0.2); } to { opacity: 0; transform: translate(-50%, -50%) scale(2.4); } }
+
+      /* constellation star subtle pulse */
+      .constellation-star { transition: transform 300ms ease, opacity 300ms ease; }
+      .constellation-star:hover { transform: scale(1.08); filter: drop-shadow(0 6px 8px rgba(0,0,0,0.08)); }
+
+      /* atmospheric subtle background gradient animation */
+      @keyframes slow-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+      .bg-atmosphere { background: linear-gradient(120deg, #FBF9F4 0%, #FFFDF9 50%, #F8F6F1 100%); background-size: 200% 200%; animation: slow-shift 30s linear infinite; }
       
     </style>
   </head>

@@ -44,6 +44,7 @@ export enum HopePointCategory {
   VoiceOfCompassion = 'VoiceOfCompassion',
   CommunityBuilder = 'CommunityBuilder',
   CommunityGift = 'CommunityGift',
+  Ritual = 'Ritual',
 }
 
 export enum CommendationType {
@@ -356,6 +357,7 @@ export interface User {
   // Legacy fields for backward compatibility
   qrCodeUrl?: string;
   lastPointGivenTimestamp?: number;
+  lastRitualTimestamp?: number;
   languagePreference?: string;
 }
 

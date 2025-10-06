@@ -301,8 +301,13 @@
     "SilentHero": "Héros Silencieux",
     "VoiceOfCompassion": "Voix de la Compassion",
     "CommunityBuilder": "Bâtisseur de Communauté",
-    "CommunityGift": "Don de la Communauté"
+    "CommunityGift": "Don de la Communauté",
+    "Ritual": "Rituel"
   },
+    "ritual": {
+      "success": "Rituel quotidien complété — Point d'espoir attribué !",
+      "error": "Impossible de compléter le rituel."
+    },
   "requestStatus": {
     "title": "Statut",
     "Open": "Ouvert",

@@ -24,6 +24,7 @@ export enum HopePointCategory {
   VoiceOfCompassion = 'VoiceOfCompassion',
   CommunityBuilder = 'CommunityBuilder',
   CommunityGift = 'CommunityGift',
+  Ritual = 'Ritual',
 }
 
 export enum RequestStatus {
@@ -61,6 +62,7 @@ export interface User {
   location?: string;
   qrCodeUrl?: string;
   lastPointGivenTimestamp?: number;
+  lastRitualTimestamp?: number;
   hasCompletedOnboarding?: boolean;
   isVerified?: boolean;
   verificationStatus?: VerificationStatus;

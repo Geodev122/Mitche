@@ -321,7 +321,12 @@
     "SilentHero": "بطل صامت",
     "VoiceOfCompassion": "صوت التعاطف",
     "CommunityBuilder": "باني المجتمع",
-    "CommunityGift": "هدية مجتمعية"
+    "CommunityGift": "هدية مجتمعية",
+    "Ritual": "طقس"
+  },
+  "ritual": {
+    "success": "اكتملت الطقوس اليومية — تم منح نقطة أمل!",
+    "error": "تعذر إكمال الطقس."
   },
   "requestStatus": {
     "title": "الحالة",

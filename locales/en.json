@@ -305,7 +305,8 @@
     "SilentHero": "Silent Hero",
     "VoiceOfCompassion": "Voice of Compassion",
     "CommunityBuilder": "Community Builder",
-    "CommunityGift": "Community Gift"
+    "CommunityGift": "Community Gift",
+    "Ritual": "Ritual"
   },
   "requestStatus": {
     "title": "Status",
@@ -330,6 +331,10 @@
       "userNotFound": "This user could not be found.",
       "invalidQR": "This is not a valid Mitché user QR code."
     }
+  },
+  "ritual": {
+    "success": "Daily ritual completed — Hope point awarded!",
+    "error": "Unable to complete the ritual."
   },
   "events": {
     "title": "Community Events",

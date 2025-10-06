@@ -1,4 +1,6 @@
 import React from 'react';
+import { useId } from 'react';
+import Tooltip from './Tooltip';
 import { HopePointCategory } from '../../types';
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -6,6 +8,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   [HopePointCategory.VoiceOfCompassion]: '#FBBF24', // amber
   [HopePointCategory.CommunityBuilder]: '#C084FC', // purple
   [HopePointCategory.CommunityGift]: '#34D399', // green
+  [HopePointCategory.Ritual]: '#FDBA74', // warm orange for rituals
 };
 
 interface Props {
@@ -27,16 +30,19 @@ const Constellation: React.FC<Props> = ({ breakdown = {}, size = 120 }) => {
     return { cx, cy };
   });
 
+  const id = useId();
   return (
     <div className="flex items-center justify-center">
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden>
+      <Tooltip content={`Total hope points: ${total}`}> 
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-labelledby={`constellation-${id}`} role="img">
+        <title id={`constellation-${id}`}>Personal Hope Constellation</title>
         <rect width="100%" height="100%" fill="none" />
         {entries.map(([cat, count], i) => {
           const color = CATEGORY_COLORS[cat] || '#D1D5DB';
           const radius = Math.min(18, 6 + Math.sqrt(count || 0) * 4);
           const pos = positions[i] || { cx: size / 2, cy: size / 2 };
           return (
-            <g key={cat}>
+            <g key={cat} className="transform-gpu" style={{ transition: 'transform 400ms ease, opacity 400ms ease' }}>
               <defs>
                 <filter id={`glow-${i}`} x="-50%" y="-50%" width="200%" height="200%">
                   <feGaussianBlur stdDeviation="4" result="coloredBlur" />
@@ -46,7 +52,7 @@ const Constellation: React.FC<Props> = ({ breakdown = {}, size = 120 }) => {
                   </feMerge>
                 </filter>
               </defs>
-              <circle cx={pos.cx} cy={pos.cy} r={radius} fill={color} filter={`url(#glow-${i})`} opacity={0.95} />
+              <circle cx={pos.cx} cy={pos.cy} r={radius} fill={color} filter={`url(#glow-${i})`} opacity={0.95} className="constellation-star" />
               {/* small inner star */}
               <circle cx={pos.cx} cy={pos.cy} r={Math.max(1, radius * 0.3)} fill="#ffffff" opacity={0.9} />
             </g>
@@ -58,6 +64,7 @@ const Constellation: React.FC<Props> = ({ breakdown = {}, size = 120 }) => {
           <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fill="#FDFDFD" fontSize={size * 0.14} fontWeight={700}>{total}</text>
         </g>
       </svg>
+      </Tooltip>
     </div>
   );
 };

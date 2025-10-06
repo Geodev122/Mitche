@@ -3,6 +3,7 @@ import Card from './Card';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from './Toast';
+import i18n from '../../i18n';
 
 const prompts = [
   'Send a short message of encouragement to someone today.',
@@ -25,14 +26,32 @@ const DailyRitual: React.FC = () => {
     if (completed) return;
     setLoading(true);
     try {
-      // Give daily point to a random recipient (for demo we'll gift to a known community member or self-avoid)
-      // For now, gift to the user themselves to represent completed ritual
-      const res = await data.giveDailyPoint(user.id);
+      // Award ritual point to the performer (actor-only) and record analytics
+  const res = await data.giveRitualPoint({ prompt });
       if (res.success) {
         toast.show('Daily ritual completed — Hope point awarded!', 'success');
         setCompleted(true);
+        // create sparkle particles around the button
+        try {
+          const btn = document.activeElement as HTMLElement | null;
+          const rectAny = (btn && btn.getBoundingClientRect()) || ({ left: window.innerWidth / 2, top: window.innerHeight / 2, width: 80, height: 32 } as any);
+          const host = document.body;
+          for (let i = 0; i < 8; i++) {
+            const s = document.createElement('span');
+            s.className = 'ritual-sparkle sparkle absolute';
+            const left = rectAny.left + (Math.random() * (rectAny.width || 80));
+            const top = rectAny.top + (Math.random() * (rectAny.height || 32));
+            s.style.left = `${left}px`;
+            s.style.top = `${top}px`;
+            s.style.pointerEvents = 'none';
+            host.appendChild(s);
+            setTimeout(() => s.remove(), 900);
+          }
+        } catch (err) {
+          // non-critical
+        }
       } else {
-        toast.show('Unable to award point: ' + res.messageKey, 'error');
+        toast.show(i18n?.t ? i18n.t(res.messageKey) : res.messageKey, 'error');
       }
     } catch (err) {
       console.error(err);
