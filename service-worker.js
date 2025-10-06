@@ -174,6 +174,14 @@ self.addEventListener('message', event => {
   }
 });
 
+// Allow clients to trigger skipWaiting from page context (used after registration)
+self.addEventListener('message', event => {
+  if (!event.data) return;
+  if (event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 // Handle service worker errors
 self.addEventListener('error', event => {
   console.error('Service Worker error:', event.error);

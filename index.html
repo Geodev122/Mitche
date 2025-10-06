@@ -15,7 +15,10 @@
     <!-- Load Tailwind CSS -->
     <script>
       // Inline critical Tailwind config to prevent FOUC
-      tailwind.config = {
+      // Ensure `tailwind` exists before assigning config (avoids ReferenceError when script runs
+      // before the CDN has defined the global). The CDN will pick up window.tailwind.config if set.
+      window.tailwind = window.tailwind || {};
+      window.tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
@@ -23,7 +26,7 @@
             }
           }
         }
-      }
+      };
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     

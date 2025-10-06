@@ -23,7 +23,7 @@
         ]
       },
       {
-        "source": "**/*.@(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)",
+        "source": "**/*.@(js|css|map|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)",
         "headers": [
           {
             "key": "Cache-Control",
@@ -46,7 +46,7 @@
         "headers": [
           {
             "key": "Content-Security-Policy",
-            "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; connect-src 'self' https:;"
+            "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://apis.google.com https:; frame-src https://mitche-platform.firebaseapp.com https://apis.google.com;"
           }
         ]
       }
