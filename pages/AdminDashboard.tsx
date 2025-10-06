@@ -9,6 +9,7 @@ import { User, VerificationStatus } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
 import AchievementsPanel from '../components/ui/AchievementsPanel';
 import NominationsPanel from '../components/admin/NominationsPanel';
+import SymbolGeneratorPanel from '../components/admin/SymbolGeneratorPanel';
 
 const StatCard: React.FC<{ icon: React.ElementType, value: number, label: string }> = ({ icon: Icon, value, label }) => (
     <Card className="flex items-center p-4">
@@ -310,9 +311,14 @@ const AdminDashboard: React.FC = () => {
                     <p>{t('admin.loading')}</p>
                 ) : (
                     <>
-                        <StatCard icon={Users} value={users.length} label={t('admin.totalUsers')} />
-                        <StatCard icon={MessageSquare} value={requests.length} label={t('admin.totalRequests')} />
-                        <StatCard icon={Calendar} value={communityEvents.length} label={t('admin.totalEvents')} />
+                        <div>
+                            <SymbolGeneratorPanel />
+                        </div>
+                        <div className="space-y-3">
+                            <StatCard icon={Users} value={users.length} label={t('admin.totalUsers')} />
+                            <StatCard icon={MessageSquare} value={requests.length} label={t('admin.totalRequests')} />
+                            <StatCard icon={Calendar} value={communityEvents.length} label={t('admin.totalEvents')} />
+                        </div>
                     </>
                 )}
             </div>
