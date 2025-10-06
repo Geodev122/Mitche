@@ -20,14 +20,17 @@ import Scanner from './pages/Scanner';
 import CommunityEvents from './pages/CommunityEvents';
 import CreateEvent from './pages/CreateEvent';
 import CommunityEventDetail from './pages/CommunityEventDetail';
-import AdminDashboard from './pages/AdminDashboard';
 import Leaderboard from './pages/Leaderboard';
-import Constellation from './pages/Constellation';
 import ResourceHub from './pages/ResourceHub';
 import CreateResource from './pages/CreateResource';
 import ResourceDetail from './pages/ResourceDetail';
-import EnhancedPlatformDemo from './pages/EnhancedPlatformDemo';
-import AnalyticsDashboard from './pages/AnalyticsDashboard';
+import OnErrorBoundary from './components/ui/ErrorBoundary';
+import ReactLazy from 'react';
+
+const AdminDashboard = ReactLazy.lazy(() => import('./pages/AdminDashboard'));
+const AnalyticsDashboard = ReactLazy.lazy(() => import('./pages/AnalyticsDashboard'));
+const Constellation = ReactLazy.lazy(() => import('./pages/Constellation'));
+const EnhancedPlatformDemo = ReactLazy.lazy(() => import('./pages/EnhancedPlatformDemo'));
 
 const LoadingFallback: React.FC = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-[#FBF9F4]">
@@ -56,7 +59,9 @@ const App: React.FC = () => {
               <React.Suspense fallback={<LoadingFallback />}>
                 {/* Rating modal provider makes inline rating modal available to all pages */}
                 <RatingModalProvider>
-                  <Main />
+                  <OnErrorBoundary>
+                    <Main />
+                  </OnErrorBoundary>
                 </RatingModalProvider>
               </React.Suspense>
             </LanguageManager>
@@ -120,15 +125,15 @@ const Main: React.FC = () => {
         <ReactRouterDOM.Route path="events" element={<CommunityEvents />} />
   <ReactRouterDOM.Route path="events/:eventId" element={<CommunityEventDetail />} />
         <ReactRouterDOM.Route path="events/new" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]}><CreateEvent /></ProtectedRoute>} />
-        <ReactRouterDOM.Route path="leaderboard" element={<Leaderboard />} />
+    <ReactRouterDOM.Route path="leaderboard" element={<Leaderboard />} />
   <ReactRouterDOM.Route path="analytics" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]}><AnalyticsDashboard /></ProtectedRoute>} />
-        <ReactRouterDOM.Route path="constellation" element={<Constellation />} />
+  <ReactRouterDOM.Route path="constellation" element={<Constellation />} />
         <ReactRouterDOM.Route path="resources" element={<ResourceHub />} />
   <ReactRouterDOM.Route path="resources/:resourceId" element={<ResourceDetail />} />
         <ReactRouterDOM.Route path="resources/new" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]} verifiedOnly={true}><CreateResource /></ProtectedRoute>} />
         <ReactRouterDOM.Route path="admin" element={<ProtectedRoute roles={[Role.Admin]}><AdminDashboard /></ProtectedRoute>} />
   {/* Phase1Demo was a developer demo; Phase1 features are embedded into main pages (search/rating). */}
-        <ReactRouterDOM.Route path="enhanced" element={<EnhancedPlatformDemo />} />
+    <ReactRouterDOM.Route path="enhanced" element={<EnhancedPlatformDemo />} />
       </ReactRouterDOM.Route>
       {/* Catch-all route for authenticated users */}
       <ReactRouterDOM.Route path="*" element={<ReactRouterDOM.Navigate to="/" replace />} />
