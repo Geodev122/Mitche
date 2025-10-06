@@ -7,6 +7,7 @@ const STATUS_ORDER = ['longlist', 'shortlist', 'finalist', 'winner'];
 
 const NominationsPanel: React.FC = () => {
   const [nominations, setNominations] = React.useState<any[]>([]);
+  const refs = React.useRef<Record<string, HTMLDivElement | null>>({});
   const [loading, setLoading] = React.useState(false);
   const toast = useToast();
 
@@ -53,6 +54,25 @@ const NominationsPanel: React.FC = () => {
     const ok = await firebaseService.updateNomination(id, { status: next });
     if (ok) toast.show(`Moved to ${next}`, 'success');
     else toast.show('Failed to update', 'error');
+    // If moved to winner, emit ritual locally
+    if (ok && next === 'winner') {
+      const el = refs.current[id];
+      emitNominationRitual(el || null);
+    }
+  };
+
+  // Emit celebratory sparkles near the nomination card when someone becomes winner
+  const emitNominationRitual = (container: HTMLElement | null) => {
+    if (!container) return;
+    for (let i = 0; i < 8; i++) {
+      const s = document.createElement('div');
+      s.className = 'ritual-sparkle';
+      s.style.position = 'absolute';
+      s.style.left = `${10 + Math.random() * 80}%`;
+      s.style.top = `${10 + Math.random() * 60}%`;
+      container.appendChild(s);
+      setTimeout(() => s.remove(), 900 + Math.random() * 300);
+    }
   };
 
   const regress = async (id: string, current: string) => {
@@ -78,7 +98,7 @@ const NominationsPanel: React.FC = () => {
         <div className="space-y-2">
           {nominations.length === 0 ? <p className="text-sm text-gray-500">No nominations</p> : (
             nominations.map(n => (
-              <div key={n.id} className="p-2 bg-white rounded border">
+              <div key={n.id} ref={(el) => { refs.current[n.id] = el; }} className="p-2 bg-white rounded border relative">
                 <div className="flex items-start justify-between">
                   <div className="min-w-0">
                     <div className="font-semibold truncate">{n.userId} — {n.reason || '—'}</div>
