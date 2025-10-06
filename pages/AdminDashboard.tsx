@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { User, VerificationStatus } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
 import AchievementsPanel from '../components/ui/AchievementsPanel';
+import NominationsPanel from '../components/admin/NominationsPanel';
 
 const StatCard: React.FC<{ icon: React.ElementType, value: number, label: string }> = ({ icon: Icon, value, label }) => (
     <Card className="flex items-center p-4">
@@ -358,6 +359,9 @@ const AdminDashboard: React.FC = () => {
                 </div>
                 <RitualAnalyticsPanel />
             </Card>
+
+            {/* Nominations / Award selection workflow */}
+            <NominationsPanel />
             
              <Card>
                 <h2 className="text-xl font-bold text-gray-800 mb-4">{t('admin.userManagement')}</h2>
