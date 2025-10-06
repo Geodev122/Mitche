@@ -2,7 +2,15 @@ import React from 'react';
 import { User, Role, HopePointCategory, VerificationStatus } from '../types';
 // Import enhanced types for Phase 1 features
 import { User as EnhancedUser, SearchFilters } from '../types-enhanced';
-import { firebaseService } from '../services/firebase';
+// Lazy-load Firebase service to avoid bundling the SDK in the main chunk.
+let _firebaseService: any = null;
+async function getFirebaseService() {
+  if (_firebaseService) return _firebaseService;
+  const mod = await import('../services/firebase');
+  _firebaseService = mod.firebaseService;
+  return _firebaseService;
+}
+
 import { EnhancedFirebaseService } from '../services/firebase-enhanced';
 import i18n from '../i18n';
 
@@ -44,14 +52,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   React.useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Try to initialize Firebase auth listener
-        authUnsubscribe.current = firebaseService.onAuthStateChange((firebaseUser) => {
+        // Dynamically load firebase service and initialize auth listener
+        const fs = await getFirebaseService();
+        authUnsubscribe.current = fs.onAuthStateChange((firebaseUser: any) => {
           console.debug('Auth state changed, firebaseUser:', firebaseUser);
           setIsFirebaseEnabled(!!firebaseUser);
           setIsLoading(false);
           if (firebaseUser) {
             // Subscribe to the user's document for real-time updates (badges, hopePoints, etc.)
-            const unsubscribeUser = firebaseService.subscribeToUser(firebaseUser.id, (userDoc) => {
+            const unsubscribeUser = fs.subscribeToUser(firebaseUser.id, (userDoc: any) => {
               setUser(userDoc);
             });
             // Replace authUnsubscribe.current with a combined cleanup
@@ -138,7 +147,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (isFirebaseEnabled) {
       // Try Firebase authentication first
       const email = username.includes('@') ? username : `${username}@mitche.local`;
-      return await firebaseService.signInWithEmailPassword(email, password);
+      const fs = await getFirebaseService();
+      return await fs.signInWithEmailPassword(email, password);
     } else {
       // Fallback to localStorage
       const users = getUsers();
@@ -194,7 +204,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (isFirebaseEnabled) {
       // Use Firebase
       const email = username.includes('@') ? username : `${username}@mitche.local`;
-      return await firebaseService.createUserWithEmailPassword(email, password, {
+      const fs = await getFirebaseService();
+      return await fs.createUserWithEmailPassword(email, password, {
         username: username.trim(),
         role: userRole,
         verificationStatus,
@@ -246,7 +257,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
-      return await firebaseService.signInWithGoogle();
+      const fs = await getFirebaseService();
+      return await fs.signInWithGoogle();
     } catch (error: any) {
       console.error('Error signing in with Google:', error);
       return { success: false, message: error.message || "Failed to sign in with Google" };
@@ -256,7 +268,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       if (isFirebaseEnabled) {
-        await firebaseService.signOut();
+        const fs = await getFirebaseService();
+        await fs.signOut();
       } else {
         localStorage.removeItem('michyUser');
         setUser(null);
@@ -270,7 +283,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
     
     if (isFirebaseEnabled) {
-      const success = await firebaseService.updateUser(user.id, updatedUserData);
+      const fs = await getFirebaseService();
+      const success = await fs.updateUser(user.id, updatedUserData);
       if (success) {
         setUser({ ...user, ...updatedUserData });
       }
@@ -315,7 +329,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateAnyUser = (updatedUser: User) => {
     if (isFirebaseEnabled) {
-      firebaseService.updateUser(updatedUser.id, updatedUser);
+      // fire-and-forget
+      getFirebaseService().then(fs => fs.updateUser(updatedUser.id, updatedUser)).catch(err => console.error('updateAnyUser failed', err));
     } else {
       const users = getUsers();
       const userIndex = users.findIndex(u => u.id === updatedUser.id);
@@ -332,10 +347,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   const updateVerificationStatus = (userId: string, status: 'Approved' | 'Rejected') => {
     if (isFirebaseEnabled) {
-      firebaseService.updateUser(userId, {
+      getFirebaseService().then(fs => fs.updateUser(userId, {
         verificationStatus: status,
         isVerified: status === 'Approved'
-      });
+      })).catch(err => console.error('updateVerificationStatus failed', err));
     } else {
       const users = getUsers();
       const userIndex = users.findIndex(u => u.id === userId);
@@ -384,7 +399,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const migrateToFirebase = async (): Promise<void> => {
     if (isFirebaseEnabled) {
-      await firebaseService.migrateFromLocalStorage();
+      const fs = await getFirebaseService();
+      await fs.migrateFromLocalStorage();
       console.log('Migration to Firebase completed!');
     } else {
       console.warn('Firebase not available for migration');

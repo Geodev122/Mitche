@@ -1,11 +1,19 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { 
-  onAuthStateChanged, 
-  User as FirebaseUser, 
-  signOut 
-} from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { auth, db } from '../services/firebase';
+// Dynamically import firebase pieces when needed to keep SDK out of initial bundle
+let _auth: any = null;
+let _db: any = null;
+let _firebaseAuthModule: any = null;
+let _firestoreModule: any = null;
+async function ensureAuthDb() {
+  if (!_auth || !_db) {
+    const mod = await import('../services/firebase');
+    _db = mod.db;
+    _auth = mod.auth;
+    _firebaseAuthModule = await import('firebase/auth');
+    _firestoreModule = await import('firebase/firestore');
+  }
+  return { auth: _auth, db: _db, authModule: _firebaseAuthModule, firestoreModule: _firestoreModule };
+}
 import { User, Role } from '../types';
 import { PermissionManager } from '../utils/permissions';
 import { PermissionType } from '../types-roles-enhanced';
@@ -33,9 +41,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   // Initialize or update user profile in Firestore
-  const initializeUserProfile = async (firebaseUser: FirebaseUser): Promise<User> => {
-    const userRef = doc(db, 'users', firebaseUser.uid);
-    const userSnap = await getDoc(userRef);
+  const initializeUserProfile = async (firebaseUser: any): Promise<User> => {
+    const { db: dynDb, firestoreModule } = await ensureAuthDb();
+    const userRef = firestoreModule.doc(dynDb, 'users', firebaseUser.uid);
+    const userSnap = await firestoreModule.getDoc(userRef);
 
     if (userSnap.exists()) {
       // Update last login
@@ -73,7 +82,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         commendations: { Kind: 0, Punctual: 0, Respectful: 0 }
       };
 
-      await setDoc(userRef, {
+      await _firestoreModule.setDoc(userRef, {
         ...newUser,
         createdAt: new Date(),
         updatedAt: new Date()
@@ -88,8 +97,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!firebaseUser) return;
 
     try {
-      const userRef = doc(db, 'users', firebaseUser.uid);
-      const userSnap = await getDoc(userRef);
+      const { db: dynDb, firestoreModule } = await ensureAuthDb();
+      const userRef = firestoreModule.doc(dynDb, 'users', firebaseUser.uid);
+      const userSnap = await firestoreModule.getDoc(userRef);
       
       if (userSnap.exists()) {
         const userData = { id: firebaseUser.uid, ...userSnap.data() } as User;
@@ -161,13 +171,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       // Update last active time before signing out
       if (user) {
-        const userRef = doc(db, 'users', user.id);
-        await updateDoc(userRef, {
+        const { db: dynDb, firestoreModule } = await ensureAuthDb();
+        const userRef = firestoreModule.doc(dynDb, 'users', user.id);
+        await firestoreModule.updateDoc(userRef, {
           lastActiveAt: new Date()
         });
       }
 
-      await signOut(auth);
+      const { auth: dynAuth } = await ensureAuthDb();
+      const { signOut } = await import('firebase/auth');
+      await signOut(dynAuth);
       setUser(null);
       setFirebaseUser(null);
     } catch (error) {
@@ -178,24 +191,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Listen to authentication state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      try {
-        if (firebaseUser) {
-          setFirebaseUser(firebaseUser);
-          const userData = await initializeUserProfile(firebaseUser);
-          setUser(userData);
-        } else {
-          setFirebaseUser(null);
-          setUser(null);
+    let unsub: any = () => {};
+    (async () => {
+      const { auth: dynAuth, authModule, firestoreModule } = await ensureAuthDb();
+      const unsubscribe = authModule.onAuthStateChanged(dynAuth, async (firebaseUser: any) => {
+        try {
+          if (firebaseUser) {
+            setFirebaseUser(firebaseUser);
+            const userData = await initializeUserProfile(firebaseUser);
+            setUser(userData);
+          } else {
+            setFirebaseUser(null);
+            setUser(null);
+          }
+        } catch (error) {
+          console.error('Error handling auth state change:', error);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error('Error handling auth state change:', error);
-      } finally {
-        setLoading(false);
-      }
-    });
+      });
+      unsub = unsubscribe;
+    })();
 
-    return () => unsubscribe();
+    return () => unsub();
   }, []);
 
   const value: AuthContextType = {
