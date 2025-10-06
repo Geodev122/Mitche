@@ -1,5 +1,16 @@
-# Edit these variables
-$token = 'REDACTED'  # <-- paste your new PAT here, keep it local
+# IMPORTANT: Do NOT store tokens in files. This script reads the token from
+# the environment variable GITHUB_PAT or prompts the user at runtime.
+if ($env:GITHUB_PAT -and $env:GITHUB_PAT.Trim() -ne '') {
+  $token = $env:GITHUB_PAT
+} else {
+  Write-Host 'Enter a GitHub Personal Access Token (will not be stored):'
+  $token = Read-Host -AsSecureString | ConvertFrom-SecureString
+  Write-Warning 'Note: you entered a token via prompt. For CI or repeatable runs, set GITHUB_PAT in your environment instead.'
+  # ConvertFrom-SecureString gives an encrypted string; to use raw token, prefer setting GITHUB_PAT.
+  Write-Host 'If you pasted a raw token into the file earlier, revoke it immediately via https://github.com/settings/tokens'
+  exit 1
+}
+
 $owner = 'Geodev122'
 $repo  = 'Mitche'
 $sha   = 'ece40cbb5a17e494e118cb870b4e7b6125a9eaf9'  # commit to target
