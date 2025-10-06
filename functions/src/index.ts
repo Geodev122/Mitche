@@ -1,5 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+// Secret Manager client
+import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 
 // Initialize admin if not already initialized
 if (!admin.apps.length) {
@@ -7,6 +9,36 @@ if (!admin.apps.length) {
 }
 
 const db = admin.firestore();
+
+// Secret Manager helper (cached)
+const secretClient = new SecretManagerServiceClient();
+const secretCache: Record<string, string | null> = {};
+
+async function getSecretValue(name: string): Promise<string | null> {
+  // name should be the short secret id like 'OPENAI_API_KEY' in the same GCP project
+  if (secretCache[name] !== undefined) return secretCache[name];
+  try {
+    // The resource name follows: projects/{project}/secrets/{secret}/versions/latest
+    // Determine project from env (FIREBASE_PROJECT) or from functions.config
+    const projectId = process.env.FIREBASE_PROJECT || process.env.GCP_PROJECT || (functions.config && (functions.config() as any).project && (functions.config() as any).project.id) || process.env.GCLOUD_PROJECT;
+    if (!projectId) {
+      secretCache[name] = null;
+      return null;
+    }
+    const resource = `projects/${projectId}/secrets/${name}/versions/latest`;
+    const [accessResponse] = await secretClient.accessSecretVersion({ name: resource });
+    const payload = accessResponse.payload?.data?.toString();
+    secretCache[name] = payload || null;
+    return secretCache[name];
+  } catch (e) {
+    // If secret not found or permission denied, return null and fallback will apply
+    const err = e as any;
+    const msg = err && (typeof err.message === 'string' ? err.message : String(err));
+    console.warn('Secret Manager access failed for', name, msg);
+    secretCache[name] = null;
+    return null;
+  }
+}
 
 // When a ledger entry is created, update aggregates for the receiver
 export const onHopeLedgerCreate = functions.firestore
@@ -300,7 +332,9 @@ export const onHopeLedgerCreateEvaluateAchievements = functions.firestore
   });
 
   // Callable function to generate a symbolic icon for a user using OpenAI Images API
-  export const generateSymbolicIcon = functions.https.onCall(async (data, context) => {
+  // Bind the function to the Firebase secret OPENAI_API_KEY so it becomes available
+  // as process.env.OPENAI_API_KEY at runtime when deployed with firebase functions secrets.
+  export const generateSymbolicIcon = functions.runWith({ secrets: ['OPENAI_API_KEY'] }).https.onCall(async (data, context) => {
     try {
       // Only authenticated admins may call this
       if (!context.auth || !context.auth.uid) {
@@ -322,9 +356,17 @@ export const onHopeLedgerCreateEvaluateAchievements = functions.firestore
       const prompt = typeof data?.prompt === 'string' ? data.prompt : `A symbolic minimal icon representing a caring community in warm gold tones.`;
       if (!userId) throw new functions.https.HttpsError('invalid-argument', 'userId required');
 
-    // Prefer functions config (`firebase functions:config:set openai.key="..."`) but fall back to env var
-    const cfg = functions.config && (functions.config() as any);
-    const openaiKey = (cfg && cfg.openai && cfg.openai.key) || process.env.OPENAI_API_KEY;
+    // Prefer the Firebase-bound secret (available in process.env when deployed with secrets)
+    let openaiKey = process.env.OPENAI_API_KEY || null;
+    // Fallback to Secret Manager directly (for environments where binding wasn't used)
+    if (!openaiKey) {
+      openaiKey = await getSecretValue('OPENAI_API_KEY');
+    }
+    // Last-resort fallback to legacy functions.config or env
+    if (!openaiKey) {
+      const cfg = functions.config && (functions.config() as any);
+      openaiKey = (cfg && cfg.openai && cfg.openai.key) || process.env.OPENAI_API_KEY || null;
+    }
     if (!openaiKey) throw new functions.https.HttpsError('failed-precondition', 'OpenAI API key not configured in functions environment');
 
       // Call OpenAI Images generation endpoint (request base64) - model selection may vary
