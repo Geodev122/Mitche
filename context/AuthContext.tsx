@@ -11,7 +11,7 @@ async function getFirebaseService() {
   return _firebaseService;
 }
 
-import { EnhancedFirebaseService } from '../services/firebase-enhanced';
+// enhancedFirebase will be lazy-loaded to avoid bundling the enhanced service into the main chunk
 import i18n from '../i18n';
 
 interface AuthContextType {
@@ -30,8 +30,8 @@ interface AuthContextType {
   generateUniqueUsernames: () => string[];
   updateVerificationStatus: (userId: string, status: 'Approved' | 'Rejected') => void;
   migrateToFirebase: () => Promise<void>;
-  // Enhanced services for Phase 1 features
-  enhancedFirebase: EnhancedFirebaseService;
+  // Enhanced services for Phase 1 features (loaded dynamically)
+  enhancedFirebase: any;
 }
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
@@ -45,8 +45,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isFirebaseEnabled, setIsFirebaseEnabled] = React.useState(false);
   const authUnsubscribe = React.useRef<(() => void) | null>(null);
   
-  // Initialize enhanced Firebase service
-  const enhancedFirebase = React.useMemo(() => new EnhancedFirebaseService(), []);
+  // Initialize enhanced Firebase service (lazy)
+  const [enhancedFirebase, setEnhancedFirebase] = React.useState<any>(null);
+  React.useEffect(() => {
+    let mounted = true;
+    import('../services/firebase-enhanced')
+      .then(m => {
+        if (!mounted) return;
+        // file exports a singleton `enhancedFirebaseService` or a class; prefer singleton if present
+        const inst = (m && m.enhancedFirebaseService) ? m.enhancedFirebaseService : (m && m.EnhancedFirebaseService ? new m.EnhancedFirebaseService() : null);
+        setEnhancedFirebase(inst);
+      })
+      .catch(err => console.warn('Failed to load enhancedFirebaseService dynamically', err));
+    return () => { mounted = false; };
+  }, []);
 
   // Initialize authentication state
   React.useEffect(() => {

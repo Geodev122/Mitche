@@ -9,7 +9,13 @@ import { useTranslation } from 'react-i18next';
 import { timeSince } from '../utils/time';
 import { RatingSystem } from '../components/rating/RatingSystem';
 import { doc as docRef, getDoc } from 'firebase/firestore';
-import { db } from '../services/firebase';
+let _db_lazy_event: any = null;
+async function getDbEvent() {
+  if (_db_lazy_event) return _db_lazy_event;
+  const m = await import('../services/firebase');
+  _db_lazy_event = m.db;
+  return _db_lazy_event;
+}
 
 const CommunityEventDetail: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -34,7 +40,8 @@ const CommunityEventDetail: React.FC = () => {
           if (mounted) setEvent(null);
           return;
         }
-        const snap = await getDoc(docRef(db, 'communityEvents', eventId));
+  const dbInst = await getDbEvent();
+  const snap = await getDoc(docRef(dbInst, 'communityEvents', eventId));
         if (mounted) {
           if (snap.exists()) setEvent({ id: snap.id, ...(snap.data() as any) });
           else setEvent(null);

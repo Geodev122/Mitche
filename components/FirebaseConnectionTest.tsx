@@ -4,8 +4,18 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { firebaseService } from '../services/firebase';
-import { auth, db } from '../services/firebase';
+let _fs_lazy_conn: any = null;
+async function getFsConn() {
+  if (_fs_lazy_conn) return _fs_lazy_conn;
+  const m = await import('../services/firebase');
+  _fs_lazy_conn = m.firebaseService;
+  return _fs_lazy_conn;
+}
+
+async function getAuthAndDb() {
+  const m = await import('../services/firebase');
+  return { auth: m.auth, db: m.db };
+}
 
 interface ConnectionStatus {
   status: 'testing' | 'success' | 'error';
@@ -30,6 +40,7 @@ const FirebaseConnectionTest: React.FC = () => {
       // Test 1: Check Firebase initialization
       setConnectionStatus({ status: 'testing', message: 'Checking Firebase initialization...' });
       
+      const { auth, db } = await getAuthAndDb();
       if (!auth || !db) {
         throw new Error('Firebase not properly initialized');
       }
@@ -52,7 +63,8 @@ const FirebaseConnectionTest: React.FC = () => {
       setConnectionStatus({ status: 'testing', message: 'Testing Firestore read operation...' });
       
       try {
-        const users = await firebaseService.getAllUsers();
+  const fs = await getFsConn();
+  const users = await fs.getAllUsers();
         console.log('✅ Firestore read test passed:', `Retrieved ${users.length} users`);
       } catch (readError) {
         console.warn('⚠️ Firestore read test failed (this might be due to auth rules):', readError);
@@ -61,7 +73,8 @@ const FirebaseConnectionTest: React.FC = () => {
       // Test 4: Test real-time listener
       setConnectionStatus({ status: 'testing', message: 'Testing real-time listeners...' });
       
-      const unsubscribe = firebaseService.subscribeToRequests((requests) => {
+  const fs2 = await getFsConn();
+  const unsubscribe = fs2.subscribeToRequests((requests: any[]) => {
         console.log('✅ Real-time listener working:', `Got ${requests.length} requests`);
         unsubscribe(); // Clean up
       });
