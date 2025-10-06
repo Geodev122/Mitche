@@ -414,6 +414,76 @@ class FirebaseService {
     }
   }
 
+  // Nominations (admin-managed award nomination workflow)
+  async getNominations(status?: string): Promise<any[]> {
+    try {
+      const { collection, query, where, orderBy, getDocs } = await import('firebase/firestore');
+      let nominationsQuery: any = collection(db, 'nominations');
+      if (status) {
+        nominationsQuery = query(collection(db, 'nominations'), where('status', '==', status), orderBy('createdAt', 'desc'));
+      } else {
+        nominationsQuery = query(collection(db, 'nominations'), orderBy('createdAt', 'desc'));
+      }
+      const snap = await getDocs(nominationsQuery as any);
+      return snap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+    } catch (err) {
+      console.error('Error getting nominations:', err);
+      return [];
+    }
+  }
+
+  subscribeToNominations(callback: (noms: any[]) => void, status?: string): (() => void) {
+    try {
+      const { collection, query, where, orderBy, onSnapshot } = require('firebase/firestore');
+      let nominationsQuery: any;
+      if (status) nominationsQuery = query(collection(db, 'nominations'), where('status', '==', status), orderBy('createdAt', 'desc'));
+      else nominationsQuery = query(collection(db, 'nominations'), orderBy('createdAt', 'desc'));
+      return onSnapshot(nominationsQuery as any, snap => {
+        const items = snap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+        callback(items);
+      }, err => console.error('Nominations subscription error:', err));
+    } catch (err) {
+      console.error('subscribeToNominations failed:', err);
+      return () => {};
+    }
+  }
+
+  async addNomination(nomination: { userId: string; nominatedBy?: string; reason?: string; metrics?: any; status?: string }): Promise<boolean> {
+    try {
+      const { doc, collection, setDoc } = await import('firebase/firestore');
+      const ref = doc(collection(db, 'nominations'));
+      const now = new Date();
+      await setDoc(ref, {
+        id: ref.id,
+        userId: nomination.userId,
+        nominatedBy: nomination.nominatedBy || null,
+        reason: nomination.reason || '',
+        metrics: nomination.metrics || {},
+        status: nomination.status || 'longlist',
+        createdAt: now,
+        updatedAt: now
+      });
+      return true;
+    } catch (err) {
+      console.error('Error adding nomination:', err);
+      return false;
+    }
+  }
+
+  async updateNomination(nominationId: string, updates: Partial<any>): Promise<boolean> {
+    try {
+      const { updateDoc, doc } = await import('firebase/firestore');
+      await updateDoc(doc(db, 'nominations', nominationId), {
+        ...updates,
+        updatedAt: new Date()
+      });
+      return true;
+    } catch (err) {
+      console.error('Error updating nomination:', err);
+      return false;
+    }
+  }
+
   async getUserNotifications(userId: string): Promise<Notification[]> {
     try {
       const notificationsQuery = query(
