@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { ChatInterface } from '../components/chat/ChatInterface';
 import { AdvancedSearch } from '../components/search/AdvancedSearch';
 import { RatingSystem } from '../components/rating/RatingSystem';
 import { AnalyticsDashboard } from '../components/analytics/AnalyticsDashboard';
-import { ConversationType } from '../types-enhanced';
 import { useAuth } from '../context/AuthContext';
 
-type TabType = 'chat' | 'search' | 'rating' | 'analytics';
+type TabType = 'search' | 'rating' | 'analytics';
 
 export const Phase1Demo: React.FC = () => {
   const { user } = useAuth();
@@ -20,7 +18,6 @@ export const Phase1Demo: React.FC = () => {
 
   const tabs = [
     { id: 'search' as TabType, name: 'Advanced Search', icon: '🔍' },
-    { id: 'chat' as TabType, name: 'Chat System', icon: '💬' },
     { id: 'rating' as TabType, name: 'Rating System', icon: '⭐' },
     { id: 'analytics' as TabType, name: 'Analytics', icon: '📊' }
   ];
@@ -35,7 +32,7 @@ export const Phase1Demo: React.FC = () => {
               Mitché Platform - Phase 1 Features
             </h1>
             <p className="mt-2 text-gray-600">
-              Experience our enhanced community platform with real-time chat, advanced search, rating system, and analytics
+              Experience our enhanced community platform with advanced search, rating system, and analytics
             </p>
           </div>
         </div>
@@ -131,12 +128,7 @@ export const Phase1Demo: React.FC = () => {
                             </span>
                           )}
                         </div>
-                        <button
-                          onClick={() => setActiveTab('chat')}
-                          className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                        >
-                          Chat
-                        </button>
+                        {/* Chat removed - action intentionally omitted */}
                       </div>
                     </div>
                   ))}
@@ -146,32 +138,6 @@ export const Phase1Demo: React.FC = () => {
           </div>
         )}
 
-        {activeTab === 'chat' && (
-          <div className="space-y-6">
-            <div className="bg-white rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">Real-Time Chat System</h2>
-              <p className="text-gray-600 mb-6">
-                Connect with community members through secure, real-time messaging with support for reactions, file sharing, and threaded conversations.
-              </p>
-            </div>
-
-            <ChatInterface
-              type={ConversationType.DirectMessage}
-              participantIds={[]}
-            />
-
-            <div className="bg-blue-50 rounded-lg p-4">
-              <h3 className="font-medium text-blue-900 mb-2">Chat Features:</h3>
-              <ul className="text-sm text-blue-800 space-y-1">
-                <li>• Real-time message delivery and read receipts</li>
-                <li>• Message reactions and threading</li>
-                <li>• File and image sharing</li>
-                <li>• Conversation archiving and search</li>
-                <li>• Anonymous and symbolic identity support</li>
-              </ul>
-            </div>
-          </div>
-        )}
 
         {activeTab === 'rating' && (
           <div className="space-y-6">

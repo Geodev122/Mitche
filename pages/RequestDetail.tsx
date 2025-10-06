@@ -9,8 +9,6 @@ import { timeSince } from '../utils/time';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, ArrowRight, Info, Heart, Tag, Shield, ShieldCheck, Award } from 'lucide-react';
 import CommendationModal from '../components/ui/CommendationModal';
-import { ChatInterface } from '../components/chat/ChatInterface';
-import { RatingSystem } from '../components/rating/RatingSystem';
 import { useData } from '../context/DataContext';
 import { useToast } from '../components/ui/Toast';
 
@@ -65,8 +63,7 @@ const RequestDetail: React.FC = () => {
   const [isEncourageModalOpen, setEncourageModalOpen] = React.useState(false);
   const [isCommendationModalOpen, setCommendationModalOpen] = React.useState(false);
   const [encouragementMessage, setEncouragementMessage] = React.useState('');
-  const [isChatOpen, setChatOpen] = React.useState(false);
-  const [chatParticipantIds, setChatParticipantIds] = React.useState<string[]>([]);
+  
   const [isAddTapestryOpen, setAddTapestryOpen] = React.useState(false);
   const [tapestryStory, setTapestryStory] = React.useState('');
   const [tapestryRevealChoice, setTapestryRevealChoice] = React.useState<'Reveal' | 'Anonymous'>('Anonymous');
@@ -127,26 +124,7 @@ const RequestDetail: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-2">
           <button onClick={() => setHelpModalOpen(true)} className="flex-1 px-4 py-3 text-sm bg-[#3A3A3A] text-white rounded-lg font-bold hover:bg-opacity-80">{t('echoes.card.provideHelp')}</button>
           <button onClick={() => setEncourageModalOpen(true)} className="flex-1 px-4 py-3 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50">{t('echoes.card.sendEncouragement')}</button>
-          <button onClick={async () => {
-              // Start or open chat with request owner and deep-link to chat route
-              try {
-                const convResp = await enhancedFirebase.createConversation({
-                  participants: [user.id, request.userId],
-                  title: `${request.title}`
-                });
-                if (convResp.success && convResp.data) {
-                  navigate(`/chat/${convResp.data.id}`);
-                } else {
-                  // Fallback to modal chat
-                  setChatParticipantIds([request.userId]);
-                  setChatOpen(true);
-                }
-              } catch (err) {
-                console.error('Error creating conversation:', err);
-                setChatParticipantIds([request.userId]);
-                setChatOpen(true);
-              }
-            }} className="flex-1 px-4 py-3 text-sm bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700">Chat</button>
+          {/* Chat feature removed — kept interaction focused on help/encourage/tapestry flows */}
           <button onClick={() => setAddTapestryOpen(true)} className="flex-1 px-4 py-3 text-sm bg-amber-500 text-white rounded-lg font-bold hover:bg-amber-600">Add to Tapestry</button>
         </div>
       );
@@ -325,11 +303,7 @@ const RequestDetail: React.FC = () => {
             userName={isOwner ? (helper?.symbolicName || '') : request.userSymbolicName}
         />
       )}
-      {isChatOpen && (
-        <Modal isOpen={isChatOpen} onClose={() => setChatOpen(false)} title={t('chat.title')}> 
-          <ChatInterface participantIds={chatParticipantIds} />
-        </Modal>
-      )}
+      {/* Chat removed */}
     </>
   );
 };
