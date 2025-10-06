@@ -18,10 +18,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Set service account
+        if: ${{ secrets.FIREBASE_ADMIN_SA_B64 != '' }}
         env:
           FIREBASE_ADMIN_SA_B64: ${{ secrets.FIREBASE_ADMIN_SA_B64 }}
         run: echo "Service account provided via secret"
       - name: Run E2E client-auth test
+        if: ${{ secrets.FIREBASE_ADMIN_SA_B64 != '' }}
         env:
           FIREBASE_ADMIN_SA_B64: ${{ secrets.FIREBASE_ADMIN_SA_B64 }}
         run: npm run test:e2e
@@ -45,6 +47,7 @@ jobs:
       - name: Install puppeteer
         run: npm install puppeteer --no-audit --no-fund
       - name: Run Puppeteer UI E2E
+        if: ${{ secrets.FIREBASE_ADMIN_SA_B64 != '' }}
         env:
           FIREBASE_ADMIN_SA_B64: ${{ secrets.FIREBASE_ADMIN_SA_B64 }}
         run: node ./scripts/puppeteer-e2e.mjs

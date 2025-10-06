@@ -26,6 +26,7 @@ jobs:
     
     - name: Deploy to Firebase
       uses: FirebaseExtended/action-hosting-deploy@v0
+      if: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MITCHE_PLATFORM != '' }}
       with:
         repoToken: ${{ secrets.GITHUB_TOKEN }}
         firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MITCHE_PLATFORM }}
