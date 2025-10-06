@@ -1,8 +1,9 @@
-name: Deploy on main
+name: Deploy on main (disabled auto-run)
 
+# Automatic deploys are disabled temporarily to prevent failing automation.
+# Re-enable by changing this to `on: push` after configuring OIDC/provider and secrets.
 on:
-  push:
-    branches: [ main ]
+  workflow_dispatch:
 
 concurrency:
   group: deploy-${{ github.ref }}
@@ -42,8 +43,8 @@ jobs:
         with:
           token_format: 'access_token'
           # Workload identity provider and service account email should be configured as repository secrets
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_PROVIDER || '' }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL || '' }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
 
       - name: Fallback: Authenticate with service account JSON (if provided)
         if: ${{ steps.auth.outcome != 'success' && secrets.FIREBASE_SERVICE_ACCOUNT != '' && secrets.FIREBASE_PROJECT != '' }}
