@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
 
     steps:
       - name: Checkout
@@ -35,23 +36,32 @@ jobs:
           npm --prefix functions ci
           npm --prefix functions run build
 
-      - name: Authenticate to Google Cloud (service account)
-        if: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' && secrets.FIREBASE_PROJECT != '' }}
+      - name: Authenticate to Google Cloud (OIDC, preferred)
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          token_format: 'access_token'
+          # Workload identity provider and service account email should be configured as repository secrets
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_PROVIDER || '' }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL || '' }}
+
+      - name: Fallback: Authenticate with service account JSON (if provided)
+        if: ${{ steps.auth.outcome != 'success' && secrets.FIREBASE_SERVICE_ACCOUNT != '' && secrets.FIREBASE_PROJECT != '' }}
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Install Firebase CLI
-        if: ${{ github.secrets.FIREBASE_SERVICE_ACCOUNT != '' && github.secrets.FIREBASE_PROJECT != '' }}
+        if: ${{ (steps.auth.outcome == 'success') || (secrets.FIREBASE_SERVICE_ACCOUNT != '') }}
         run: npm install -g firebase-tools
 
       - name: Deploy to Firebase (hosting + functions)
-        if: ${{ github.secrets.FIREBASE_SERVICE_ACCOUNT != '' && github.secrets.FIREBASE_PROJECT != '' }}
+        if: ${{ (steps.auth.outcome == 'success') || (secrets.FIREBASE_SERVICE_ACCOUNT != '') }}
         env:
           FIREBASE_PROJECT: ${{ secrets.FIREBASE_PROJECT }}
         run: |
           firebase deploy --project "$FIREBASE_PROJECT" --only "hosting,functions"
 
-      - name: Skip deploy (missing secrets)
-        if: ${{ secrets.FIREBASE_SERVICE_ACCOUNT == '' || secrets.FIREBASE_PROJECT == '' }}
-        run: echo "FIREBASE_SERVICE_ACCOUNT or FIREBASE_PROJECT is not set. Skipping deploy."
+      - name: Skip deploy (missing auth or project)
+        if: ${{ (steps.auth.outcome != 'success') && (secrets.FIREBASE_SERVICE_ACCOUNT == '') }}
+        run: echo "No GCP auth available (workload identity or service account). Skipping deploy."
