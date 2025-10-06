@@ -82,6 +82,7 @@ export interface User {
   joinedAt?: string | Date;
   lastActive?: string | Date;
   languagePreference?: string;
+  submittedDocuments?: string[]; // filenames or storage refs for documents submitted during signup
   // Timestamps stored in Firestore may be serverTimestamp() values; allow loose typing
   createdAt?: any;
   updatedAt?: any;

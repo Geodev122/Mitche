@@ -19,7 +19,7 @@ interface AuthContextType {
   isLoading: boolean;
   isFirebaseEnabled: boolean;
   login: (username: string, password: string) => Promise<{ success: boolean; message?: string }>;
-  signup: (username: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  signup: (username: string, password: string, meta?: { role?: Role; submittedDocuments?: string[]; submittedFiles?: File[] }) => Promise<{ success: boolean; message?: string }>;
   signInWithGoogle: () => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   addHopePoints: (points: number, category: HopePointCategory) => void;
@@ -184,7 +184,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signup = async (username: string, password: string): Promise<{ success: boolean; message?: string }> => {
+  const signup = async (username: string, password: string, meta?: { role?: Role; submittedDocuments?: string[] }): Promise<{ success: boolean; message?: string }> => {
     if (!username.trim() || !password.trim()) {
       return { success: false, message: i18n.t('auth.errorInvalid') };
     }
@@ -197,27 +197,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: false, message: "Password must be at least 4 characters" };
     }
 
-    // Determine role based on username patterns
-    let userRole: Role = Role.Citizen;
-    let verificationStatus: VerificationStatus = 'NotRequested';
-    
+  // Determine role based on provided meta or username heuristics
+  let userRole: Role = meta?.role || Role.Citizen;
+  let verificationStatus: VerificationStatus = 'NotRequested';
+
+  if (!meta?.role) {
     const upperUsername = username.toUpperCase();
     if (upperUsername.includes('NGO')) {
-        userRole = Role.NGO;
-        verificationStatus = 'Pending';
+      userRole = Role.NGO;
+      verificationStatus = 'Pending';
     } else if (upperUsername.includes('GOV') || upperUsername.includes('GOVERNMENT')) {
-        userRole = Role.PublicWorker;
-        verificationStatus = 'Pending';
+      userRole = Role.PublicWorker;
+      verificationStatus = 'Pending';
     } else if (upperUsername.includes('ADMIN')) {
-        userRole = Role.Admin;
-        verificationStatus = 'Approved'; 
+      userRole = Role.Admin;
+      verificationStatus = 'Approved'; 
     }
+  } else {
+    // If role provided and requires verification, set Pending
+    if (userRole === Role.NGO || userRole === Role.PublicWorker) verificationStatus = 'Pending';
+  }
 
     if (isFirebaseEnabled) {
       // Use Firebase
       const email = username.includes('@') ? username : `${username}@mitche.local`;
       const fs = await getFirebaseService();
-      return await fs.createUserWithEmailPassword(email, password, {
+      const createResult = await fs.createUserWithEmailPassword(email, password, {
         username: username.trim(),
         role: userRole,
         verificationStatus,
@@ -229,6 +234,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isVerified: userRole === Role.Admin,
         commendations: { Kind: 0, Punctual: 0, Respectful: 0 }
       });
+
+      // If documents were provided as File objects, upload them and update the user doc
+      if (createResult.success && meta?.submittedFiles && meta.submittedFiles.length > 0) {
+        try {
+          const uploadedUrls = await fs.uploadDocuments(createResult.user.id, meta.submittedFiles);
+          if (uploadedUrls && uploadedUrls.length > 0) {
+            await fs.updateUser(createResult.user.id, { submittedDocuments: uploadedUrls, verificationStatus: 'Pending' });
+          }
+        } catch (err) {
+          console.error('Document upload during signup failed:', err);
+        }
+      }
+
+      return createResult;
     } else {
       // Fallback to localStorage
       const users = getUsers();
@@ -249,6 +268,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         hasCompletedOnboarding: false,
         isVerified: userRole === Role.Admin,
         verificationStatus: verificationStatus,
+        submittedDocuments: meta?.submittedDocuments || [],
         commendations: { Kind: 0, Punctual: 0, Respectful: 0 }
       };
 

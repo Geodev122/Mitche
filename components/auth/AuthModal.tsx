@@ -2,6 +2,7 @@ import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import Modal from '../ui/Modal';
 import { useTranslation } from 'react-i18next';
+import { Role } from '../../types';
 import { RefreshCw } from 'lucide-react';
 
 interface AuthModalProps {
@@ -24,6 +25,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     const [generatedUsernames, setGeneratedUsernames] = React.useState<string[]>([]);
     const [selectedUsername, setSelectedUsername] = React.useState<string | null>(null);
     const [isGenerating, setIsGenerating] = React.useState(false);
+    const [selectedRole, setSelectedRole] = React.useState<Role>(Role.Citizen);
+    const [documents, setDocuments] = React.useState<File[]>([]);
 
     const handleGenerateUsernames = React.useCallback(() => {
         setIsGenerating(true);
@@ -94,8 +97,16 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         setLoading(true);
         
         try {
-            const result = await signup(selectedUsername, password.trim());
+            // Prepare document upload placeholders (client will upload files to storage in a later step)
+            const result = await signup(selectedUsername, password.trim(), {
+                role: selectedRole,
+                submittedFiles: documents
+            });
             if (result.success) {
+                // If role requires admin approval, inform the user
+                if (selectedRole === 'NGO' || selectedRole === 'PublicWorker') {
+                    alert(t('auth.pendingApproval'));
+                }
                 onClose();
                 resetForm();
             } else {
@@ -224,6 +235,23 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                                 ))}
                             </div>
                         )}
+                        <div className="pt-2">
+                            <label className="block text-sm font-medium text-gray-600 mb-2">{t('auth.role')}</label>
+                            <div className="flex gap-2">
+                                <button type="button" onClick={() => setSelectedRole(Role.Citizen)} className={`px-3 py-2 rounded ${selectedRole === Role.Citizen ? 'bg-[#D4AF37] text-white' : 'bg-white border'}`}>Citizen</button>
+                                <button type="button" onClick={() => setSelectedRole(Role.NGO)} className={`px-3 py-2 rounded ${selectedRole === Role.NGO ? 'bg-[#D4AF37] text-white' : 'bg-white border'}`}>NGO</button>
+                                <button type="button" onClick={() => setSelectedRole(Role.PublicWorker)} className={`px-3 py-2 rounded ${selectedRole === Role.PublicWorker ? 'bg-[#D4AF37] text-white' : 'bg-white border'}`}>Public Worker</button>
+                            </div>
+                        </div>
+
+                        <div className="pt-2">
+                            <label className="block text-sm font-medium text-gray-600 mb-2">{t('auth.uploadDocs')}</label>
+                            <input type="file" multiple onChange={(e) => {
+                                const files = e.target.files ? Array.from(e.target.files) : [];
+                                setDocuments(files);
+                            }} className="w-full text-sm" />
+                            {documents.length > 0 && <p className="text-xs text-gray-600 mt-1">{documents.length} {t('auth.documentsSelected')}</p>}
+                        </div>
                     </div>
                     <InputField id="signup-password" label={t('auth.password')} type="password" value={password} onChange={e => setPassword(e.target.value)} required />
                     

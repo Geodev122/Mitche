@@ -29,11 +29,14 @@ import {
 } from 'firebase/auth';
 import { firebaseConfig } from '../firebase.config';
 import { User, Request, CommunityEvent, Resource, Offering, Notification, TapestryThread, Role } from '../types';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+export { app };
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+export const storage = getStorage(app);
 
 // Initialize Google Auth Provider
 const googleProvider = new GoogleAuthProvider();
@@ -691,6 +694,24 @@ class FirebaseService {
     } catch (error) {
       console.error('Error adding resource:', error);
       return false;
+    }
+  }
+
+  // Upload multiple documents for a user; accepts browser File objects and returns download URLs
+  async uploadDocuments(userId: string, files: File[]): Promise<string[]> {
+    try {
+      const promises = files.map(async (file, idx) => {
+        const path = `user_uploads/${userId}/${Date.now()}_${idx}_${file.name}`;
+        const ref = storageRef(storage, path);
+        const snap = await uploadBytes(ref, file as any);
+        const url = await getDownloadURL(snap.ref);
+        return url;
+      });
+      const urls = await Promise.all(promises);
+      return urls;
+    } catch (err) {
+      console.error('Error uploading documents:', err);
+      return [];
     }
   }
 

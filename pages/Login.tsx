@@ -4,6 +4,7 @@ import * as ReactRouterDOM from 'react-router-dom';
 import { Shield } from 'lucide-react';
 import AuthModal from '../components/auth/AuthModal';
 import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 
 const Login: React.FC = () => {
     const { user } = useAuth();
@@ -16,7 +17,10 @@ const Login: React.FC = () => {
 
     return (
         <>
-            <div className="min-h-screen bg-[#FBF9F4] flex flex-col items-center justify-center p-4 text-center">
+            <div className="min-h-screen bg-gradient-to-b from-white via-amber-50 to-[#FBF9F4] flex flex-col items-center justify-center p-4 text-center">
+                <div className="w-full max-w-5xl flex justify-end p-4">
+                    <LanguageSwitcher />
+                </div>
                 <img src="/awardlogo.png" alt="Mitché Logo" className="w-40 h-40 mx-auto mb-4 animate-fade-in-down" />
                 <h1 className="text-3xl font-bold text-[#3A3A3A]">{t('login.welcome')}</h1>
                 <p className="text-gray-500 text-lg mt-2 mb-8">{t('appSlogan')}</p>
