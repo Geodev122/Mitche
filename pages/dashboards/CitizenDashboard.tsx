@@ -7,6 +7,7 @@ import { AdvancedSearch } from '../../components/search/AdvancedSearch';
 import TapestryPreview from '../../components/tapestry/TapestryPreview';
 import { RatingSystem } from '../../components/rating/RatingSystem';
 import Modal from '../../components/ui/Modal';
+import DailyRitual from '../../components/ui/DailyRitual';
 import { DEMO_REQUESTS, DEMO_EVENTS, DEMO_RESOURCES } from './demoData';
 
 const CitizenDashboard: React.FC = () => {
@@ -105,11 +106,7 @@ const CitizenDashboard: React.FC = () => {
           />
         </div>
 
-        <div className="bg-white rounded-lg p-4">
-          <h3 className="font-semibold mb-3">Open Chat</h3>
-          <p className="text-sm text-gray-500 mb-3">Start a conversation related to any request or offering. Chats are powered by real-time Firebase messaging.</p>
-          <button onClick={() => navigate('/echoes')} className="px-4 py-2 bg-blue-600 text-white rounded-md">Go to Echoes</button>
-        </div>
+        <DailyRitual />
       </div>
 
       <Modal isOpen={ratingModalOpen} onClose={() => setRatingModalOpen(false)} title={ratingTarget ? `Rate ${ratingTarget.name || ratingTarget.id}` : 'Rate'}>

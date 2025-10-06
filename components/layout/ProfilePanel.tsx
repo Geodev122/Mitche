@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import Card from '../ui/Card';
 import SymbolIcon from '../ui/SymbolIcon';
+import Constellation from '../ui/Constellation';
 import { Award, ShieldCheck, LogOut, Download, Pencil, MapPin, QrCode, ScanLine, Bell, BellOff, Send, ChevronRight, X, Info, Camera, Zap } from 'lucide-react';
 import { HopePointCategory, Role } from '../../types';
 import { useTranslation } from 'react-i18next';
@@ -188,10 +189,10 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
                             {user.bio && <p className="italic px-4">"{user.bio}"</p>}
                         </div>
                     </div>
-                    <div className="mt-4 pt-4 border-t flex justify-around text-center">
+                    <div className="mt-4 pt-4 border-t flex justify-around items-center text-center">
                         <div>
-                            <p className="text-xs text-gray-500">{t('constellation.totalHopePoints')}</p>
-                            <p className="text-2xl font-bold text-[#D4AF37] my-1">{user.hopePoints}</p>
+                            <p className="text-xs text-gray-500">{t('constellation.personalConstellation')}</p>
+                            <Constellation breakdown={user.hopePointsBreakdown} size={110} />
                         </div>
                         {user.qrCodeUrl && <div className="border-l my-[-1rem] mx-2"></div>}
                         {user.qrCodeUrl && (
@@ -208,12 +209,13 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
                 {user.commendations && Object.keys(user.commendations).length > 0 && (
                     <Card>
                         <h3 className="font-bold text-gray-700 mb-3">{t('commendations.title')}</h3>
-                        <div className="space-y-2">
+                        <div className="flex flex-wrap gap-2">
                             {Object.entries(user.commendations).map(([type, count]) => (
-                                <div key={type} className="text-sm flex items-center justify-between bg-gray-50 p-2 rounded-md">
-                                    <span className="text-gray-600 font-medium">{t(`commendations.types.${type}`)}</span>
-                                    <span className="font-bold text-gray-800 bg-gray-200 text-xs px-2 py-1 rounded-full">{count}</span>
-                                </div>
+                                <span key={type} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-amber-50 to-white text-amber-700 text-sm font-semibold shadow-sm">
+                                    <span className="inline-block w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                                    {t(`commendations.types.${type}`)}
+                                    <span className="ml-2 text-xs text-gray-600 bg-white rounded-full px-2 py-0.5">{count}</span>
+                                </span>
                             ))}
                         </div>
                     </Card>
