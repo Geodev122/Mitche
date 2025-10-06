@@ -465,6 +465,23 @@ class FirebaseService {
     });
   }
 
+  // Real-time user document subscription
+  subscribeToUser(userId: string, callback: (user: User | null) => void): () => void {
+    try {
+      const userRef = doc(db, 'users', userId);
+      return onSnapshot(userRef, (snap) => {
+        if (snap.exists()) {
+          callback({ id: snap.id, ...(snap.data() as any) } as User);
+        } else {
+          callback(null);
+        }
+      });
+    } catch (err) {
+      console.error('subscribeToUser failed:', err);
+      return () => {};
+    }
+  }
+
   async updateNotification(notificationId: string, updates: Partial<Notification>): Promise<boolean> {
     try {
       const notificationRef = doc(db, 'notifications', notificationId);

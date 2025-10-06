@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
 import LanguageManager from './components/LanguageManager';
 import { ToastProvider } from './components/ui/Toast';
+import BadgeWatcher from './components/ui/BadgeWatcher';
 import { Role } from './types';
 import { RatingModalProvider } from './context/RatingModalContext';
 
@@ -54,6 +55,7 @@ const App: React.FC = () => {
     <AuthProvider>
       <DataProvider>
         <ToastProvider>
+          <BadgeWatcher />
           <ReactRouterDOM.HashRouter>
             <LanguageManager>
               <React.Suspense fallback={<LoadingFallback />}>

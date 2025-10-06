@@ -7,6 +7,7 @@ import { useToast } from '../components/ui/Toast';
 import { useTranslation } from 'react-i18next';
 import { User, VerificationStatus } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
+import AchievementsPanel from '../components/ui/AchievementsPanel';
 
 const StatCard: React.FC<{ icon: React.ElementType, value: number, label: string }> = ({ icon: Icon, value, label }) => (
     <Card className="flex items-center p-4">
@@ -363,6 +364,11 @@ const AdminDashboard: React.FC = () => {
                 <div className="space-y-2">
                     {users.map(u => <UserRow key={u.id} user={u} />)}
                 </div>
+            </Card>
+
+            <Card>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">Recent Achievements</h2>
+                <AchievementsPanel />
             </Card>
 
             <Card>

@@ -46,9 +46,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         // Try to initialize Firebase auth listener
         authUnsubscribe.current = firebaseService.onAuthStateChange((firebaseUser) => {
-          setUser(firebaseUser);
-          setIsFirebaseEnabled(true);
+          setIsFirebaseEnabled(!!firebaseUser);
           setIsLoading(false);
+          if (firebaseUser) {
+            // Subscribe to the user's document for real-time updates (badges, hopePoints, etc.)
+            const unsubscribeUser = firebaseService.subscribeToUser(firebaseUser.id, (userDoc) => {
+              setUser(userDoc);
+            });
+            // Replace authUnsubscribe.current with a combined cleanup
+            authUnsubscribe.current = () => {
+              unsubscribeUser();
+            };
+          } else {
+            setUser(null);
+          }
         });
 
         // Give Firebase a moment to initialize

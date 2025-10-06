@@ -9,6 +9,7 @@ import { HopePointCategory, Role } from '../../types';
 import { useTranslation } from 'react-i18next';
 import Modal from '../ui/Modal';
 import EditProfileModal from '../ui/EditProfileModal';
+import AchievementsPanel from '../ui/AchievementsPanel';
 import * as ReactRouterDOM from 'react-router-dom';
 import { isPushSupported, subscribeUser, unsubscribeUser, getSubscription } from '../../utils/notifications';
 import LanguageSwitcher from '../ui/LanguageSwitcher';
@@ -220,6 +221,21 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
                         </div>
                     </Card>
                 )}
+                {user.badges && user.badges.length > 0 && (
+                    <Card>
+                        <h3 className="font-bold text-gray-700 mb-3">{t('achievements.title', 'Accolades & Badges')}</h3>
+                        <div className="flex flex-wrap gap-2">
+                            {user.badges.map((b: string) => (
+                                <div key={b} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-white to-amber-50 text-amber-700 text-sm font-semibold shadow-sm">
+                                    <img src={`/badges/${b}.png`} alt={b} className="w-5 h-5 rounded-full" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                    {b}
+                                </div>
+                            ))}
+                        </div>
+                    </Card>
+                )}
+                {/* Achievements list */}
+                <AchievementsPanel />
                 
                 <button onClick={() => handleNavigation('/scanner')} className="w-full flex items-center justify-center py-3 px-4 bg-[#D4AF37] text-white rounded-lg font-bold hover:bg-opacity-90 transition-colors text-md shadow-sm active:scale-95">
                     <ScanLine className="w-5 h-5 mx-2" /> {t('constellation.scanToGiveHope')}

@@ -69,6 +69,8 @@ export interface User {
   commendations?: {
     [key in CommendationType]?: number;
   };
+  // Achievement badge ids (denormalized for fast reads)
+  badges?: string[];
   // Optional fields used by Firebase and other services
   avatar?: string; // URL to avatar image
   displayName?: string;
