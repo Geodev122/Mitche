@@ -21,6 +21,8 @@ const NominationsPanel: React.FC = () => {
 
   const [newUserId, setNewUserId] = React.useState('');
   const [newReason, setNewReason] = React.useState('');
+  const [newAttachment, setNewAttachment] = React.useState('');
+  const [commentText, setCommentText] = React.useState('');
 
   const addNomination = async () => {
     if (!newUserId) return toast.show('Enter a user id', 'error');
@@ -31,6 +33,17 @@ const NominationsPanel: React.FC = () => {
       setNewReason('');
     } else {
       toast.show('Failed to add nomination', 'error');
+    }
+  };
+
+  const addComment = async (nomId: string) => {
+    if (!commentText) return toast.show('Enter a comment', 'error');
+    const ok = await firebaseService.addNominationComment(nomId, { authorId: 'system', text: commentText, attachmentUrl: newAttachment || undefined });
+    if (ok) {
+      toast.show('Comment added', 'success');
+      setCommentText(''); setNewAttachment('');
+    } else {
+      toast.show('Failed to add comment', 'error');
     }
   };
 
@@ -65,14 +78,41 @@ const NominationsPanel: React.FC = () => {
         <div className="space-y-2">
           {nominations.length === 0 ? <p className="text-sm text-gray-500">No nominations</p> : (
             nominations.map(n => (
-              <div key={n.id} className="p-2 bg-white rounded border flex items-center justify-between">
-                <div className="min-w-0">
-                  <div className="font-semibold truncate">{n.userId} — {n.reason || '—'}</div>
-                  <div className="text-xs text-gray-400">Status: {n.status} — Created: {new Date(n.createdAt.seconds ? n.createdAt.seconds * 1000 : n.createdAt).toLocaleString()}</div>
+              <div key={n.id} className="p-2 bg-white rounded border">
+                <div className="flex items-start justify-between">
+                  <div className="min-w-0">
+                    <div className="font-semibold truncate">{n.userId} — {n.reason || '—'}</div>
+                    <div className="text-xs text-gray-400">Status: {n.status} — Created: {new Date(n.createdAt.seconds ? n.createdAt.seconds * 1000 : n.createdAt).toLocaleString()}</div>
+                    <div className="mt-2 text-sm">
+                      {n.metrics && <div className="text-xs text-gray-500">Metrics: {JSON.stringify(n.metrics)}</div>}
+                      <div className="mt-2">
+                        <strong className="text-xs">Comments</strong>
+                        {(!n.comments || n.comments.length === 0) ? <div className="text-xs text-gray-400">No comments</div> : (
+                          <div className="space-y-1 mt-1 text-xs">
+                            {n.comments.map((c: any) => (
+                              <div key={c.id} className="p-1 bg-gray-50 rounded border">
+                                <div className="text-xs font-semibold">{c.authorId}</div>
+                                <div className="text-xs text-gray-600">{c.text}</div>
+                                {c.attachmentUrl && <a className="text-xs text-blue-500" href={c.attachmentUrl} target="_blank" rel="noreferrer">Attachment</a>}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <button onClick={() => regress(n.id, n.status)} className="px-2 py-1 border rounded">Prev</button>
+                    <button onClick={() => advance(n.id, n.status)} className="px-2 py-1 bg-amber-500 text-white rounded">Next</button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => regress(n.id, n.status)} className="px-2 py-1 border rounded">Prev</button>
-                  <button onClick={() => advance(n.id, n.status)} className="px-2 py-1 bg-amber-500 text-white rounded">Next</button>
+
+                <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
+                  <input className="p-2 border rounded col-span-2" placeholder="Add a comment" value={commentText} onChange={e => setCommentText(e.target.value)} />
+                  <div className="flex gap-2">
+                    <input className="p-2 border rounded" placeholder="Attachment URL" value={newAttachment} onChange={e => setNewAttachment(e.target.value)} />
+                    <button onClick={() => addComment(n.id)} className="px-3 py-1 bg-amber-500 text-white rounded">Comment</button>
+                  </div>
                 </div>
               </div>
             ))
