@@ -438,10 +438,10 @@ class FirebaseService {
       let nominationsQuery: any;
       if (status) nominationsQuery = query(collection(db, 'nominations'), where('status', '==', status), orderBy('createdAt', 'desc'));
       else nominationsQuery = query(collection(db, 'nominations'), orderBy('createdAt', 'desc'));
-      return onSnapshot(nominationsQuery as any, snap => {
-        const items = snap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+      return onSnapshot(nominationsQuery as any, (snap: any) => {
+        const items = snap.docs.map((d: any) => ({ id: d.id, ...(d.data() as any) }));
         callback(items);
-      }, err => console.error('Nominations subscription error:', err));
+      }, (err: any) => console.error('Nominations subscription error:', err));
     } catch (err) {
       console.error('subscribeToNominations failed:', err);
       return () => {};

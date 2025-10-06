@@ -124,15 +124,17 @@
         background: radial-gradient(circle at center, rgba(212,175,55,0.18), rgba(212,175,55,0.06) 30%, transparent 60%);
         animation: ripple 700ms ease-out forwards;
       }
+      .ripple-effect { position: absolute; border-radius: 9999px; pointer-events: none; transform: translate(0,0); animation: ripple 700ms ease-out forwards; }
       @keyframes ripple { from { opacity: 0.9; transform: translate(-50%, -50%) scale(0.2); } to { opacity: 0; transform: translate(-50%, -50%) scale(2.4); } }
 
       /* constellation star subtle pulse */
       .constellation-star { transition: transform 300ms ease, opacity 300ms ease; }
       .constellation-star:hover { transform: scale(1.08); filter: drop-shadow(0 6px 8px rgba(0,0,0,0.08)); }
 
-      /* atmospheric subtle background gradient animation */
-      @keyframes slow-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-      .bg-atmosphere { background: linear-gradient(120deg, #FBF9F4 0%, #FFFDF9 50%, #F8F6F1 100%); background-size: 200% 200%; animation: slow-shift 30s linear infinite; }
+  /* atmospheric subtle background gradient animation */
+  @keyframes slow-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+  .bg-atmosphere { background: linear-gradient(120deg, #FBF9F4 0%, #FFFDF9 50%, #F8F6F1 100%); background-size: 200% 200%; animation: slow-shift 30s linear infinite; }
+  .atmo-bg { background: linear-gradient(180deg, rgba(212,175,55,0.04), rgba(58,58,58,0.01)), radial-gradient(ellipse at var(--atmo-x, 0) var(--atmo-y, 0), rgba(212,175,55,0.06), transparent 40%); mix-blend-mode: multiply; }
       
     </style>
   </head>

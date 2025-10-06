@@ -12,10 +12,10 @@ const AchievementsPanel: React.FC = () => {
     if (!user) return;
     // Listen to userAchievements collection for this user
     const q = query(collection(db, 'userAchievements'), where('userId', '==', user.id), orderBy('completedAt', 'desc')) as any;
-    const unsub = onSnapshot(q, async (snap) => {
-      const docs = snap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+    const unsub = onSnapshot(q, async (snap: any) => {
+      const docs = snap.docs.map((d: any) => ({ id: d.id, ...(d.data() as any) }));
       // Enrich with achievement metadata
-      const enriched = await Promise.all(docs.map(async (d) => {
+      const enriched = await Promise.all(docs.map(async (d: any) => {
         try {
           const achSnap = await getDoc(doc(db, 'achievements', d.achievementId) as any);
           const meta = achSnap.exists() ? (achSnap.data() as any) : null;
