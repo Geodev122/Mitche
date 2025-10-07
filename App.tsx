@@ -23,6 +23,7 @@ import CommunityEvents from './pages/CommunityEvents';
 import CreateEvent from './pages/CreateEvent';
 import CommunityEventDetail from './pages/CommunityEventDetail';
 import Leaderboard from './pages/Leaderboard';
+import Ritual from './pages/Ritual';
 import ResourceHub from './pages/ResourceHub';
 import CreateResource from './pages/CreateResource';
 import ResourceDetail from './pages/ResourceDetail';
@@ -132,7 +133,7 @@ const Main: React.FC = () => {
         <ReactRouterDOM.Route path="events" element={<CommunityEvents />} />
   <ReactRouterDOM.Route path="events/:eventId" element={<CommunityEventDetail />} />
         <ReactRouterDOM.Route path="events/new" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]}><CreateEvent /></ProtectedRoute>} />
-    <ReactRouterDOM.Route path="leaderboard" element={<Leaderboard />} />
+  <ReactRouterDOM.Route path="ritual" element={<Ritual />} />
   <ReactRouterDOM.Route path="analytics" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]}><AnalyticsDashboard /></ProtectedRoute>} />
   <ReactRouterDOM.Route path="constellation" element={<Constellation />} />
         <ReactRouterDOM.Route path="resources" element={<ResourceHub />} />

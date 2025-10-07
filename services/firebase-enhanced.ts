@@ -466,8 +466,11 @@ export class EnhancedFirebaseService {
 
       // atomically update receiver's hopePoints total and history
       const userRef = doc(db, 'users', receiverId);
+      // increment both the overall points and the per-category breakdown
       await updateDoc(userRef, {
         hopePoints: increment(points),
+        // Update nested breakdown safely using a field path
+        [`hopePointsBreakdown.${category}`]: increment(points),
         updatedAt: serverTimestamp()
       });
 
@@ -539,9 +542,19 @@ export class EnhancedFirebaseService {
       const snap = await getDoc(docRef as any);
       if (!snap.exists()) return { success: true, data: [] };
   const data = snap.data() as any || {};
-  const totals = (data.totals || {}) as Record<string, number>;
-  const rows = Object.entries(totals).map(([id, points]) => ({ id, points: Number(points || 0) }));
-  const sorted = rows.sort((a, b) => b.points - a.points);
+  const totals = (data.totals || {}) as Record<string, any>;
+  // Normalize rows: each totals[id] is expected to be an object with breakdown and score
+  const rows = Object.entries(totals).map(([id, obj]) => {
+    const raw = obj || {};
+    return {
+      id,
+      score: Number(raw.score || 0),
+      rawPoints: Number(raw.rawPoints || 0),
+      breakdown: raw.breakdown || {},
+      commendations: raw.commendations || {}
+    };
+  });
+  const sorted = rows.sort((a, b) => b.score - a.score);
       return { success: true, data: sorted };
     } catch (err) {
       console.error('Error reading preaggregated global leaderboard:', err);

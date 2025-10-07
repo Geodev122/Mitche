@@ -58,17 +58,55 @@ export const onHopeLedgerCreate = functions.firestore
       const dailyRef = db.collection('leaderboard_aggregates').doc(`${receiverId}_daily`);
 
       // Use transaction to update global aggregate and per-user aggregate atomically
+      // Enhanced aggregation: maintain per-user rawPoints, per-category breakdown, commendation counts, and a composite score.
       await db.runTransaction(async (tx) => {
         const gSnap = await tx.get(globalRef);
         const gData = gSnap.exists ? gSnap.data() || {} : {};
         const gTotals = gData.totals || {};
-        gTotals[receiverId] = (gTotals[receiverId] || 0) + amount;
+
+        // Each entry in gTotals[uid] is an object: { rawPoints, breakdown: {category:points}, commendations: {...}, score }
+        const existingGlobalForUser = gTotals[receiverId] || { rawPoints: 0, breakdown: {}, commendations: {}, score: 0 };
+        existingGlobalForUser.rawPoints = (existingGlobalForUser.rawPoints || 0) + amount;
+        existingGlobalForUser.breakdown = existingGlobalForUser.breakdown || {};
+        existingGlobalForUser.breakdown[data.category || 'unknown'] = (existingGlobalForUser.breakdown[data.category || 'unknown'] || 0) + amount;
+
+        // If the ledger entry includes a commendation map, merge counts
+        if (data.commendations && typeof data.commendations === 'object') {
+          existingGlobalForUser.commendations = existingGlobalForUser.commendations || {};
+          for (const [k, v] of Object.entries(data.commendations)) {
+            existingGlobalForUser.commendations[k] = (existingGlobalForUser.commendations[k] || 0) + (Number(v) || 0);
+          }
+        }
+
+        // Compute composite score using simple weighted formula:
+        // score = rawPoints + (threads*3) + (echoes*2) + (souls*4) + (sum of commendation weights)
+        // Note: categories mapping to "Threads","Echoes","Souls" should be provided by category names; we'll map by heuristics here.
+        const c = existingGlobalForUser.breakdown || {};
+        const threads = Number(c.Threads || c.thread || c.tapestry || 0);
+        const echoes = Number(c.Echoes || c.echoes || 0);
+        const souls = Number(c.Souls || c.souls || 0);
+        const rawPoints = Number(existingGlobalForUser.rawPoints || 0);
+
+        // default commendation weights (can be tuned)
+        const commendationWeights: Record<string, number> = { Kind: 3, Punctual: 1, Respectful: 2 };
+        let commendationBonus = 0;
+        const comms = existingGlobalForUser.commendations || {};
+        for (const [k, v] of Object.entries(comms)) {
+          commendationBonus += (Number(v) || 0) * (commendationWeights[k] || 1);
+        }
+
+        const score = rawPoints + (threads * 3) + (echoes * 2) + (souls * 4) + commendationBonus;
+        existingGlobalForUser.score = score;
+
+        gTotals[receiverId] = existingGlobalForUser;
         tx.set(globalRef, { totals: gTotals }, { merge: true });
 
+        // per-user doc summarizing aggregates
         const pSnap = await tx.get(perUserRef);
         const pData = pSnap.exists ? pSnap.data() || {} : {};
-        const pTotal = (pData.total || 0) + amount;
-        tx.set(perUserRef, { total: pTotal, lastUpdated: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
+        const newTotal = (pData.total || 0) + amount;
+        const mergedBreakdown = { ...(pData.breakdown || {}), ...(existingGlobalForUser.breakdown || {}) };
+        tx.set(perUserRef, { total: newTotal, breakdown: mergedBreakdown, score: existingGlobalForUser.score, lastUpdated: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
 
         // daily breakdown per user
         const dSnap = await tx.get(dailyRef);
@@ -361,40 +399,77 @@ export const onHopeLedgerCreateEvaluateAchievements = functions.firestore
       const userData: any = userSnap.data() || {};
       const userHopePoints = Number(userData.hopePoints || 0);
 
-      // Query achievements that are of type 'hopePoints'
-      const achQuery = await db.collection('achievements').where('criteria.type', '==', 'hopePoints').get();
-      if (achQuery.empty) return null;
+      // Enhanced: evaluate multiple criteria types (hopePoints, commendations, tapestry, echoes, combo)
+      const achSnapshot = await db.collection('achievements').get();
+      if (achSnapshot.empty) return null;
+
+      // Compute pillar progress and attach to user doc (non-critical)
+      const pillars = computePillarsFromUser(userData);
+      try {
+        await userRef.set({ pillars }, { merge: true });
+      } catch (e) {
+        // ignore write failures (non-fatal)
+        console.warn('Failed to set user pillars', e);
+      }
 
       const batch = db.batch();
       let anyWrites = false;
 
-      for (const achDoc of achQuery.docs) {
+      // Helper to mark achievement for user
+      const markAchievement = async (achievementId: string) => {
+        const uaId = `${receiverId}_${achievementId}`;
+        const uaRef = db.collection('userAchievements').doc(uaId);
+        const uaSnap = await uaRef.get();
+        if (!uaSnap.exists) {
+          const now = admin.firestore.FieldValue.serverTimestamp();
+          batch.set(uaRef, {
+            id: uaId,
+            userId: receiverId,
+            achievementId,
+            currentProgress: 0,
+            targetProgress: 0,
+            isCompleted: true,
+            completedAt: now,
+            notificationSent: false,
+            earnedContext: { ledgerId, category: data.category || null },
+            createdAt: now,
+            updatedAt: now,
+          });
+          batch.update(userRef, { badges: admin.firestore.FieldValue.arrayUnion(achievementId) });
+          anyWrites = true;
+        }
+      };
+
+      // Evaluate each achievement
+      for (const achDoc of achSnapshot.docs) {
         const ach = achDoc.data() as any;
         const criteria = ach?.criteria || {};
+        const type = criteria.type;
         const target = Number(criteria.value || 0);
-        if (userHopePoints >= target) {
-          const uaId = `${receiverId}_${achDoc.id}`;
-          const uaRef = db.collection('userAchievements').doc(uaId);
-          const uaSnap = await uaRef.get();
-          if (!uaSnap.exists) {
-            const now = admin.firestore.FieldValue.serverTimestamp();
-            batch.set(uaRef, {
-              id: uaId,
-              userId: receiverId,
-              achievementId: achDoc.id,
-              currentProgress: target,
-              targetProgress: target,
-              isCompleted: true,
-              completedAt: now,
-              notificationSent: false,
-              earnedContext: { ledgerId, category: data.category || null },
-              createdAt: now,
-              updatedAt: now,
-            });
-            // Ensure user's badges include this achievement id (denormalized)
-            batch.update(userRef, { badges: admin.firestore.FieldValue.arrayUnion(achDoc.id) });
-            anyWrites = true;
+
+        try {
+          if (type === 'hopePoints') {
+            if (userHopePoints >= target) await markAchievement(achDoc.id);
+          } else if (type === 'commendations') {
+            // sum up all commendation counts on the user
+            const comms = userData.commendations || {};
+            let sum = 0;
+            for (const k of Object.keys(comms)) sum += Number(comms[k] || 0);
+            if (sum >= target) await markAchievement(achDoc.id);
+          } else if (type === 'tapestry') {
+            // try user-supplied counters, else query tapestry collection for authored threads
+            const tapestryCount = Number(userData.tapestryThreadsCount || userData.tapestryCount || 0);
+            if (tapestryCount >= target) await markAchievement(achDoc.id);
+          } else if (type === 'echoes') {
+            const echoes = Number(userData.echoes || userData.totalEchoes || userData.hopePointsBreakdown?.VoiceOfCompassion || 0);
+            if (echoes >= target) await markAchievement(achDoc.id);
+          } else if (type === 'combo') {
+            // legacy combo criteria — interpret as number of requests helped or similar
+            const comboCount = Number(userData.combo || 0);
+            if (comboCount >= target) await markAchievement(achDoc.id);
           }
+        } catch (e) {
+          console.warn('Error evaluating achievement', achDoc.id, e);
         }
       }
 
@@ -408,6 +483,220 @@ export const onHopeLedgerCreateEvaluateAchievements = functions.firestore
       return null;
     }
   });
+
+// Helper: compute simple pillar map from user data
+function computePillarsFromUser(userData: any) {
+  // pillars: anchor, bridge, symbol, dialog, transpersonal
+  const anchor = Number(userData.hopePointsBreakdown?.SilentHero || userData.hopePointsBreakdown?.CommunityGift || 0);
+  const bridge = Number(userData.tapestryThreadsCount || userData.tapestryCount || 0);
+  // symbol maps to commendation total
+  const commendations = userData.commendations || {};
+  let symbol = 0;
+  for (const k of Object.keys(commendations)) symbol += Number(commendations[k] || 0);
+  const dialog = Number(userData.echoes || userData.totalEchoes || userData.hopePointsBreakdown?.VoiceOfCompassion || 0);
+  const transpersonal = Number(userData.hopePoints || 0);
+  return { anchor, bridge, symbol, dialog, transpersonal };
+}
+
+// Admin callable: recompute achievements for a specific user (idempotent)
+export const adminRecomputeUserAchievements = functions.https.onCall(async (data, context) => {
+  try {
+    if (!context.auth || !context.auth.uid) throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
+    // basic admin check
+    const callerUid = context.auth.uid;
+    let isAdmin = (context.auth.token && (context.auth.token as any).role) === 'Admin';
+    if (!isAdmin) {
+      const callerDoc = await db.collection('users').doc(callerUid).get();
+      if (callerDoc.exists) isAdmin = ((callerDoc.data() as any).role === 'Admin');
+    }
+    if (!isAdmin) return { success: false, error: 'permission-denied' };
+
+    const userId = typeof data?.userId === 'string' ? data.userId : null;
+    if (!userId) return { success: false, error: 'userId required' };
+
+    // Trigger the same evaluation as ledger trigger by fetching user's data and invoking evaluation logic
+    const userRef = db.collection('users').doc(userId);
+    const userSnap = await userRef.get();
+    if (!userSnap.exists) return { success: false, error: 'user-not-found' };
+    const userData = userSnap.data() as any;
+
+    // reuse computePillarsFromUser and evaluation code by creating a fake ledger context (not writing ledger)
+    // We'll perform the evaluation logic here (similar to onHopeLedgerCreateEvaluateAchievements)
+    const achSnapshot = await db.collection('achievements').get();
+    const batch = db.batch();
+    let anyWrites = false;
+
+    // write pillar snapshot
+    const pillars = computePillarsFromUser(userData);
+    batch.set(userRef, { pillars }, { merge: true });
+
+    for (const achDoc of achSnapshot.docs) {
+      const ach = achDoc.data() as any;
+      const criteria = ach?.criteria || {};
+      const type = criteria.type;
+      const target = Number(criteria.value || 0);
+      const userHopePoints = Number(userData.hopePoints || 0);
+
+      const markAchievement = () => {
+        const uaId = `${userId}_${achDoc.id}`;
+        const uaRef = db.collection('userAchievements').doc(uaId);
+        batch.set(uaRef, {
+          id: uaId,
+          userId,
+          achievementId: achDoc.id,
+          currentProgress: target,
+          targetProgress: target,
+          isCompleted: true,
+          completedAt: admin.firestore.FieldValue.serverTimestamp(),
+          notificationSent: false,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        batch.update(userRef, { badges: admin.firestore.FieldValue.arrayUnion(achDoc.id) });
+        anyWrites = true;
+      };
+
+      if (type === 'hopePoints' && userHopePoints >= target) markAchievement();
+      else if (type === 'commendations') {
+        const comms = userData.commendations || {};
+        let sum = 0; for (const k of Object.keys(comms)) sum += Number(comms[k] || 0);
+        if (sum >= target) markAchievement();
+      } else if (type === 'tapestry') {
+        const tapestryCount = Number(userData.tapestryThreadsCount || userData.tapestryCount || 0);
+        if (tapestryCount >= target) markAchievement();
+      } else if (type === 'echoes') {
+        const echoes = Number(userData.echoes || userData.totalEchoes || userData.hopePointsBreakdown?.VoiceOfCompassion || 0);
+        if (echoes >= target) markAchievement();
+      } else if (type === 'combo') {
+        const comboCount = Number(userData.combo || 0);
+        if (comboCount >= target) markAchievement();
+      }
+    }
+
+    if (anyWrites) await batch.commit();
+    else await db.runTransaction(async (tx) => tx.update(userRef, { pillars }));
+
+    return { success: true };
+  } catch (err: any) {
+    console.error('adminRecomputeUserAchievements error', err);
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
+  }
+});
+
+// Admin callable to seed initial HBIM pillar achievements and symbolic commendation achievements
+export const adminSeedInitialAchievements = functions.https.onCall(async (data, context) => {
+  try {
+    if (!context.auth || !context.auth.uid) throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
+    // basic admin check
+    const callerUid = context.auth.uid;
+    let isAdmin = (context.auth.token && (context.auth.token as any).role) === 'Admin';
+    if (!isAdmin) {
+      const callerDoc = await db.collection('users').doc(callerUid).get();
+      if (callerDoc.exists) isAdmin = ((callerDoc.data() as any).role === 'Admin');
+    }
+    if (!isAdmin) throw new functions.https.HttpsError('permission-denied', 'Admin only');
+
+    const achievements = [
+      {
+        id: 'hbim_pillar_anchor',
+        name: 'Bearer of Inner Light',
+        description: 'Existential Anchoring: foundational acts that stabilize and support others.',
+        icon: '⚙️',
+        criteria: { type: 'hopePoints', value: 20, timeframe: 'allTime' },
+        hopePointsReward: 10,
+        category: 'Dedication',
+        rarity: 'Common',
+        isActive: true,
+        isHidden: false
+      },
+      {
+        id: 'hbim_pillar_bridge',
+        name: 'Weaver of Wisdom',
+        description: 'Narrative Bridging: contribute meaningful stories or tapestry threads.',
+        icon: '📚',
+        criteria: { type: 'tapestry', value: 3, timeframe: 'allTime' },
+        hopePointsReward: 15,
+        category: 'Community',
+        rarity: 'Common',
+        isActive: true,
+        isHidden: false
+      },
+      {
+        id: 'hbim_pillar_symbol',
+        name: 'Keeper of Sacred Symbols',
+        description: 'Symbolic Activation: earn symbolic commendations and cultivate identity.',
+        icon: '✴️',
+        criteria: { type: 'commendations', value: 5, timeframe: 'allTime' },
+        hopePointsReward: 20,
+        category: 'Helper',
+        rarity: 'Rare',
+        isActive: true,
+        isHidden: false
+      },
+      {
+        id: 'hbim_pillar_dialog',
+        name: 'Voice of Compassion',
+        description: 'Dialogical Positioning: earn echoes and meaningful conversational contributions.',
+        icon: '✍️',
+        criteria: { type: 'echoes', value: 10, timeframe: 'allTime' },
+        hopePointsReward: 15,
+        category: 'Community',
+        rarity: 'Common',
+        isActive: true,
+        isHidden: false
+      },
+      {
+        id: 'hbim_pillar_transpersonal',
+        name: 'Legacy of Light',
+        description: 'Transpersonal Resonance: sustained impact across the community.',
+        icon: '🌟',
+        criteria: { type: 'hopePoints', value: 200, timeframe: 'allTime' },
+        hopePointsReward: 50,
+        category: 'Dedication',
+        rarity: 'Epic',
+        isActive: true,
+        isHidden: false
+      },
+      {
+        id: 'symbolic_silent_hero',
+        name: 'Silent Hero',
+        description: 'Receive 5 SilentHero commendations.',
+        icon: '🦸',
+        criteria: { type: 'commendations', value: 5, timeframe: 'allTime' },
+        hopePointsReward: 25,
+        category: 'Special',
+        rarity: 'Rare',
+        isActive: true,
+        isHidden: false
+      },
+      {
+        id: 'symbolic_community_builder',
+        name: 'Community Builder',
+        description: 'Receive 5 CommunityBuilder commendations.',
+        icon: '🌳',
+        criteria: { type: 'commendations', value: 5, timeframe: 'allTime' },
+        hopePointsReward: 25,
+        category: 'Special',
+        rarity: 'Rare',
+        isActive: true,
+        isHidden: false
+      }
+    ];
+
+    const batch = db.batch();
+    for (const ach of achievements) {
+      const ref = db.collection('achievements').doc(ach.id);
+      batch.set(ref, { ...ach, createdAt: admin.firestore.FieldValue.serverTimestamp(), updatedAt: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    }
+    await batch.commit();
+
+    return { success: true, seeded: achievements.length };
+  } catch (err: any) {
+    console.error('adminSeedInitialAchievements error', err);
+    if (err instanceof functions.https.HttpsError) throw err;
+    throw new functions.https.HttpsError('internal', err instanceof Error ? err.message : String(err));
+  }
+});
 
   // Callable function to generate a symbolic icon for a user using OpenAI Images API
   // Bind the function to the Firebase secret OPENAI_API_KEY so it becomes available

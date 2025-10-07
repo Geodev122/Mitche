@@ -4,68 +4,99 @@ import { useId } from 'react';
 import Tooltip from './Tooltip.tsx';
 import { HopePointCategory } from '../../types';
 
-const CATEGORY_COLORS: Record<string, string> = {
-  [HopePointCategory.SilentHero]: '#7DD3FC', // blue
-  [HopePointCategory.VoiceOfCompassion]: '#FBBF24', // amber
-  [HopePointCategory.CommunityBuilder]: '#C084FC', // purple
-  [HopePointCategory.CommunityGift]: '#34D399', // green
-  [HopePointCategory.Ritual]: '#FDBA74', // warm orange for rituals
-};
+// Map five HBIM pillars to colors (these become the flower petals)
+const PILLAR_COLORS: string[] = ['#7DD3FC', '#FBBF24', '#C084FC', '#34D399', '#FDBA74'];
 
 interface Props {
+  // breakdown values map to the five pillars in order: anchor, bridge, symbol, dialog, transpersonal
   breakdown?: Record<string, number> | undefined;
   size?: number;
 }
 
-// Simple SVG constellation visualization: render colored stars proportional to counts
-const Constellation: React.FC<Props> = ({ breakdown = {}, size = 120 }) => {
-  const entries = Object.entries(breakdown || {});
-  const total = entries.reduce((s, [, v]) => s + (v || 0), 0);
-
-  // Generate positions for stars
-  const positions = entries.map(([,], i) => {
-    const angle = (i / Math.max(1, entries.length)) * Math.PI * 2;
-    const r = 20 + (i % 3) * 18;
-    const cx = size / 2 + Math.cos(angle) * r;
-    const cy = size / 2 + Math.sin(angle) * r;
-    return { cx, cy };
+// Render a 5-petal flower (SVG). Each petal fills proportionally based on the value for that pillar.
+const Constellation: React.FC<Props> = ({ breakdown = {}, size = 140 }) => {
+  // Map breakdown to an ordered array of pillar values. We accept either explicit keys or a fallback array.
+  const pillarKeys = ['anchor', 'bridge', 'symbol', 'dialog', 'transpersonal'];
+  const values = pillarKeys.map((k, i) => {
+    // try canonical keys first, then numeric indexes or enum-like names
+    const v = (breakdown as any)[k] ?? (breakdown as any)[Object.keys(breakdown || {})[i]] ?? 0;
+    return Math.max(0, Number(v || 0));
   });
 
+  const total = values.reduce((s, v) => s + v, 0);
+  const maxForScale = Math.max(1, ...values, total / 5 || 1);
+
   const id = useId();
+
+  // Petal geometry: five petals evenly spaced around center; petal path created via elliptical arcs
+  const center = { x: size / 2, y: size / 2 };
+  const petalRadius = size * 0.36;
+  const petalWidth = size * 0.26;
+
+  const petalPath = (angleDeg: number, fillRatio: number) => {
+    // angle in degrees, fillRatio 0..1 determines inner cut to show progress
+    const a = (angleDeg * Math.PI) / 180;
+    const cx = center.x + Math.cos(a) * (petalRadius * 0.55);
+    const cy = center.y + Math.sin(a) * (petalRadius * 0.55);
+
+    // large petal outer point
+    const ox = center.x + Math.cos(a) * petalRadius;
+    const oy = center.y + Math.sin(a) * petalRadius;
+
+    // orthogonal for width
+    const orthoA = a + Math.PI / 2;
+    const w = petalWidth;
+    const x1 = cx + Math.cos(orthoA) * w;
+    const y1 = cy + Math.sin(orthoA) * w;
+    const x2 = cx - Math.cos(orthoA) * w;
+    const y2 = cy - Math.sin(orthoA) * w;
+
+    // inner cut point for progress
+    const innerR = petalRadius * (0.12 + 0.75 * (1 - fillRatio));
+    const ix = center.x + Math.cos(a) * innerR;
+    const iy = center.y + Math.sin(a) * innerR;
+
+    // build path from x1,y1 to outer to x2,y2 to inner back
+    return `M ${x1} ${y1} Q ${ox} ${oy} ${x2} ${y2} L ${ix} ${iy} Z`;
+  };
+
   return (
     <div className="flex items-center justify-center">
-      <Tooltip content={`Total hope points: ${total}`}> 
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-labelledby={`constellation-${id}`} role="img">
-        <title id={`constellation-${id}`}>Personal Hope Constellation</title>
-        <rect width="100%" height="100%" fill="none" />
-        {entries.map(([cat, count], i) => {
-          const color = CATEGORY_COLORS[cat] || '#D1D5DB';
-          const radius = Math.min(18, 6 + Math.sqrt(count || 0) * 4);
-          const pos = positions[i] || { cx: size / 2, cy: size / 2 };
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-labelledby={`constellation-${id}`}>
+        <title id={`constellation-${id}`}>Personal Constellation Flower</title>
+        <defs>
+          <filter id={`glow`} x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        {/* petals */}
+        {values.map((v, i) => {
+          const angle = -90 + (i * 360) / values.length; // start at top
+          const fillRatio = Math.min(1, v / maxForScale);
+          const color = PILLAR_COLORS[i % PILLAR_COLORS.length];
           return (
-            <g key={cat} className="transform-gpu" style={{ transition: 'transform 400ms ease, opacity 400ms ease' }}>
-              <defs>
-                <filter id={`glow-${i}`} x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="4" result="coloredBlur" />
-                  <feMerge>
-                    <feMergeNode in="coloredBlur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-              <circle cx={pos.cx} cy={pos.cy} r={radius} fill={color} filter={`url(#glow-${i})`} opacity={0.95} className="constellation-star" />
-              {/* small inner star */}
-              <circle cx={pos.cx} cy={pos.cy} r={Math.max(1, radius * 0.3)} fill="#ffffff" opacity={0.9} />
+            <g key={i} transform={`translate(0,0)`}> 
+              {/* background petal */}
+              <path d={petalPath(angle, 0)} fill={`${color}33`} stroke="none" />
+              {/* filled portion */}
+              <path d={petalPath(angle, fillRatio)} fill={color} stroke="none" filter={`url(#glow)`} opacity={0.95} />
             </g>
           );
         })}
-        {/* center badge showing total */}
+
+        {/* center circle with total and flower center ring */}
         <g>
-          <circle cx={size / 2} cy={size / 2} r={size * 0.16} fill="#111827" opacity={0.9} />
-          <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fill="#FDFDFD" fontSize={size * 0.14} fontWeight={700}>{total}</text>
+          <circle cx={center.x} cy={center.y} r={size * 0.14} fill="#111827" opacity={0.95} />
+          <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fill="#FDFDFD" fontSize={size * 0.12} fontWeight={700}>
+            {total}
+          </text>
         </g>
       </svg>
-      </Tooltip>
     </div>
   );
 };

@@ -2,6 +2,7 @@
   "compilerOptions": {
     "lib": ["es2020", "dom"],
     "module": "commonjs",
+    "skipLibCheck": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "lib",

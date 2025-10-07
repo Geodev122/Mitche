@@ -1,3 +1,135 @@
+// Database Migration Scripts for Enhanced Mitché Platform (fixed)
+// Seeds system settings and HBIM pillar achievements + symbolic commendation achievements
+
+import { collection, doc, writeBatch, serverTimestamp } from 'firebase/firestore';
+import { db } from '../services/firebase';
+
+export class DatabaseMigration {
+  async seedInitial(): Promise<void> {
+    console.log('Seeding system settings and achievements...');
+
+    await this.createInitialSystemSettings();
+    await this.createInitialAchievements();
+
+    console.log('Seeding complete');
+  }
+
+  private async createInitialSystemSettings(): Promise<void> {
+    const settings = [
+      { id: 'app_version', value: '2.0.0', type: 'string', description: 'Current application version', isPublic: true },
+      { id: 'achievementsEnabled', value: true, type: 'boolean', description: 'Toggle achievements system', isPublic: false }
+    ];
+
+    const batch = writeBatch(db);
+    for (const s of settings) {
+      const ref = doc(db, 'systemSettings', s.id);
+      batch.set(ref, { ...s, lastModifiedBy: 'system', updatedAt: serverTimestamp() });
+    }
+    await batch.commit();
+    console.log('System settings created');
+  }
+
+  private async createInitialAchievements(): Promise<void> {
+    // HBIM pillars as petals in the Constellation flower
+    const achievements = [
+      {
+        id: 'hbim_pillar_anchor',
+        name: 'Bearer of Inner Light',
+        description: 'Existential Anchoring: foundational acts that stabilize and support others.',
+        icon: '⚙️',
+        criteria: { type: 'hopePoints', value: 20, timeframe: 'allTime' },
+        hopePointsReward: 10,
+        category: 'Dedication',
+        rarity: 'Common',
+        isActive: true,
+        isHidden: false
+      },
+      {
+        id: 'hbim_pillar_bridge',
+        name: 'Weaver of Wisdom',
+        description: 'Narrative Bridging: contribute meaningful stories or tapestry threads.',
+        icon: '📚',
+        criteria: { type: 'tapestry', value: 3, timeframe: 'allTime' },
+        hopePointsReward: 15,
+        category: 'Community',
+        rarity: 'Common',
+        isActive: true,
+        isHidden: false
+      },
+      {
+        id: 'hbim_pillar_symbol',
+        name: 'Keeper of Sacred Symbols',
+        description: 'Symbolic Activation: earn symbolic commendations and cultivate identity.',
+        icon: '✴️',
+        criteria: { type: 'commendations', value: 5, timeframe: 'allTime' },
+        hopePointsReward: 20,
+        category: 'Helper',
+        rarity: 'Rare',
+        isActive: true,
+        isHidden: false
+      },
+      {
+        id: 'hbim_pillar_dialog',
+        name: 'Voice of Compassion',
+        description: 'Dialogical Positioning: earn echoes and meaningful conversational contributions.',
+        icon: '✍️',
+        criteria: { type: 'echoes', value: 10, timeframe: 'allTime' },
+        hopePointsReward: 15,
+        category: 'Community',
+        rarity: 'Common',
+        isActive: true,
+        isHidden: false
+      },
+      {
+        id: 'hbim_pillar_transpersonal',
+        name: 'Legacy of Light',
+        description: 'Transpersonal Resonance: sustained impact across the community.',
+        icon: '🌟',
+        criteria: { type: 'hopePoints', value: 200, timeframe: 'allTime' },
+        hopePointsReward: 50,
+        category: 'Dedication',
+        rarity: 'Epic',
+        isActive: true,
+        isHidden: false
+      },
+      // Symbolic commendation achievements
+      {
+        id: 'symbolic_silent_hero',
+        name: 'Silent Hero',
+        description: 'Receive 5 SilentHero commendations.',
+        icon: '🦸',
+        criteria: { type: 'commendations', value: 5, timeframe: 'allTime' },
+        hopePointsReward: 25,
+        category: 'Special',
+        rarity: 'Rare',
+        isActive: true,
+        isHidden: false
+      },
+      {
+        id: 'symbolic_community_builder',
+        name: 'Community Builder',
+        description: 'Receive 5 CommunityBuilder commendations.',
+        icon: '🌳',
+        criteria: { type: 'commendations', value: 5, timeframe: 'allTime' },
+        hopePointsReward: 25,
+        category: 'Special',
+        rarity: 'Rare',
+        isActive: true,
+        isHidden: false
+      }
+    ];
+
+    const batch = writeBatch(db);
+    for (const ach of achievements) {
+      const ref = doc(db, 'achievements', ach.id);
+      batch.set(ref, { ...ach, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+    }
+    await batch.commit();
+    console.log(`Seeded ${achievements.length} achievements`);
+  }
+}
+
+export const databaseMigration = new DatabaseMigration();
 // Database Migration Scripts for Enhanced Mitché Platform
 // This file contains scripts to migrate existing data to the new enhanced schema
 
@@ -9,68 +141,94 @@ import {
   setDoc, 
   writeBatch, 
   serverTimestamp,
-  addDoc 
-} from 'firebase/firestore';
-import { db } from '../services/firebase';
-import { 
-  User, 
-  Request, 
-  Offering, 
-  CommunityEvent, 
-  Resource, 
-  Notification,
-  Role,
-  RequestType,
-  RequestMode,
-  RequestStatus,
-  CommunityEventType,
-  ResourceCategory
-} from '../types-enhanced';
-
-export class DatabaseMigration {
-  
-  // === MIGRATION METHODS ===
-  
-  async migrateAllCollections(): Promise<void> {
-    console.log('Starting database migration...');
-    
-    try {
-      await this.migrateUsers();
-      await this.migrateRequests();
-      await this.migrateOfferings();
-      await this.migrateCommunityEvents();
-      await this.migrateResources();
-      await this.migrateNotifications();
-      await this.createInitialSystemSettings();
-      await this.createInitialAchievements();
-      
-      console.log('Database migration completed successfully!');
-    } catch (error) {
-      console.error('Migration failed:', error);
-      throw error;
-    }
-  }
-  
-  // Migrate Users Collection
-  async migrateUsers(): Promise<void> {
-    console.log('Migrating users...');
-    
-    const usersSnapshot = await getDocs(collection(db, 'users'));
-    const batch = writeBatch(db);
-    
-    usersSnapshot.docs.forEach((userDoc) => {
-      const userData = userDoc.data() as any;
-
-      const migratedUser: any = {
-        // Core fields (already exist)
-        id: userData.id || userDoc.id,
-        username: userData.username,
-        symbolicName: userData.symbolicName || '',
-        symbolicIcon: userData.symbolicIcon || '',
-        role: userData.role as Role || Role.Citizen,
-        
-        // Enhanced fields
-        email: userData.email || '',
+    // Achievements seeded by HBIM pillars (each pillar is a petal in the Constellation flower)
+    const achievements = [
+      {
+        id: 'pillar_anchor',
+        name: 'Bearer of Inner Light',
+        description: 'Demonstrate Existential Anchoring by accumulating focused acts in this pillar',
+        icon: '\u2699',
+        criteria: { type: 'hopePoints', value: 20, timeframe: 'allTime' },
+        hopePointsReward: 10,
+        category: 'Dedication',
+        rarity: 'Common',
+        isActive: true,
+        isHidden: false
+      },
+      {
+        id: 'pillar_bridge',
+        name: 'Weaver of Wisdom',
+        description: 'Narrative Bridging: contribute stories and reflections that bind community',
+        icon: '\ud83d\udcda',
+        criteria: { type: 'tapestry', value: 3, timeframe: 'allTime' },
+        hopePointsReward: 15,
+        category: 'Community',
+        rarity: 'Common',
+        isActive: true,
+        isHidden: false
+      },
+      {
+        id: 'pillar_symbol',
+        name: 'Keeper of Sacred Symbols',
+        description: 'Symbolic Activation: earn symbolic commendations and cultivate symbolic identity',
+        icon: '\u2734',
+        criteria: { type: 'commendations', value: 5, timeframe: 'allTime' },
+        hopePointsReward: 20,
+        category: 'Helper',
+        rarity: 'Rare',
+        isActive: true,
+        isHidden: false
+      },
+      {
+        id: 'pillar_dialog',
+        name: 'Voice of Compassion',
+        description: 'Dialogical Positioning: meaningful conversational contributions and echoes',
+        icon: '\u270d',
+        criteria: { type: 'echoes', value: 10, timeframe: 'allTime' },
+        hopePointsReward: 15,
+        category: 'Community',
+        rarity: 'Common',
+        isActive: true,
+        isHidden: false
+      },
+      {
+        id: 'pillar_transpersonal',
+        name: 'Legacy of Light',
+        description: 'Transpersonal Resonance: long-term impact across the community',
+        icon: '\ud83c\udf1f',
+        criteria: { type: 'hopePoints', value: 200, timeframe: 'allTime' },
+        hopePointsReward: 50,
+        category: 'Dedication',
+        rarity: 'Epic',
+        isActive: true,
+        isHidden: false
+      },
+      // Symbolic commendation achievements (awarded when users earn particular commendation counts)
+      {
+        id: 'symbolic_silent_hero',
+        name: 'Silent Hero',
+        description: 'Awarded for receiving 5 SilentHero commendations',
+        icon: '\ud83e\uddb8',
+        criteria: { type: 'commendations', value: 5, timeframe: 'allTime' },
+        hopePointsReward: 25,
+        category: 'Special',
+        rarity: 'Rare',
+        isActive: true,
+        isHidden: false
+      },
+      {
+        id: 'symbolic_community_builder',
+        name: 'Community Builder',
+        description: 'Awarded for receiving 5 CommunityBuilder commendations',
+        icon: '\ud83c\udf33',
+        criteria: { type: 'commendations', value: 5, timeframe: 'allTime' },
+        hopePointsReward: 25,
+        category: 'Special',
+        rarity: 'Rare',
+        isActive: true,
+        isHidden: false
+      }
+    ];
         displayName: userData.displayName,
         isVerified: userData.isVerified || false,
         verificationStatus: userData.verificationStatus || 'NotRequested',

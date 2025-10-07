@@ -14,7 +14,7 @@ const BottomNav: React.FC = () => {
     { path: '/echoes', label: t('nav.echoes'), icon: MessageSquare, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
     { path: '/resources', label: t('nav.resources'), icon: PackageSearch, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
     { path: '/events', label: t('nav.events'), icon: Calendar, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
-  { path: '/leaderboard', label: t('nav.leaderboard'), icon: Trophy, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
+  { path: '/ritual', label: t('nav.ritual', 'Daily Ritual'), icon: Zap, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
   // Phase 1 features are now integrated into main flows; no standalone nav entry
     { path: '/admin', label: t('nav.admin'), icon: Shield, roles: [Role.Admin] },
   ];
