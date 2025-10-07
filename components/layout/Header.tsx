@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, X, BookOpen } from 'lucide-react';
+import { Bell, X, BookOpen, QrCode } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import { Notification } from '../../types';
@@ -85,9 +85,7 @@ const Header: React.FC = () => {
                         // Dispatch an event that ProfilePanel listens for to open QR modal
                         window.dispatchEvent(new CustomEvent('mitche.openQr'));
                     }} title={t('constellation.showQrCode', 'Show QR')} className="p-2 rounded-full hover:bg-gray-200/50">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h6v6H3V3zm12 0h6v6h-6V3zM3 15h6v6H3v-6zm12 0h6v6h-6v-6z" />
-                        </svg>
+                        <QrCode className="w-6 h-6 text-gray-600" />
                     </button>
                 </div>
             </header>
