@@ -1,6 +1,7 @@
 {
   "name": "mitche-functions",
   "private": true,
+  "version": "2025.10.07-001",
   "engines": {
     "node": "20"
   },

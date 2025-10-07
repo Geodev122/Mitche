@@ -43,10 +43,10 @@
     "generatingUsernames": "Génération de noms uniques...",
     "chooseUsername": "Choisissez votre nom d'utilisateur",
     "refreshUsernames": "Rafraîchir les noms",
-    "googleSignIn": "[MISSING TRANSLATION] Continue with Google",
-    "googleSignInLoading": "[MISSING TRANSLATION] Signing in with Google...",
-    "orDivider": "[MISSING TRANSLATION] or",
-    "errorGoogleSignIn": "[MISSING TRANSLATION] Failed to sign in with Google. Please try again."
+  "googleSignIn": "Continue with Google",
+  "googleSignInLoading": "Signing in with Google...",
+  "orDivider": "or",
+  "errorGoogleSignIn": "Failed to sign in with Google. Please try again."
   },
   "onboarding": {
     "step1": {
@@ -475,14 +475,14 @@
     "verificationRejected": "La vérification de votre compte a été rejetée. Veuillez contacter le support si vous pensez qu'il s'agit d'une erreur."
   },
   "demo": {
-    "title": "[MISSING TRANSLATION] Demo Content",
-    "searchPlaceholder": "[MISSING TRANSLATION] Search demo items...",
-    "noItems": "[MISSING TRANSLATION] No demo items",
-    "addSuccess": "[MISSING TRANSLATION] Demo item added",
-    "addError": "[MISSING TRANSLATION] Failed to add demo item",
-    "deleteSuccess": "[MISSING TRANSLATION] Demo item deleted",
-    "deleteError": "[MISSING TRANSLATION] Failed to delete demo item",
-    "confirmDelete": "[MISSING TRANSLATION] Delete demo item? This cannot be undone.",
-    "showing": "[MISSING TRANSLATION] Showing"
+  "title": "Demo Content",
+  "searchPlaceholder": "Search demo items...",
+  "noItems": "No demo items",
+  "addSuccess": "Demo item added",
+  "addError": "Failed to add demo item",
+  "deleteSuccess": "Demo item deleted",
+  "deleteError": "Failed to delete demo item",
+  "confirmDelete": "Delete demo item? This cannot be undone.",
+  "showing": "Showing"
   }
 }
