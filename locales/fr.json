@@ -485,4 +485,13 @@
     "confirmDelete": "Delete item? This action is irreversible.",
     "showing": "Affichage"
   }
+  ,
+  "dashboard": {
+    "quickActions": "Actions rapides",
+    "recent": "Récents",
+    "noQuickActions": "Aucune action rapide disponible"
+  },
+  "common": {
+    "open": "Ouvrir"
+  }
 }

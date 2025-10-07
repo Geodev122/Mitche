@@ -410,6 +410,14 @@
     "confirmDelete": "Delete item? This action cannot be undone.",
     "showing": "عرض"
   },
+  "dashboard": {
+    "quickActions": "الإجراءات السريعة",
+    "recent": "الأحدث",
+    "noQuickActions": "لا توجد إجراءات سريعة متاحة"
+  },
+  "common": {
+    "open": "افتح"
+  },
   "leaderboard": {
     "title": "قائمة المتصدرين للأمل",
     "subtitle": "تكريم حاملي الأمل الأكثر نشاطاً",

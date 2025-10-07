@@ -392,6 +392,14 @@
     "confirmDelete": "Delete item? This cannot be undone.",
     "showing": "Showing"
   },
+  "dashboard": {
+    "quickActions": "Quick Actions",
+    "recent": "Recent",
+    "noQuickActions": "No quick actions available"
+  },
+  "common": {
+    "open": "Open"
+  },
   "leaderboard": {
     "title": "Hope Leaderboard",
     "subtitle": "Celebrating the most active bearers of hope",

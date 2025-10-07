@@ -41,6 +41,8 @@ interface DataContextType {
   getLeaderboard?: (opts?: { role?: string; startDate?: string; endDate?: string; depthBased?: boolean; limit?: number; }) => Promise<any[] | null>;
   // Send an encouragement message to another user (not limited to once-per-day)
   sendEncouragement: (receiverId: string, message: string) => Promise<{ success: boolean; messageKey?: string }>;
+  getQuickActionsForUser: (userId?: string | null) => Promise<any[]>;
+  getRecentActivityForUser: (userId?: string | null) => Promise<any[]>;
 }
 
 const DataContext = React.createContext<DataContextType | undefined>(undefined);
@@ -992,6 +994,44 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const getQuickActionsForUser = async (userId?: string | null) => {
+    // Provide a small set of contextual quick actions
+    try {
+      const actions: any[] = [];
+      actions.push({ id: 'create_request', title: i18n.t('createRequest.title'), subtitle: i18n.t('createRequest.subtitle'), action: 'createRequest' });
+      if (communityEvents && communityEvents.length > 0) {
+        actions.push({ id: 'view_events', title: i18n.t('sanctuary.tiles.events'), subtitle: i18n.t('sanctuary.tiles.eventsSub'), action: 'viewEvents' });
+      }
+      if (tapestryThreads && tapestryThreads.length > 0) {
+        actions.push({ id: 'view_tapestry', title: i18n.t('tapestry.title'), subtitle: i18n.t('tapestry.subtitle'), action: 'viewTapestry' });
+      }
+      return actions;
+    } catch (e) {
+      return [];
+    }
+  };
+
+  const getRecentActivityForUser = async (userId?: string | null) => {
+    try {
+      const items: any[] = [];
+      // Start with notifications
+      const notifs = notifications.slice(0, 10).map(n => ({ id: n.id, text: n.messageKey ? i18n.t(n.messageKey, n.messageOptions || {}) : (n.message || '') }));
+      items.push(...notifs);
+
+      // Recent tapestry threads
+      const threads = tapestryThreads.slice(0, 5).map(t => ({ id: t.id, text: t.story?.slice(0, 120) }));
+      items.push(...threads);
+
+      // Recent requests/offers
+      const recentRequests = requests.slice(0, 5).map(r => ({ id: r.id, text: r.title }));
+      items.push(...recentRequests);
+
+      return items.slice(0, 10);
+    } catch (e) {
+      return [];
+    }
+  };
+
   const sendEncouragement = async (receiverId: string, message: string): Promise<{ success: boolean; messageKey?: string }> => {
     if (!user) return { success: false, messageKey: 'scanner.error.notLoggedIn' };
 
@@ -1146,7 +1186,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 
   return (
-    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, giveRitualPoint, communityEvents, addCommunityEvent, getRequestById, getOfferingsForRequest, resources, addResource, leaveCommendation, addTapestryThread, recordHopePoints, getLeaderboard, sendEncouragement }}>
+    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, giveRitualPoint, communityEvents, addCommunityEvent, getRequestById, getOfferingsForRequest, resources, addResource, leaveCommendation, addTapestryThread, recordHopePoints, getLeaderboard, sendEncouragement, getQuickActionsForUser, getRecentActivityForUser }}>
       {children}
     </DataContext.Provider>
   );
