@@ -232,6 +232,20 @@ export const awardRitual = functions.https.onCall(async (data, context) => {
     const now = new Date();
     const utcMidnightMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0);
 
+    // Require an active admin-created Ritual activity to be present
+    const activityQuery = await db.collection('activities')
+      .where('type', '==', 'ritual')
+      .where('active', '==', true)
+      .orderBy('createdAt', 'desc')
+      .limit(1)
+      .get();
+    if (activityQuery.empty) {
+      throw new functions.https.HttpsError('failed-precondition', 'no-active-ritual', { message: 'No active ritual activity configured by admin' });
+    }
+    const activityDoc = activityQuery.docs[0];
+    const activityId = activityDoc.id;
+    const activityData: any = activityDoc.data() || {};
+    const perUserDailyLimit = typeof activityData.limitPerUserPerDay === 'number' ? activityData.limitPerUserPerDay : 1;
     const userRef = db.collection('users').doc(uid);
     const ledgerColl = db.collection('hope_ledger');
     const ledgerRef = requestId ? ledgerColl.doc(requestId) : ledgerColl.doc();
@@ -245,6 +259,18 @@ export const awardRitual = functions.https.onCall(async (data, context) => {
       }
     }
 
+    // Enforce per-user per-activity daily limit by checking existing ledger entries for today
+    const todayStart = admin.firestore.Timestamp.fromMillis(utcMidnightMs);
+    const existingTodayQ = await db.collection('hope_ledger')
+      .where('actorId', '==', uid)
+      .where('category', '==', 'Ritual')
+      .where('activityId', '==', activityId)
+      .where('timestamp', '>=', todayStart)
+      .get();
+    if (!existingTodayQ.empty && existingTodayQ.size >= perUserDailyLimit) {
+      throw new functions.https.HttpsError('failed-precondition', 'already-completed', { message: 'Already completed ritual for today' });
+    }
+
     // Run transaction to ensure atomicity: check lastRitualTimestamp, create ledger, update user
     const result = await db.runTransaction(async (tx) => {
       const userSnap = await tx.get(userRef);
@@ -254,6 +280,7 @@ export const awardRitual = functions.https.onCall(async (data, context) => {
       const userData: any = userSnap.data() || {};
       const lastRitualTs = typeof userData.lastRitualTimestamp === 'number' ? userData.lastRitualTimestamp : null;
 
+      // Keep the legacy lastRitualTimestamp check as a safeguard; prefer activity-based enforcement above
       if (lastRitualTs && lastRitualTs >= utcMidnightMs) {
         throw new functions.https.HttpsError('failed-precondition', 'already-completed', { lastRitualTimestamp: lastRitualTs });
       }
@@ -275,6 +302,8 @@ export const awardRitual = functions.https.onCall(async (data, context) => {
         category: 'Ritual',
         amount,
         prompt: prompt || null,
+        activityId: activityId,
+        activityTitle: activityData.title || null,
         timestamp: nowTs,
       };
       if (requestId) ledgerData.requestId = requestId;

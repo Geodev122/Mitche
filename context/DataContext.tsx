@@ -10,6 +10,7 @@ async function getFsCtx() {
   return _fs_ctx;
 }
 import i18n from '../i18n';
+import { DEMO_REQUESTS, DEMO_EVENTS, DEMO_RESOURCES } from '../pages/dashboards/demoData';
 
 interface DataContextType {
   requests: Request[];
@@ -275,14 +276,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         unsubscribes.forEach(unsubscribe => unsubscribe());
       };
     } else {
-      // Fallback to mock data when Firebase is not available
-      console.log('📦 Using mock data (Firebase not available)');
+      // Fallback to mock/demo data when Firebase is not available
+      console.log('📦 Using demo/mock data (Firebase not available)');
       setTimeout(() => {
-        setRequests(MOCK_REQUESTS);
+        setRequests([...MOCK_REQUESTS, ...DEMO_REQUESTS as any]);
         setOfferings(MOCK_OFFERINGS);
         setTapestryThreads(MOCK_THREADS);
-        setCommunityEvents(MOCK_EVENTS);
-        setResources(MOCK_RESOURCES);
+        setCommunityEvents([...MOCK_EVENTS, ...DEMO_EVENTS as any]);
+        setResources([...MOCK_RESOURCES, ...DEMO_RESOURCES as any]);
         setLoading(false);
       }, 1000);
     }

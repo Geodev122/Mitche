@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, X, BookOpen, QrCode } from 'lucide-react';
+import { Bell, X, BookOpen, QrCode, Trophy } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import { Notification } from '../../types';
@@ -73,6 +73,10 @@ const Header: React.FC = () => {
                                                 <BookOpen className="w-6 h-6 text-gray-600" />
                                             </button>
                                         )}
+                    {/* Leaderboard quick icon-only CTA */}
+                    <button onClick={() => navigate('/leaderboard')} title={t('leaderboard.title', 'Leaderboard')} className="p-2 rounded-full hover:bg-gray-200/50">
+                        <Trophy className="w-6 h-6 text-gray-600" />
+                    </button>
                     <button onClick={() => {
                         // Open profile panel
                         setProfileOpen(true);

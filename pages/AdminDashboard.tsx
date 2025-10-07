@@ -79,6 +79,10 @@ const AdminDashboard: React.FC = () => {
     const [demoTitle, setDemoTitle] = React.useState('');
     const [demoType, setDemoType] = React.useState('resource');
     const [demoContent, setDemoContent] = React.useState('');
+    const [activityTitle, setActivityTitle] = React.useState('Daily Motivation');
+    const [activityActive, setActivityActive] = React.useState(true);
+    const [activityLimit, setActivityLimit] = React.useState<number | ''>(1);
+    const [activities, setActivities] = React.useState<any[]>([]);
     const toast = useToast();
 
     // Leaderboard aggregates debug state
@@ -118,6 +122,22 @@ const AdminDashboard: React.FC = () => {
     React.useEffect(() => {
         fetchDemoContent();
     }, [fetchDemoContent]);
+
+    // Load activities
+    const fetchActivities = React.useCallback(async () => {
+        try {
+            const { db } = await import('../services/firebase');
+            const { collection, query, where, getDocs, orderBy } = await import('firebase/firestore');
+            const q = query(collection(db, 'activities'), orderBy('createdAt', 'desc'));
+            const snap = await getDocs(q as any);
+            setActivities(snap.docs.map(d => ({ id: d.id, ...(d.data() as any) })));
+        } catch (err) {
+            console.error('Error fetching activities', err);
+            setActivities([]);
+        }
+    }, []);
+
+    React.useEffect(() => { fetchActivities(); }, [fetchActivities]);
 
     // Fetch pre-aggregated leaderboard global doc
     const fetchAggregates = React.useCallback(async () => {
@@ -379,6 +399,47 @@ const AdminDashboard: React.FC = () => {
             <Card>
                 <h2 className="text-xl font-bold text-gray-800 mb-4">Recent Achievements</h2>
                 <AchievementsPanel />
+            </Card>
+
+            <Card>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">Manage Ritual Activities</h2>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-2 items-center mb-3">
+                    <input className="p-2 border rounded col-span-2" value={activityTitle} onChange={e => setActivityTitle(e.target.value)} />
+                    <input type="number" className="p-2 border rounded" value={activityLimit as any} onChange={e => setActivityLimit(e.target.value ? Number(e.target.value) : '')} min={1} />
+                    <label className="flex items-center gap-2"><input type="checkbox" checked={activityActive} onChange={e => setActivityActive(e.target.checked)} /> Active</label>
+                </div>
+                <div className="flex gap-2">
+                    <button onClick={async () => {
+                        try {
+                            const { db } = await import('../services/firebase');
+                            const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+                            const docRef = await addDoc(collection(db, 'activities'), { title: activityTitle, type: 'ritual', active: activityActive, limitPerUserPerDay: Number(activityLimit) || 1, createdAt: serverTimestamp() });
+                            toast.show('Activity created', 'success');
+                            setActivityTitle('Daily Motivation');
+                            setActivityLimit(1);
+                            setActivityActive(true);
+                            fetchActivities();
+                        } catch (err) {
+                            console.error('Failed creating activity', err);
+                            toast.show('Failed to create activity', 'error');
+                        }
+                    }} className="px-3 py-1 bg-amber-500 text-white rounded">Create</button>
+                    <button onClick={async () => { await fetchActivities(); toast.show('Refreshed', 'success'); }} className="px-3 py-1 border rounded">Refresh</button>
+                </div>
+
+                <div className="mt-4 space-y-2">
+                    {activities.length === 0 ? <div className="text-sm text-gray-500">No activities</div> : (
+                        activities.map(a => (
+                            <div key={a.id} className="p-2 bg-white rounded border flex items-center justify-between">
+                                <div>
+                                    <div className="font-semibold">{a.title}</div>
+                                    <div className="text-xs text-gray-400">Limit per user/day: {a.limitPerUserPerDay || 1}</div>
+                                </div>
+                                <div className="text-sm text-gray-600">{a.active ? 'Active' : 'Inactive'}</div>
+                            </div>
+                        ))
+                    )}
+                </div>
             </Card>
 
             <Card>
