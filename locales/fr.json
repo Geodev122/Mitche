@@ -43,10 +43,10 @@
     "generatingUsernames": "Génération de noms uniques...",
     "chooseUsername": "Choisissez votre nom d'utilisateur",
     "refreshUsernames": "Rafraîchir les noms",
-  "googleSignIn": "Continue with Google",
-  "googleSignInLoading": "Signing in with Google...",
-  "orDivider": "or",
-  "errorGoogleSignIn": "Failed to sign in with Google. Please try again."
+  "googleSignIn": "Se connecter avec Google",
+  "googleSignInLoading": "Connexion avec Google...",
+  "orDivider": "ou",
+  "errorGoogleSignIn": "Échec de la connexion avec Google. Veuillez réessayer."
   },
   "onboarding": {
     "step1": {
@@ -475,14 +475,14 @@
     "verificationRejected": "La vérification de votre compte a été rejetée. Veuillez contacter le support si vous pensez qu'il s'agit d'une erreur."
   },
   "demo": {
-  "title": "Demo Content",
-  "searchPlaceholder": "Search demo items...",
-  "noItems": "No demo items",
-  "addSuccess": "Demo item added",
-  "addError": "Failed to add demo item",
-  "deleteSuccess": "Demo item deleted",
-  "deleteError": "Failed to delete demo item",
-  "confirmDelete": "Delete demo item? This cannot be undone.",
-  "showing": "Showing"
+  "title": "Contenu de démonstration",
+  "searchPlaceholder": "Rechercher des éléments de démonstration...",
+  "noItems": "Aucun élément de démonstration",
+  "addSuccess": "Élément de démonstration ajouté",
+  "addError": "Échec de l'ajout de l'élément de démonstration",
+  "deleteSuccess": "Élément de démonstration supprimé",
+  "deleteError": "Échec de la suppression de l'élément de démonstration",
+  "confirmDelete": "Supprimer l'élément de démonstration ? Cette action est irréversible.",
+  "showing": "Affichage"
   }
 }
