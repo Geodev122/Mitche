@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Mitché - A poetic sanctuary where anonymous dignity meets communal action. A platform for hope bearers to connect and support each other.">
+    <meta name="keywords" content="hope, community, support, anonymous, help, Lebanon, Arabic, platform">
+    <meta name="author" content="Mitché Platform">
+    <title>Mitché — منصة حامل الأمل</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" as="style">
+  <link rel="preload" href="/optimized/awardlogo-160.png" as="image">
+    
+    <!-- Load Tailwind CSS -->
+    <script>
+      // Inline critical Tailwind config to prevent FOUC
+      // Ensure `tailwind` exists before assigning config (avoids ReferenceError when script runs
+      // before the CDN has defined the global). The CDN will pick up window.tailwind.config if set.
+      window.tailwind = window.tailwind || {};
+      window.tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              'tajawal': ['Tajawal', 'sans-serif']
+            }
+          }
+        }
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    
+    <!-- PWA Meta tags -->
+    <meta name="theme-color" content="#D4AF37">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Mitché">
+    
+    <!-- Icons and manifest -->
+  <link rel="icon" type="image/png" href="/optimized/awardlogo-160.png">
+    <link rel="manifest" href="/assets/manifest-C4uveoyc.json" />
+  <link rel="apple-touch-icon" href="/optimized/awardlogo-160.png">
+    
+    <style>
+      body {
+        font-family: 'Tajawal', sans-serif;
+        overscroll-behavior-y: contain;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      
+      /* Critical CSS for loading state */
+      .loading-screen {
+        position: fixed;
+        inset: 0;
+        background: #FBF9F4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+      
+      @keyframes fade-in-down {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fade-in-down {
+        animation: fade-in-down 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+      
+      @keyframes slide-in-up {
+        from {
+          transform: translateY(100%);
+        }
+        to {
+          transform: translateY(0);
+        }
+      }
+      .animate-slide-in-up {
+        animation: slide-in-up 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+      
+      @keyframes pulse-glow {
+        0% {
+          transform: scale(1);
+          filter: brightness(100%);
+        }
+        50% {
+          transform: scale(1.03);
+          filter: brightness(120%);
+        }
+        100% {
+          transform: scale(1);
+          filter: brightness(100%);
+        }
+      }
+      .animate-pulse-glow {
+        animation: pulse-glow 0.8s ease-in-out;
+      }
+      /* sparkle particle */
+      @keyframes sparkle {
+        0% { opacity: 0; transform: translateY(0) scale(0.6); }
+        30% { opacity: 1; transform: translateY(-6px) scale(1); }
+        100% { opacity: 0; transform: translateY(-14px) scale(0.3); }
+      }
+      .sparkle {
+        position: absolute; width: 8px; height: 8px; border-radius: 9999px; box-shadow: 0 0 8px rgba(255,255,255,0.9); animation: sparkle 800ms ease-out forwards;
+      }
+      .ritual-sparkle { background: radial-gradient(circle at 30% 30%, #FFF7ED, #FDE68A 40%); width: 8px; height: 8px; border-radius: 9999px; }
+
+      /* ripple effect */
+      .ripple {
+        position: absolute; border-radius: 9999px; pointer-events: none; transform: translate(-50%, -50%);
+        background: radial-gradient(circle at center, rgba(212,175,55,0.18), rgba(212,175,55,0.06) 30%, transparent 60%);
+        animation: ripple 700ms ease-out forwards;
+      }
+      .ripple-effect { position: absolute; border-radius: 9999px; pointer-events: none; transform: translate(0,0); animation: ripple 700ms ease-out forwards; }
+      @keyframes ripple { from { opacity: 0.9; transform: translate(-50%, -50%) scale(0.2); } to { opacity: 0; transform: translate(-50%, -50%) scale(2.4); } }
+
+      /* constellation star subtle pulse */
+      .constellation-star { transition: transform 300ms ease, opacity 300ms ease; }
+      .constellation-star:hover { transform: scale(1.08); filter: drop-shadow(0 6px 8px rgba(0,0,0,0.08)); }
+
+  /* atmospheric subtle background gradient animation */
+  @keyframes slow-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+  .bg-atmosphere { background: linear-gradient(120deg, #FBF9F4 0%, #FFFDF9 50%, #F8F6F1 100%); background-size: 200% 200%; animation: slow-shift 30s linear infinite; }
+  .atmo-bg { background: linear-gradient(180deg, rgba(212,175,55,0.04), rgba(58,58,58,0.01)), radial-gradient(ellipse at var(--atmo-x, 0) var(--atmo-y, 0), rgba(212,175,55,0.06), transparent 40%); mix-blend-mode: multiply; }
+      
+    </style>
+    <script type="module" crossorigin src="/assets/index-dTdZMvNo.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/vendor-D9PHxLvC.js">
+    <link rel="modulepreload" crossorigin href="/assets/i18next-CIEwNdMy.js">
+    <link rel="modulepreload" crossorigin href="/assets/lucide-react-Bt-TLW4z.js">
+    <link rel="modulepreload" crossorigin href="/assets/firebase_scoped-rVXQxPiN.js">
+    <link rel="modulepreload" crossorigin href="/assets/firebase_plain-hKIYSAs6.js">
+  </head>
+  <body class="bg-[#FBF9F4] text-[#3A3A3A]">
+    <!-- Loading screen -->
+    <div id="loading-screen" class="loading-screen">
+      <div class="text-center">
+  <img src="/optimized/awardlogo-64.png" alt="Mitché Logo" width="64" height="64" class="w-16 h-16 mx-auto mb-4 animate-pulse" />
+        <p class="text-gray-500">Loading Mitché...</p>
+      </div>
+    </div>
+    
+    <div id="root"></div>
+    
+  </body>
+</html>

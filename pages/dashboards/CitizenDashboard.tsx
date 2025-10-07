@@ -28,9 +28,9 @@ const CitizenDashboard: React.FC = () => {
   }
 
   const navTiles = [
-    { title: 'Wall of Echoes', subtitle: 'Request or respond to calls', path: '/echoes', icon: MessageSquare },
-    { title: 'Community Events', subtitle: 'Join initiatives and gatherings', path: '/events', icon: Calendar },
-    { title: 'Hope Tapestry', subtitle: 'Read stories of resilience', path: '/tapestry', icon: BookOpen },
+    { title: t('sanctuary.tiles.echoes'), subtitle: t('sanctuary.tiles.echoesSub'), path: '/echoes', icon: MessageSquare },
+    { title: t('sanctuary.tiles.events'), subtitle: t('sanctuary.tiles.eventsSub'), path: '/events', icon: Calendar },
+    { title: t('sanctuary.tiles.tapestry'), subtitle: t('sanctuary.tiles.tapestrySub'), path: '/tapestry', icon: BookOpen },
   ];
 
   return (

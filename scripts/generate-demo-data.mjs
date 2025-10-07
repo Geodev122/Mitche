@@ -25,29 +25,29 @@ const db = admin.firestore();
 
 (async () => {
   try {
-    console.log('Writing demo events...');
+    console.log('Writing sample events...');
     const events = [
-      { title: 'Demo Beach Cleanup', description: 'Community cleanup event', organizerId: userId || 'demo_org_1', organizerSymbolicName: 'DemoOrg', type: 'Volunteer', timestamp: admin.firestore.FieldValue.serverTimestamp(), region: 'Demo City' },
-      { title: 'Demo Clothing Drive', description: 'Collect warm clothes', organizerId: userId || 'demo_org_1', organizerSymbolicName: 'DemoOrg', type: 'Volunteer', timestamp: admin.firestore.FieldValue.serverTimestamp(), region: 'Demo City' }
+      { title: 'Beach Cleanup', description: 'Community cleanup event', organizerId: userId || 'sample_org_1', organizerSymbolicName: 'SampleOrg', type: 'Volunteer', timestamp: admin.firestore.FieldValue.serverTimestamp(), region: 'Sample City' },
+      { title: 'Clothing Drive', description: 'Collect warm clothes', organizerId: userId || 'sample_org_1', organizerSymbolicName: 'SampleOrg', type: 'Volunteer', timestamp: admin.firestore.FieldValue.serverTimestamp(), region: 'Sample City' }
     ];
     for (const ev of events) {
       const doc = await db.collection('communityEvents').add(ev);
       console.log('Created event', doc.id);
     }
 
-    console.log('Writing demo requests...');
+    console.log('Writing sample requests...');
     const requests = [
-      { title: 'Need groceries', description: 'Short-term food assistance', userId: userId || 'demo_user_1', userSymbolicName: 'DemoUser', type: 'Food', mode: 'Loud', timestamp: admin.firestore.FieldValue.serverTimestamp(), region: 'Demo City', status: 'Open' },
-      { title: 'Tutoring help', description: 'Looking for math tutoring', userId: userId || 'demo_user_2', userSymbolicName: 'DemoUser2', type: 'Education', mode: 'Silent', timestamp: admin.firestore.FieldValue.serverTimestamp(), region: 'Demo City', status: 'Open' }
+      { title: 'Need groceries', description: 'Short-term food assistance', userId: userId || 'sample_user_1', userSymbolicName: 'SampleUser', type: 'Food', mode: 'Loud', timestamp: admin.firestore.FieldValue.serverTimestamp(), region: 'Sample City', status: 'Open' },
+      { title: 'Tutoring help', description: 'Looking for math tutoring', userId: userId || 'sample_user_2', userSymbolicName: 'SampleUser2', type: 'Education', mode: 'Silent', timestamp: admin.firestore.FieldValue.serverTimestamp(), region: 'Sample City', status: 'Open' }
     ];
     for (const r of requests) {
       const doc = await db.collection('requests').add(r);
       console.log('Created request', doc.id);
     }
 
-    console.log('Writing demo resources...');
+    console.log('Writing sample resources...');
     const resources = [
-      { title: 'Community Kitchen', description: 'Free meals weekly', organizerId: userId || 'demo_org_1', organizerSymbolicName: 'DemoOrg', category: 'Food', region: 'Demo City', schedule: 'Weekly', timestamp: admin.firestore.FieldValue.serverTimestamp() }
+      { title: 'Community Kitchen', description: 'Free meals weekly', organizerId: userId || 'sample_org_1', organizerSymbolicName: 'SampleOrg', category: 'Food', region: 'Sample City', schedule: 'Weekly', timestamp: admin.firestore.FieldValue.serverTimestamp() }
     ];
     for (const res of resources) {
       const doc = await db.collection('resources').add(res);
@@ -58,14 +58,14 @@ const db = admin.firestore();
       console.log('Updating user profile for', userId);
       const userRef = db.collection('users').doc(userId);
       const demoProfile = {
-        symbolicName: 'DemoBearer',
+        symbolicName: 'SampleBearer',
         symbolicIcon: 'Lantern',
-        bio: 'Demo profile populated for testing.',
+        bio: 'Sample profile populated for testing.',
         hopePoints: 5,
         hopePointsBreakdown: { CommunityGift: 2, Ritual: 3 },
-        badges: ['demo_volunteer'],
-        qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=demo:' + userId,
-        location: 'Demo City',
+        badges: ['sample_volunteer'],
+        qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=sample:' + userId,
+        location: 'Sample City',
         hasCompletedOnboarding: true
       };
       await userRef.set(demoProfile, { merge: true });
