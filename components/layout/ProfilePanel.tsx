@@ -78,6 +78,13 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
       window.removeEventListener('appinstalled', appInstalledHandler);
     };
   }, []);
+
+    // Listen for global QR open events (dispatched from Header)
+    React.useEffect(() => {
+        const handler = () => setIsQrModalOpen(true);
+        window.addEventListener('mitche.openQr' as any, handler as any);
+        return () => window.removeEventListener('mitche.openQr' as any, handler as any);
+    }, []);
   
   React.useEffect(() => {
     if (isPushSupported()) {
@@ -141,6 +148,35 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
     onClose();
     navigate(path);
   }
+
+    // Data context wiring for profile actions
+    const { giveDailyPoint, sendEncouragement, communityEvents: allEvents, requests: allRequests } = useData();
+
+    const handleGiveDailyPoint = async () => {
+        if (!user) return;
+        const res = await giveDailyPoint(user.id);
+        if (res && res.success) {
+            // show a small success toast via cameraStatus for now
+            setCameraStatus({ message: t('scanner.success.giftSent', { name: res.receiverName || user.symbolicName }), type: 'success' });
+            setTimeout(() => setCameraStatus(null), 3000);
+        } else {
+            setCameraStatus({ message: t(res.messageKey || 'scanner.error.server'), type: 'error' });
+            setTimeout(() => setCameraStatus(null), 3000);
+        }
+    };
+
+    const handleMotivate = async () => {
+        if (!user) return;
+        const message = t('profile.motivate.defaultMessage', 'Keep going — you are not alone!');
+        const res = await sendEncouragement(user.id, message);
+        if (res && res.success) {
+            setCameraStatus({ message: t('profile.motivate.sent'), type: 'success' });
+            setTimeout(() => setCameraStatus(null), 3000);
+        } else {
+            setCameraStatus({ message: t(res.messageKey || 'scanner.error.server'), type: 'error' });
+            setTimeout(() => setCameraStatus(null), 3000);
+        }
+    };
 
   if (!user) return null;
 
@@ -206,6 +242,53 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
                         )}
                     </div>
                 </Card>
+
+                                {/* Profile action CTAs: Give daily point and Motivate */}
+                                <div className="grid grid-cols-2 gap-3">
+                                    <button onClick={handleGiveDailyPoint} className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-green-600 text-white rounded-lg font-bold hover:bg-opacity-90 transition-colors text-sm shadow-sm active:scale-95">
+                                            <Send className="w-4 h-4" /> {t('profile.giveDaily', 'Give daily Hope Point')}
+                                    </button>
+                                    <button onClick={handleMotivate} className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 text-white rounded-lg font-bold hover:bg-opacity-90 transition-colors text-sm shadow-sm active:scale-95">
+                                            <Zap className="w-4 h-4" /> {t('profile.motivate', 'Motivate')}
+                                    </button>
+                                </div>
+
+                                {/* List user's events and requests */}
+                                <Card>
+                                    <h3 className="font-bold text-gray-700 mb-3">{t('profile.yourEvents', 'Your Events')}</h3>
+                                    <div className="space-y-2">
+                                        {allEvents.filter(e => e.organizerId === user.id).map(ev => (
+                                            <div key={ev.id} className="p-2 border rounded flex justify-between items-center">
+                                                <div>
+                                                    <div className="font-medium">{ev.title}</div>
+                                                    <div className="text-xs text-gray-500">{ev.region}</div>
+                                                </div>
+                                                <div>
+                                                    <button onClick={() => handleNavigation(`/events/${ev.id}`)} className="px-2 py-1 bg-gray-100 rounded text-sm">{t('open', 'Open')}</button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {allEvents.filter(e => e.organizerId === user.id).length === 0 && <div className="text-xs text-gray-500">{t('profile.noEvents', 'No events yet')}</div>}
+                                    </div>
+                                </Card>
+
+                                <Card>
+                                    <h3 className="font-bold text-gray-700 mb-3">{t('profile.yourRequests', 'Your Requests')}</h3>
+                                    <div className="space-y-2">
+                                        {allRequests.filter(r => r.userId === user.id).map(req => (
+                                            <div key={req.id} className="p-2 border rounded flex justify-between items-center">
+                                                <div>
+                                                    <div className="font-medium">{req.title}</div>
+                                                    <div className="text-xs text-gray-500">{req.region}</div>
+                                                </div>
+                                                <div>
+                                                    <button onClick={() => handleNavigation(`/echoes/${req.id}`)} className="px-2 py-1 bg-gray-100 rounded text-sm">{t('open', 'Open')}</button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {allRequests.filter(r => r.userId === user.id).length === 0 && <div className="text-xs text-gray-500">{t('profile.noRequests', 'No requests yet')}</div>}
+                                    </div>
+                                </Card>
 
                 {user.commendations && Object.keys(user.commendations).length > 0 && (
                     <Card>

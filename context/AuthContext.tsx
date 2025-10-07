@@ -284,16 +284,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signInWithGoogle = async (): Promise<{ success: boolean; message?: string }> => {
-    if (!isFirebaseEnabled) {
-      return { success: false, message: "Google sign-in requires Firebase authentication" };
-    }
-
+    // Don't short-circuit solely on isFirebaseEnabled: it's possible the
+    // auth listener hasn't toggled yet but the firebase service can be
+    // dynamically imported and used to start the sign-in flow.
     try {
       const fs = await getFirebaseService();
+      if (!fs || typeof fs.signInWithGoogle !== 'function') {
+        return { success: false, message: "Google sign-in requires Firebase authentication" };
+      }
       return await fs.signInWithGoogle();
     } catch (error: any) {
       console.error('Error signing in with Google:', error);
-      return { success: false, message: error.message || "Failed to sign in with Google" };
+      // Surface friendly message when Firebase isn't available
+      return { success: false, message: error?.message || "Google sign-in requires Firebase authentication" };
     }
   };
 

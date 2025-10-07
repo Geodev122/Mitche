@@ -38,6 +38,8 @@ interface DataContextType {
   addTapestryThread: (thread: Omit<TapestryThread, 'id' | 'timestamp'>) => Promise<string | null>;
   recordHopePoints?: (actorId: string, receiverId: string, category: string, amount: number, reason?: string, depthMultiplier?: number) => Promise<{ success: boolean } | undefined>;
   getLeaderboard?: (opts?: { role?: string; startDate?: string; endDate?: string; depthBased?: boolean; limit?: number; }) => Promise<any[] | null>;
+  // Send an encouragement message to another user (not limited to once-per-day)
+  sendEncouragement: (receiverId: string, message: string) => Promise<{ success: boolean; messageKey?: string }>;
 }
 
 const DataContext = React.createContext<DataContextType | undefined>(undefined);
@@ -989,6 +991,54 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const sendEncouragement = async (receiverId: string, message: string): Promise<{ success: boolean; messageKey?: string }> => {
+    if (!user) return { success: false, messageKey: 'scanner.error.notLoggedIn' };
+
+    // Fetch receiver locally or remotely
+    let receiver = getUserById(receiverId);
+    if (isFirebaseEnabled) {
+      try {
+        const fs = await getFsCtx();
+        const remote = await fs.getUser(receiverId);
+        if (remote) receiver = remote as User;
+      } catch (err) {
+        console.error('Error fetching receiver for encouragement:', err);
+      }
+    }
+
+    if (!receiver) return { success: false, messageKey: 'scanner.error.userNotFound' };
+
+    // Build a notification to deliver the encouragement and optionally increment hope points
+    const newNotification: Notification = {
+      id: `notif_${Date.now()}_encourage`,
+      userId: receiverId,
+      message: message,
+      messageKey: undefined,
+      timestamp: new Date(),
+      isRead: false,
+      type: 'Generic'
+    };
+
+    if (isFirebaseEnabled) {
+      try {
+        const fs = await getFsCtx();
+        // Create a notification and increment receiver hopePoints by 1
+        await fs.createNotification(newNotification as any);
+        await fs.updateUser(receiverId, { hopePoints: (receiver.hopePoints || 0) + 1 } as any);
+        return { success: true };
+      } catch (err) {
+        console.error('Error sending encouragement via Firebase:', err);
+        return { success: false, messageKey: 'scanner.error.server' };
+      }
+    } else {
+      // Local fallback: update local user store and notifications
+      const updatedReceiver = { ...receiver, hopePoints: (receiver.hopePoints || 0) + 1 } as User;
+      updateAnyUser(updatedReceiver);
+      setNotifications(prev => [newNotification, ...prev]);
+      return { success: true };
+    }
+  };
+
   // Give a ritual-only point to the current user (performer) and record analytics
   const giveRitualPoint = async (opts?: { prompt?: string }): Promise<{ success: boolean; messageKey: string }> => {
     if (!user) return { success: false, messageKey: 'scanner.error.notLoggedIn' };
@@ -1095,7 +1145,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 
   return (
-    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, giveRitualPoint, communityEvents, addCommunityEvent, getRequestById, getOfferingsForRequest, resources, addResource, leaveCommendation, addTapestryThread, recordHopePoints, getLeaderboard }}>
+    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, giveRitualPoint, communityEvents, addCommunityEvent, getRequestById, getOfferingsForRequest, resources, addResource, leaveCommendation, addTapestryThread, recordHopePoints, getLeaderboard, sendEncouragement }}>
       {children}
     </DataContext.Provider>
   );

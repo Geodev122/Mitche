@@ -14,7 +14,7 @@ const CitizenDashboard: React.FC = () => {
   const { user } = useAuth();
   const navigate = ReactRouterDOM.useNavigate();
   const { t } = useTranslation();
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  // Advanced search moved to sidebar/profile panel; remove inline search from main dashboard
   const [ratingModalOpen, setRatingModalOpen] = React.useState(false);
   const [ratingTarget, setRatingTarget] = React.useState<{ id: string; type: any; name?: string } | null>(null);
 
@@ -65,34 +65,7 @@ const CitizenDashboard: React.FC = () => {
         ))}
       </div>
 
-      {/* Embed a compact Advanced Search panel so Phase1 search is available from the dashboard */}
-      <div className="mt-8">
-        <AdvancedSearch
-          searchType="requests"
-          onSearch={(results) => {
-            setSearchResults(results || []);
-          }}
-        />
-
-        {searchResults.length > 0 && (
-          <div className="mt-4 bg-white rounded-lg p-4 shadow-sm">
-            <h4 className="font-semibold mb-2">Search Preview ({searchResults.length})</h4>
-            <ul className="space-y-2">
-              {searchResults.slice(0,5).map((r: any) => (
-                <li key={r.id || r.title} className="p-2 border rounded flex justify-between items-center">
-                  <div>
-                    <div className="font-medium">{r.title || r.description?.substring(0,50) || 'Untitled'}</div>
-                    <div className="text-xs text-gray-500">{r.region || r.location?.region}</div>
-                  </div>
-                  <div>
-                    <button onClick={() => navigate(r.id ? `/echoes/${r.id}` : '/echoes')} className="px-3 py-1 bg-blue-600 text-white rounded-md">Open</button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
+      {/* AdvancedSearch intentionally removed from main dashboard; accessible from sidebar/profile */}
 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg p-4">
