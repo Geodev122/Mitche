@@ -52,7 +52,7 @@ jobs:
           # Final install: accept peer conflicts to allow Storybook packages to install
           npm ci --no-audit --no-fund --prefer-offline --legacy-peer-deps
       - name: Build Storybook
-        run: npm run build-storybook
+        run: npx storybook build --loglevel=warn
       - name: Upload Storybook artifact
         uses: actions/upload-artifact@v4
         with:
