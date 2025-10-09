@@ -24,9 +24,27 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - name: Install dependencies
+      - name: Print node and npm versions
         run: |
-          # use no-optional to skip native optional deps (sharp) and make CI installs more reliable
+          node -v
+          npm -v
+
+      - name: Install dependencies (logged)
+        continue-on-error: true
+        run: |
+          set -o pipefail || true
+          npm ci --no-audit --no-fund --prefer-offline --no-optional 2>&1 | tee storybook-install.log
+
+      - name: Upload npm install log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-install-log
+          path: storybook-install.log
+
+      - name: Install dependencies (final)
+        run: |
+          # Try again (this will fail the job if install still fails)
           npm ci --no-audit --no-fund --prefer-offline --no-optional
       - name: Build Storybook
         run: npm run build-storybook
@@ -41,5 +59,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./storybook-static
-          # Push to the gh-pages branch (default) and enable single-page app fallback
-          keep_history: true
+          # Push to the gh-pages branch (default)
