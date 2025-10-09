@@ -29,6 +29,7 @@ import CreateResource from './pages/CreateResource';
 import ResourceDetail from './pages/ResourceDetail';
 import OnErrorBoundary from './components/ui/ErrorBoundary';
 import ReactLazy from 'react';
+import AchievementsPage from './pages/AchievementsPage';
 
 const AdminDashboard = ReactLazy.lazy(() => import('./pages/AdminDashboard'));
 const AnalyticsDashboard = ReactLazy.lazy(() => import('./pages/AnalyticsDashboard'));
@@ -131,13 +132,14 @@ const Main: React.FC = () => {
         <ReactRouterDOM.Route path="nomination" element={<NominationResponse />} />
         <ReactRouterDOM.Route path="scanner" element={<Scanner />} />
         <ReactRouterDOM.Route path="events" element={<CommunityEvents />} />
-  <ReactRouterDOM.Route path="events/:eventId" element={<CommunityEventDetail />} />
+        <ReactRouterDOM.Route path="events/:eventId" element={<CommunityEventDetail />} />
         <ReactRouterDOM.Route path="events/new" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]}><CreateEvent /></ProtectedRoute>} />
-  <ReactRouterDOM.Route path="ritual" element={<Ritual />} />
-  <ReactRouterDOM.Route path="analytics" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]}><AnalyticsDashboard /></ProtectedRoute>} />
-  <ReactRouterDOM.Route path="constellation" element={<Constellation />} />
+        <ReactRouterDOM.Route path="ritual" element={<Ritual />} />
+        <ReactRouterDOM.Route path="analytics" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]}><AnalyticsDashboard /></ProtectedRoute>} />
+        <ReactRouterDOM.Route path="constellation" element={<Constellation />} />
+        <ReactRouterDOM.Route path="achievements" element={<AchievementsPage />} />
         <ReactRouterDOM.Route path="resources" element={<ResourceHub />} />
-  <ReactRouterDOM.Route path="resources/:resourceId" element={<ResourceDetail />} />
+        <ReactRouterDOM.Route path="resources/:resourceId" element={<ResourceDetail />} />
         <ReactRouterDOM.Route path="resources/new" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]} verifiedOnly={true}><CreateResource /></ProtectedRoute>} />
         <ReactRouterDOM.Route path="admin" element={<ProtectedRoute roles={[Role.Admin]}><AdminDashboard /></ProtectedRoute>} />
   {/* Phase1Demo was a developer demo; Phase1 features are embedded into main pages (search/rating). */}

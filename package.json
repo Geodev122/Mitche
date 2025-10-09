@@ -4,16 +4,17 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-  "dev": "vite",
-  "build": "vite build",
-  "preview": "vite preview",
-  "start": "vite preview --host 0.0.0.0 --port ${PORT:-4173}",
-  "deploy:build": "npm run build && npm run preview",
-  "storybook": "storybook dev -p 6006 -s public",
-  "build-storybook": "storybook build",
-  "lighthouse-ci": "lhci autorun --collect.staticDistDir=dist",
-  "optimize-images": "node scripts/optimize-images.cjs --input=public/awardlogo.png --output=public/optimized --name=awardlogo",
-  "test:e2e": "node ./scripts/e2e-client-auth-test.mjs"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "vite preview --host 0.0.0.0 --port ${PORT:-4173}",
+    "deploy:build": "npm run build && npm run preview",
+    "storybook": "storybook dev -p 6006 -s public",
+    "build-storybook": "storybook build",
+    "lighthouse-ci": "lhci autorun --collect.staticDistDir=dist",
+    "optimize-images": "node scripts/optimize-images.cjs --input=public/awardlogo.png --output=public/optimized --name=awardlogo",
+    "test:e2e": "node ./scripts/e2e-client-auth-test.mjs",
+    "seed": "node scripts/seed-commendations.mjs"
   },
   "dependencies": {
     "date-fns": "^4.1.0",
@@ -28,22 +29,24 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-i18next": "14.1.2",
-    "react-router-dom": "^7.9.3"
+    "react-router-dom": "^7.9.3",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
+    "@storybook/addon-essentials": "^7.0.0",
+    "@storybook/addon-interactions": "^7.0.0",
+    "@storybook/jest": "^0.1.0",
+    "@storybook/react-vite": "^7.0.0",
+    "@storybook/testing-library": "^0.2.0",
     "@types/node": "^22.14.0",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.0",
-    "typescript": "~5.8.2",
-    "vite": "^6.2.0",
     "minimist": "^1.2.8",
     "sharp": "^0.33.0",
-    "@storybook/addon-essentials": "^7.0.0",
-    "@storybook/addon-interactions": "^7.0.0",
-    "@storybook/react-vite": "^7.0.0",
-    "@storybook/jest": "^0.1.0",
-    "@storybook/testing-library": "^0.2.0"
-    ,"storybook": "^7.0.0"
+    "storybook": "^7.0.0",
+    "tsx": "^4.20.6",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
   }
 }

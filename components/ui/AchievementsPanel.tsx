@@ -1,62 +1,54 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Achievement } from '../../types-master';
+import { useAchievements } from '../../hooks/useAchievements';
 import Card from './Card';
-import { useAuth } from '../../context/AuthContext';
-// Avoid static firebase imports here to keep the main bundle small.
-// We'll dynamically import the firebase service and firestore helpers when needed.
 
 const AchievementsPanel: React.FC = () => {
-  const { user } = useAuth();
-  const [items, setItems] = React.useState<any[]>([]);
+  const { t } = useTranslation();
+  const { achievements, loading, error } = useAchievements();
 
-  React.useEffect(() => {
-    if (!user) return;
-    let unsub: any = () => {};
-    (async () => {
-      try {
-        const [{ db: dynamicDb }, firestore] = await Promise.all([
-          import('../../services/firebase'),
-          import('firebase/firestore')
-        ]);
-        const q = firestore.query(firestore.collection(dynamicDb, 'userAchievements'), firestore.where('userId', '==', user.id), firestore.orderBy('completedAt', 'desc')) as any;
-        unsub = firestore.onSnapshot(q, async (snap: any) => {
-          const docs = snap.docs.map((d: any) => ({ id: d.id, ...(d.data() as any) }));
-          // Enrich with achievement metadata
-          const enriched = await Promise.all(docs.map(async (d: any) => {
-            try {
-              const achSnap = await firestore.getDoc(firestore.doc(dynamicDb, 'achievements', d.achievementId) as any);
-              const meta = achSnap.exists() ? (achSnap.data() as any) : null;
-              return { ...d, meta };
-            } catch (err) {
-              return d;
-            }
-          }));
-          setItems(enriched);
-        });
-      } catch (err) {
-        console.error('Failed to load firestore for AchievementsPanel', err);
-      }
-    })();
+  const getRarityColor = (rarity: string) => {
+    switch (rarity.toLowerCase()) {
+      case 'legendary':
+        return 'text-purple-500';
+      case 'epic':
+        return 'text-orange-500';
+      case 'rare':
+        return 'text-blue-500';
+      default:
+        return 'text-gray-500';
+    }
+  };
 
-    return () => unsub();
-  }, [user]);
+  if (loading) {
+    return <Card><p>{t('loadingAchievements', 'Loading achievements...')}</p></Card>;
+  }
 
-  if (!user) return null;
+  if (error) {
+    return <Card><p className="text-red-500">{t('errorLoadingAchievements', 'Error loading achievements.')}</p></Card>;
+  }
 
   return (
     <Card>
-      <h3 className="text-lg font-semibold mb-3">Achievements</h3>
-      {items.length === 0 ? (
-        <p className="text-sm text-gray-500">No achievements yet.</p>
+      <h3 className="text-lg font-semibold mb-3">{t('achievements', 'Achievements')}</h3>
+      {achievements.length === 0 ? (
+        <p className="text-sm text-gray-500">{t('noAchievementsYet', 'No achievements yet.')}</p>
       ) : (
-        <div className="space-y-2">
-          {items.map(it => (
-            <div key={it.id} className="flex items-center gap-3 p-2 bg-white rounded border">
-              {it.meta?.iconUrl ? <img src={it.meta.iconUrl} alt={it.meta?.title || it.achievementId} width={40} height={40} className="w-10 h-10 rounded" /> : <div className="w-10 h-10 rounded bg-amber-50 flex items-center justify-center text-amber-600">🏅</div>}
-              <div className="min-w-0">
-                <div className="font-semibold text-sm truncate">{it.meta?.title || it.achievementId}</div>
-                <div className="text-xs text-gray-500 truncate">{it.meta?.description || ''}</div>
+        <div className="space-y-3">
+          {achievements.map((achievement: Achievement) => (
+            <div key={achievement.id} className="flex items-start gap-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="text-4xl flex-shrink-0 w-12 h-12 flex items-center justify-center bg-amber-100 rounded-full">
+                {achievement.icon}
               </div>
-              <div className="ml-auto text-xs text-gray-400">{it.completedAt && it.completedAt.toDate ? it.completedAt.toDate().toLocaleString() : (it.completedAt || '')}</div>
+              <div className="flex-grow">
+                <h4 className="font-bold text-md text-gray-800">{t(achievement.name, achievement.name)}</h4>
+                <p className="text-sm text-gray-600 mt-1">{t(achievement.description, achievement.description)}</p>
+                <div className="text-xs text-gray-500 mt-2 flex items-center gap-4">
+                  <span className="font-medium">{t('rarity', 'Rarity')}: <span className={`font-bold ${getRarityColor(achievement.rarity)}`}>{t(achievement.rarity, achievement.rarity)}</span></span>
+                  <span className="font-medium">{t('category', 'Category')}: <span className="font-semibold">{t(achievement.category, achievement.category)}</span></span>
+                </div>
+              </div>
             </div>
           ))}
         </div>

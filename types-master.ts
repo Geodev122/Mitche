@@ -1,5 +1,5 @@
-// Enhanced types for Mitché Platform
-// This file defines comprehensive TypeScript interfaces for all data structures
+// Master types for Mitché Platform
+// This file defines comprehensive TypeScript interfaces for all data structures, consolidating all previous type files.
 
 // === ENUMS ===
 
@@ -51,6 +51,11 @@ export enum CommendationType {
   Kind = 'Kind',
   Punctual = 'Punctual',
   Respectful = 'Respectful',
+  BearerOfInnerLight = 'BearerOfInnerLight',
+  WeaverOfWisdom = 'WeaverOfWisdom',
+  KeeperOfSacredSymbols = 'KeeperOfSacredSymbols',
+  VoiceOfCompassion = 'VoiceOfCompassion',
+  LegacyOfLight = 'LegacyOfLight',
 }
 
 export enum CommunityEventType {
@@ -338,8 +343,8 @@ export interface User {
   privacySettings?: PrivacySettings;
   
   // Analytics & Tracking
-  lastActive?: string;
-  joinDate?: string;
+  lastActive?: any;
+  joinDate?: any;
   activityStreakDays?: number;
   totalRequestsCreated?: number;
   totalOfferingsGiven?: number;
@@ -355,13 +360,17 @@ export interface User {
   reportCount?: number;
   isSuspended?: boolean;
   suspensionReason?: string;
-  suspensionExpiry?: Date;
+  suspensionExpiry?: any;
   
   // Legacy fields for backward compatibility
   qrCodeUrl?: string;
   lastPointGivenTimestamp?: number;
   lastRitualTimestamp?: number;
   languagePreference?: string;
+  
+  // Timestamps
+  createdAt?: any;
+  updatedAt?: any;
 }
 
 export interface Request {
@@ -377,7 +386,7 @@ export interface Request {
   
   // Location & Timing
   location: Location;
-  deadline?: Date;
+  deadline?: any;
   
   // Status & Fulfillment
   status: RequestStatus;
@@ -389,8 +398,8 @@ export interface Request {
   offeringsCount?: number;
   
   // Creator Info (for display) - Symbolic identity chosen by user
-  creatorSymbolicName: string;  // The chosen identity name (not login username)
-  creatorSymbolicIcon: string;  // The chosen symbolic icon
+  creatorSymbolicName: string;
+  creatorSymbolicIcon: string;
   
   // Verification & Moderation
   isVerified?: boolean;
@@ -403,7 +412,7 @@ export interface Request {
   documents?: string[];
   
   // Completion & Feedback
-  completionDate?: Date;
+  completionDate?: any;
   satisfactionRating?: number;
   feedback?: string;
   
@@ -411,21 +420,10 @@ export interface Request {
   responseTime?: number;
   fulfillmentTime?: number;
   
-  // Legacy fields for backward compatibility
-  userId?: string; // Mapped to createdBy
-  userSymbolicName?: string; // Legacy, use creatorSymbolicName
-  userSymbolicIcon?: string; // Legacy, use creatorSymbolicIcon
-  timestamp?: Date; // Legacy, use createdAt
-  region?: string; // Legacy, use location.region
-  helperId?: string; // Legacy, use assignedHelper
-  isConfirmedByRequester?: boolean;
-  requesterCommended?: boolean;
-  helperCommended?: boolean;
-  
   // Timestamps
-  createdAt: Date;
-  updatedAt: Date;
-  expiresAt?: Date;
+  createdAt: any;
+  updatedAt: any;
+  expiresAt?: any;
 }
 
 export interface Offering {
@@ -448,8 +446,8 @@ export interface Offering {
   contactMethod?: ContactMethod;
   
   // Timeline
-  availableFrom?: Date;
-  availableTo?: Date;
+  availableFrom?: any;
+  availableTo?: any;
   
   // Feedback & Ratings
   rating?: number;
@@ -464,15 +462,10 @@ export interface Offering {
   offererSymbolicIcon?: string;
   offererIsVerified?: boolean;
   
-  // Legacy fields
-  userId?: string; // Mapped to offeredBy
-  timestamp?: Date; // Use createdAt instead
-  hopePointsEarned?: number; // Mapped to pointsEarned
-  
   // Timestamps
-  createdAt: Date;
-  updatedAt: Date;
-  completedAt?: Date;
+  createdAt: any;
+  updatedAt: any;
+  completedAt?: any;
 }
 
 export interface CommunityEvent {
@@ -486,8 +479,8 @@ export interface CommunityEvent {
   category?: EventCategory;
   
   // Schedule & Location
-  startDate?: Date;
-  endDate?: Date;
+  startDate?: any;
+  endDate?: any;
   location: Location;
   isVirtual?: boolean;
   virtualLink?: string;
@@ -496,7 +489,7 @@ export interface CommunityEvent {
   maxParticipants?: number;
   currentParticipants?: number;
   registrationRequired?: boolean;
-  registrationDeadline?: Date;
+  registrationDeadline?: any;
   participants?: string[];
   waitlist?: string[];
   
@@ -530,14 +523,10 @@ export interface CommunityEvent {
   feedback?: EventFeedback;
   impactReport?: string;
   
-  // Legacy fields
-  timestamp?: Date; // Use startDate instead
-  region?: string; // Use location.region instead
-  
   // Timestamps
-  createdAt: Date;
-  updatedAt: Date;
-  publishedAt?: Date;
+  createdAt: any;
+  updatedAt: any;
+  publishedAt?: any;
 }
 
 export interface Resource {
@@ -575,7 +564,7 @@ export interface Resource {
   
   // Quality & Trust
   verificationStatus?: VerificationStatus;
-  lastVerifiedDate?: Date;
+  lastVerifiedDate?: any;
   reviews?: Review;
   
   // Usage Analytics
@@ -585,10 +574,6 @@ export interface Resource {
   reports?: number;
   
   // Creator Info
-  organizerId?: string; // Legacy field, mapped to createdBy
-  organizerSymbolicName?: string; // Legacy
-  organizerSymbolicIcon?: string; // Legacy
-  organizerIsVerified?: boolean; // Legacy
   creatorSymbolicName: string;
   creatorSymbolicIcon: string;
   creatorIsVerified: boolean;
@@ -597,14 +582,10 @@ export interface Resource {
   images?: string[];
   brochures?: string[];
   
-  // Legacy fields
-  region?: string; // Use location.region instead
-  timestamp?: Date; // Use createdAt instead
-  
   // Timestamps
-  createdAt: Date;
-  updatedAt: Date;
-  lastUpdated?: Date;
+  createdAt: any;
+  updatedAt: any;
+  lastUpdated?: any;
 }
 
 export interface Notification {
@@ -634,17 +615,12 @@ export interface Notification {
   deliveryStatus?: DeliveryStatus;
   
   // Scheduling
-  scheduledFor?: Date;
-  expiresAt?: Date;
-  
-  // Legacy fields
-  userId?: string; // Mapped to recipientId
-  requestId?: string; // Mapped to relatedId when relatedType is 'Request'
-  timestamp?: Date; // Use createdAt instead
+  scheduledFor?: any;
+  expiresAt?: any;
   
   // Timestamps
-  createdAt: Date;
-  readAt?: Date;
+  createdAt: any;
+  readAt?: any;
 }
 
 export interface Conversation {
@@ -669,7 +645,7 @@ export interface Conversation {
   lastMessage?: {
     content: string;
     senderId: string;
-    timestamp: Date;
+    timestamp: any;
   };
   
   // Unread Count
@@ -678,7 +654,7 @@ export interface Conversation {
   // Status
   isActive: boolean;
   isArchived: boolean;
-  lastActivity: Date;
+  lastActivity: any;
   
   // Settings
   settings?: {
@@ -701,8 +677,8 @@ export interface Conversation {
   moderationFlags?: string[];
   
   // Timestamps
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: any;
+  updatedAt: any;
 }
 
 export interface Message {
@@ -728,17 +704,17 @@ export interface Message {
   isDelivered?: boolean;
   deliveryStatus?: {
     status: 'sending' | 'delivered' | 'read';
-    timestamp: Date;
+    timestamp: any;
   };
   readBy?: {
-    [userId: string]: Date;
+    [userId: string]: any;
   };
   
   // Moderation
   isEdited?: boolean;
-  editedAt?: Date;
+  editedAt?: any;
   isDeleted?: boolean;
-  deletedAt?: Date;
+  deletedAt?: any;
   
   // Metadata
   metadata?: {
@@ -757,9 +733,9 @@ export interface Message {
   replyTo?: string;
   
   // Timestamps
-  timestamp: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  timestamp: any;
+  createdAt: any;
+  updatedAt: any;
 }
 
 export interface TapestryThread {
@@ -782,7 +758,6 @@ export interface TapestryThread {
   communityReach?: number;
   
   // Honoree Display Info
-  honoreeUserId?: string; // Legacy field, mapped to honoreeId
   honoreeSymbolicName: string;
   honoreeSymbolicIcon: string;
   honoreeRealName?: string;
@@ -803,15 +778,10 @@ export interface TapestryThread {
     recent: Comment[];
   };
   
-  // Legacy fields
-  rippleTag?: number; // Mapped to livesTouched
-  echoes?: number; // Legacy
-  timestamp?: Date; // Use createdAt instead
-  
   // Timestamps
-  createdAt: Date;
-  approvedAt?: Date;
-  updatedAt: Date;
+  createdAt: any;
+  approvedAt?: any;
+  updatedAt: any;
 }
 
 export interface Report {
@@ -835,9 +805,9 @@ export interface Report {
   actionTaken?: ActionTaken;
   
   // Timestamps
-  createdAt: Date;
-  reviewedAt?: Date;
-  resolvedAt?: Date;
+  createdAt: any;
+  reviewedAt?: any;
+  resolvedAt?: any;
 }
 
 export interface Analytics {
@@ -859,7 +829,7 @@ export interface Analytics {
   };
   
   // Timestamps
-  createdAt: Date;
+  createdAt: any;
 }
 
 export interface SystemSetting {
@@ -869,7 +839,7 @@ export interface SystemSetting {
   description?: string;
   isPublic: boolean;
   lastModifiedBy: string;
-  updatedAt: Date;
+  updatedAt: any;
 }
 
 export interface Achievement {
@@ -894,8 +864,8 @@ export interface Achievement {
   isHidden: boolean;
   
   // Timestamps
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: any;
+  updatedAt: any;
 }
 
 export interface UserAchievement {
@@ -909,13 +879,13 @@ export interface UserAchievement {
   isCompleted: boolean;
   
   // Completion Details
-  completedAt?: Date;
+  completedAt?: any;
   notificationSent: boolean;
   
   // Metadata
   earnedContext?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: any;
+  updatedAt: any;
 }
 
 // === UTILITY TYPES ===
@@ -942,8 +912,8 @@ export interface SearchFilters {
   location?: string;
   status?: RequestStatus[] | RequestStatus;
   dateRange?: {
-    start: Date;
-    end: Date;
+    start: any;
+    end: any;
   };
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
@@ -968,7 +938,7 @@ export interface CreateRequestForm {
   urgency: RequestUrgency;
   mode: RequestMode;
   region: string;
-  deadline?: Date;
+  deadline?: any;
   images?: File[];
 }
 
@@ -977,8 +947,8 @@ export interface CreateEventForm {
   description: string;
   type: CommunityEventType;
   category: EventCategory;
-  startDate: Date;
-  endDate?: Date;
+  startDate: any;
+  endDate?: any;
   location: string;
   isVirtual: boolean;
   virtualLink?: string;

@@ -1,4 +1,3 @@
-
 {
   "appName": "Mitché",
   "appSlogan": "Where Hope Echoes",
@@ -210,6 +209,42 @@
       "beaconOfHope": {
         "title": "Beacon of Hope",
         "description": "Your story received 10 echoes."
+      },
+      "Bearer of Inner Light": {
+        "title": "Bearer of Inner Light",
+        "description": "For grounding others in faith, values, or meaning during adversity."
+      },
+      "Weaver of Wisdom": {
+        "title": "Weaver of Wisdom",
+        "description": "For transforming personal suffering into stories that guide and uplift."
+      },
+      "Keeper of Sacred Symbols": {
+        "title": "Keeper of Sacred Symbols",
+        "description": "For creating rituals, gestures, or art that turn pain into communal meaning."
+      },
+      "Voice of Compassion": {
+        "title": "Voice of Compassion",
+        "description": "For nurturing healing through dialogue—with others, with God, or with self."
+      },
+      "Legacy of Light": {
+        "title": "Legacy of Light",
+        "description": "For extending hope beyond the self—into families, communities, and time."
+      },
+      "Silent Hero": {
+        "title": "Silent Hero",
+        "description": "For quiet acts of dignity that ripple without recognition."
+      },
+      "Community Builder": {
+        "title": "Community Builder",
+        "description": "For constructing spaces/activities—physical or emotional—where others can heal."
+      },
+      "Lantern of Continuity": {
+        "title": "Lantern of Continuity",
+        "description": "For sustaining hope across generations, especially in posthumous or long-term impact, or laws submitted, reform achieved."
+      },
+      "Flower of Testimony": {
+        "title": "Flower of Testimony",
+        "description": "For offering one’s story as a seed of transformation for others."
       }
     },
     "activity": {
@@ -493,5 +528,39 @@
   "profile": {
     "verificationPending": "Your account is pending verification. You will be notified when the review is complete.",
     "verificationRejected": "Your account verification was rejected. Please contact support if you believe this is a mistake."
-  }
+  },
+  "achievements": "Achievements",
+  "rarity": "Rarity",
+  "category": "Category",
+  "loadingAchievements": "Loading achievements...",
+  "errorLoadingAchievements": "Error loading achievements.",
+  "noAchievementsYet": "No achievements yet.",
+  "Bearer of Inner Light": "Bearer of Inner Light",
+  "For grounding others in faith, values, or meaning during adversity.": "For grounding others in faith, values, or meaning during adversity.",
+  "Weaver of Wisdom": "Weaver of Wisdom",
+  "For transforming personal suffering into stories that guide and uplift.": "For transforming personal suffering into stories that guide and uplift.",
+  "Keeper of Sacred Symbols": "Keeper of Sacred Symbols",
+  "For creating rituals, gestures, or art that turn pain into communal meaning.": "For creating rituals, gestures, or art that turn pain into communal meaning.",
+  "Voice of Compassion": "Voice of Compassion",
+  "For nurturing healing through dialogue—with others, with God, or with self.": "For nurturing healing through dialogue—with others, with God, or with self.",
+  "Legacy of Light": "Legacy of Light",
+  "For extending hope beyond the self—into families, communities, and time.": "For extending hope beyond the self—into families, communities, and time.",
+  "Silent Hero": "Silent Hero",
+  "For quiet acts of dignity that ripple without recognition.": "For quiet acts of dignity that ripple without recognition.",
+  "Community Builder": "Community Builder",
+  "For constructing spaces/activities—physical or emotional—where others can heal.": "For constructing spaces/activities—physical or emotional—where others can heal.",
+  "Lantern of Continuity": "Lantern of Continuity",
+  "For sustaining hope across generations, especially in posthumous or long-term impact, or laws submitted, reform achieved.": "For sustaining hope across generations, especially in posthumous or long-term impact, or laws submitted, reform achieved.",
+  "Flower of Testimony": "Flower of Testimony",
+  "For offering one’s story as a seed of transformation for others.": "For offering one’s story as a seed of transformation for others.",
+  "Common": "Common",
+  "Rare": "Rare",
+  "Epic": "Epic",
+  "Legendary": "Legendary",
+  "Pillar": "Pillar",
+  "Symbolic": "Symbolic",
+  "Helper": "Helper",
+  "Community": "Community",
+  "Dedication": "Dedication",
+  "Special": "Special"
 }
