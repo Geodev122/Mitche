@@ -1,0 +1,72 @@
+﻿2025-10-09T17:33:47.5594843Z ##[group]Run actions/checkout@v4
+2025-10-09T17:33:47.5596116Z with:
+2025-10-09T17:33:47.5596831Z   repository: Geodev122/Mitche
+2025-10-09T17:33:47.5598164Z   token: ***
+2025-10-09T17:33:47.5598904Z   ssh-strict: true
+2025-10-09T17:33:47.5599643Z   ssh-user: git
+2025-10-09T17:33:47.5600395Z   persist-credentials: true
+2025-10-09T17:33:47.5601244Z   clean: true
+2025-10-09T17:33:47.5602006Z   sparse-checkout-cone-mode: true
+2025-10-09T17:33:47.5602946Z   fetch-depth: 1
+2025-10-09T17:33:47.5603685Z   fetch-tags: false
+2025-10-09T17:33:47.5604431Z   show-progress: true
+2025-10-09T17:33:47.5605205Z   lfs: false
+2025-10-09T17:33:47.5605900Z   submodules: false
+2025-10-09T17:33:47.5606670Z   set-safe-directory: true
+2025-10-09T17:33:47.5607974Z env:
+2025-10-09T17:33:47.5608685Z   NPM_CONFIG_UNSAFE_PERM: true
+2025-10-09T17:33:47.5609672Z   NODE_OPTIONS: --max-old-space-size=4096
+2025-10-09T17:33:47.5610650Z ##[endgroup]
+2025-10-09T17:33:47.6989524Z Syncing repository: Geodev122/Mitche
+2025-10-09T17:33:47.6992344Z ##[group]Getting Git version info
+2025-10-09T17:33:47.6993668Z Working directory is '/home/runner/work/Mitche/Mitche'
+2025-10-09T17:33:47.6995417Z [command]/usr/bin/git version
+2025-10-09T17:33:47.7048246Z git version 2.51.0
+2025-10-09T17:33:47.7075202Z ##[endgroup]
+2025-10-09T17:33:47.7091100Z Temporarily overriding HOME='/home/runner/work/_temp/6abf62cf-a706-4310-9b17-083d6e0ef2b4' before making global git config changes
+2025-10-09T17:33:47.7104127Z Adding repository directory to the temporary git global config as a safe directory
+2025-10-09T17:33:47.7106223Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Mitche/Mitche
+2025-10-09T17:33:47.7139699Z Deleting the contents of '/home/runner/work/Mitche/Mitche'
+2025-10-09T17:33:47.7143342Z ##[group]Initializing the repository
+2025-10-09T17:33:47.7147075Z [command]/usr/bin/git init /home/runner/work/Mitche/Mitche
+2025-10-09T17:33:47.7245274Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-10-09T17:33:47.7249400Z hint: is subject to change. To configure the initial branch name to use in all
+2025-10-09T17:33:47.7252187Z hint: of your new repositories, which will suppress this warning, call:
+2025-10-09T17:33:47.7253651Z hint:
+2025-10-09T17:33:47.7254585Z hint: 	git config --global init.defaultBranch <name>
+2025-10-09T17:33:47.7256153Z hint:
+2025-10-09T17:33:47.7257195Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-10-09T17:33:47.7259262Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-10-09T17:33:47.7261038Z hint:
+2025-10-09T17:33:47.7261805Z hint: 	git branch -m <name>
+2025-10-09T17:33:47.7262676Z hint:
+2025-10-09T17:33:47.7263795Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-10-09T17:33:47.7265572Z Initialized empty Git repository in /home/runner/work/Mitche/Mitche/.git/
+2025-10-09T17:33:47.7268672Z [command]/usr/bin/git remote add origin https://github.com/Geodev122/Mitche
+2025-10-09T17:33:47.7299999Z ##[endgroup]
+2025-10-09T17:33:47.7301518Z ##[group]Disabling automatic garbage collection
+2025-10-09T17:33:47.7303236Z [command]/usr/bin/git config --local gc.auto 0
+2025-10-09T17:33:47.7332838Z ##[endgroup]
+2025-10-09T17:33:47.7334386Z ##[group]Setting up auth
+2025-10-09T17:33:47.7338101Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-10-09T17:33:47.7367886Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-10-09T17:33:47.7701918Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-10-09T17:33:47.7733384Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-10-09T17:33:47.7954066Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-10-09T17:33:47.7988173Z ##[endgroup]
+2025-10-09T17:33:47.7989555Z ##[group]Fetching the repository
+2025-10-09T17:33:47.8005479Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +5a18790da664ecb6c3a94e0d2580f5a63287bdbf:refs/remotes/origin/main
+2025-10-09T17:33:48.1354319Z From https://github.com/Geodev122/Mitche
+2025-10-09T17:33:48.1356545Z  * [new ref]         5a18790da664ecb6c3a94e0d2580f5a63287bdbf -> origin/main
+2025-10-09T17:33:48.1389909Z ##[endgroup]
+2025-10-09T17:33:48.1392257Z ##[group]Determining the checkout info
+2025-10-09T17:33:48.1394780Z ##[endgroup]
+2025-10-09T17:33:48.1396925Z [command]/usr/bin/git sparse-checkout disable
+2025-10-09T17:33:48.1438350Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-10-09T17:33:48.1467230Z ##[group]Checking out the ref
+2025-10-09T17:33:48.1470713Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2025-10-09T17:33:48.1758131Z Switched to a new branch 'main'
+2025-10-09T17:33:48.1760438Z branch 'main' set up to track 'origin/main'.
+2025-10-09T17:33:48.1768772Z ##[endgroup]
+2025-10-09T17:33:48.1804826Z [command]/usr/bin/git log -1 --format=%H
+2025-10-09T17:33:48.1826897Z 5a18790da664ecb6c3a94e0d2580f5a63287bdbf

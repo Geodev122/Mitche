@@ -1,0 +1,17 @@
+﻿2025-10-09T17:33:51.6105481Z ##[group]Run actions/cache@v4
+2025-10-09T17:33:51.6105843Z with:
+2025-10-09T17:33:51.6106058Z   path: ~/.npm
+./.npm
+
+2025-10-09T17:33:51.6106508Z   key: Linux-node-9f64890caffc1b4f251fa6caeddab0e17e2d2796304ec7092282823a345d2e44
+2025-10-09T17:33:51.6107055Z   restore-keys: Linux-node-
+
+2025-10-09T17:33:51.6107355Z   enableCrossOsArchive: false
+2025-10-09T17:33:51.6107961Z   fail-on-cache-miss: false
+2025-10-09T17:33:51.6108319Z   lookup-only: false
+2025-10-09T17:33:51.6108585Z   save-always: false
+2025-10-09T17:33:51.6108813Z env:
+2025-10-09T17:33:51.6109022Z   NPM_CONFIG_UNSAFE_PERM: true
+2025-10-09T17:33:51.6109312Z   NODE_OPTIONS: --max-old-space-size=4096
+2025-10-09T17:33:51.6109639Z ##[endgroup]
+2025-10-09T17:33:51.8431898Z Cache not found for input keys: Linux-node-9f64890caffc1b4f251fa6caeddab0e17e2d2796304ec7092282823a345d2e44, Linux-node-

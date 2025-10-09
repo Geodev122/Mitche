@@ -44,5 +44,6 @@
     "@storybook/react-vite": "^7.0.0",
     "@storybook/jest": "^0.1.0",
     "@storybook/testing-library": "^0.2.0"
+    ,"storybook": "^7.0.0"
   }
 }
