@@ -49,8 +49,8 @@ jobs:
 
       - name: Install dependencies (final)
         run: |
-          # Final install: ensure optional native deps are installed (don't omit optional deps)
-          npm ci --no-audit --no-fund --prefer-offline || npm ci --no-audit --no-fund --prefer-offline --legacy-peer-deps
+          # Final install: accept peer conflicts to allow Storybook packages to install
+          npm ci --no-audit --no-fund --prefer-offline --legacy-peer-deps
       - name: Build Storybook
         run: npm run build-storybook
       - name: Upload Storybook artifact
