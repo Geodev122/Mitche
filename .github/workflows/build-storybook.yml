@@ -15,6 +15,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
       - name: Cache node modules
         uses: actions/cache@v4
         with:
@@ -33,7 +34,7 @@ jobs:
         continue-on-error: true
         run: |
           set -o pipefail || true
-          npm ci --no-audit --no-fund --prefer-offline --no-optional 2>&1 | tee storybook-install.log
+          npm ci --no-audit --no-fund --prefer-offline --no-optional --legacy-peer-deps 2>&1 | tee storybook-install.log
 
       - name: Upload npm install log
         if: always()
@@ -44,9 +45,8 @@ jobs:
 
       - name: Install dependencies (final)
         run: |
-          # Try again with legacy peer deps if the first attempt failed. This can resolve peer dependency
-          # resolution issues that appear in CI for some lockfiles.
-          npm ci --no-audit --no-fund --prefer-offline --no-optional || npm ci --no-audit --no-fund --prefer-offline --no-optional --legacy-peer-deps
+          # Final install: prefer legacy-peer-deps to avoid peer resolution failures in CI.
+          npm ci --no-audit --no-fund --prefer-offline --no-optional --legacy-peer-deps
       - name: Build Storybook
         run: npm run build-storybook
       - name: Upload Storybook artifact
