@@ -51,7 +51,7 @@ const Header: React.FC = () => {
 
     return (
         <>
-            <header className="sticky top-0 bg-[#FBF9F4]/80 backdrop-blur-sm z-20 p-2 sm:p-4 flex justify-between items-center border-b border-[#F1EADF]">
+            <header className="sticky top-0 bg-white/80 backdrop-blur-sm z-20 p-2 sm:p-4 flex justify-between items-center border-b">
                 <div className="flex items-center space-x-2 rtl:space-x-reverse">
                     <ResponsiveLogo className="h-8 w-8" />
                     <span className="text-lg font-bold text-[#3A3A3A] hidden sm:inline">{t('appName')}</span>
@@ -73,10 +73,8 @@ const Header: React.FC = () => {
                                                 <BookOpen className="w-6 h-6 text-gray-600" />
                                             </button>
                                         )}
-                    {/* Ritual quick icon-only CTA */}
-                    <button onClick={() => navigate('/ritual')} title={t('nav.ritual', 'Daily Ritual')} className="p-2 rounded-full hover:bg-gray-200/50">
-                        <Zap className="w-6 h-6 text-gray-600" />
-                    </button>
+                    {/* Ritual quick CTA */}
+                    <a href="/ritual" className="hidden sm:inline-flex items-center px-3 py-2 rounded-md bg-[var(--accent)] text-white text-sm">{t('nav.ritual', 'Daily Ritual')}</a>
                     <button onClick={() => {
                         // Open profile panel
                         setProfileOpen(true);

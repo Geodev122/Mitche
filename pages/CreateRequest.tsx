@@ -5,6 +5,8 @@ import { useAuth } from '../context/AuthContext';
 import { RequestType, RequestMode } from '../types';
 import { ArrowRight, ArrowLeft, Eye, Shield } from 'lucide-react';
 import RippleButton from '../components/ui/RippleButton';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
 import ConfirmationModal from '../components/ui/ConfirmationModal';
 import { useTranslation } from 'react-i18next';
 
@@ -50,7 +52,7 @@ const CreateRequest: React.FC = () => {
         </header>
         <p className="text-center text-md text-gray-500 mb-6">{t('createRequest.subtitle')}</p>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
+  <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">{t('createRequest.form.title')}</label>
             <input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]" placeholder={t('createRequest.form.titlePlaceholder')} />
@@ -90,9 +92,9 @@ const CreateRequest: React.FC = () => {
           </div>
 
           <div className="fixed bottom-16 left-0 right-0 bg-[#FBF9F4]/80 backdrop-blur-sm p-4 border-t border-[#F1EADF]">
-            <RippleButton type="submit" className="w-full bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors">
-              {t('createRequest.form.submit')}
-            </RippleButton>
+            <Card>
+              <Button type="submit" className="w-full" variant="primary">{t('createRequest.form.submit')}</Button>
+            </Card>
           </div>
         </form>
       </div>

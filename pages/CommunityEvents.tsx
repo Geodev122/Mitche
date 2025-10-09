@@ -5,6 +5,7 @@ import { PlusCircle, Calendar, Users, ShieldCheck, Star } from 'lucide-react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { CommunityEvent, CommunityEventType, Role } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
+import Button from '../components/ui/Button';
 import { useAuth } from '../context/AuthContext';
 import { useRatingModal } from '../context/RatingModalContext';
 import { useTranslation } from 'react-i18next';
@@ -119,8 +120,8 @@ const CommunityEvents: React.FC = () => {
       )}
 
       {canCreateEvent && (
-        <ReactRouterDOM.Link to="/events/new" className="fixed bottom-24 right-6 rtl:right-auto rtl:left-6 bg-[#D4AF37] text-white p-4 rounded-full shadow-lg hover:bg-opacity-90 transition-transform transform hover:scale-110">
-          <PlusCircle size={28} />
+        <ReactRouterDOM.Link to="/events/new" className="fixed bottom-24 right-6 rtl:right-auto rtl:left-6">
+          <Button variant="primary"><PlusCircle size={20} className="mr-2"/> {t('events.create')}</Button>
         </ReactRouterDOM.Link>
       )}
     </div>

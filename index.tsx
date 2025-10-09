@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './i18n'; // Initialize i18next
+import './styles/theme.css';
 import { info, warn } from './utils/logger';
 
 // Register Service Worker for PWA as early as possible (helps Lighthouse detect control of start_url).

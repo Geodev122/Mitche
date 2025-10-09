@@ -24,3 +24,11 @@ jobs:
         with:
           name: storybook-static
           path: storybook-static
+
+      - name: Deploy Storybook to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./storybook-static
+          # Push to the gh-pages branch (default) and enable single-page app fallback
+          keep_history: true

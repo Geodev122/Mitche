@@ -38,6 +38,11 @@
     "typescript": "~5.8.2",
     "vite": "^6.2.0",
     "minimist": "^1.2.8",
-    "sharp": "^0.33.0"
+    "sharp": "^0.33.0",
+    "@storybook/addon-essentials": "^7.0.0",
+    "@storybook/addon-interactions": "^7.0.0",
+    "@storybook/react-vite": "^7.0.0",
+    "@storybook/jest": "^0.1.0",
+    "@storybook/testing-library": "^0.2.0"
   }
 }

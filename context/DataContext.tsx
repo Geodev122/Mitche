@@ -43,6 +43,7 @@ interface DataContextType {
   sendEncouragement: (receiverId: string, message: string) => Promise<{ success: boolean; messageKey?: string }>;
   getQuickActionsForUser: (userId?: string | null) => Promise<any[]>;
   getRecentActivityForUser: (userId?: string | null) => Promise<any[]>;
+  subscribeToUserPillars?: (userId: string, cb: (pillars: any) => void) => () => void;
 }
 
 const DataContext = React.createContext<DataContextType | undefined>(undefined);
@@ -1011,6 +1012,31 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Subscribe to a user's live document and invoke callback with pillars snapshot
+  const subscribeToUserPillars = (userId: string, cb: (pillars: any) => void) => {
+    if (!userId) return () => {};
+    let unsub = () => {};
+    if (isFirebaseEnabled) {
+      (async () => {
+        try {
+          const fs = await getFsCtx();
+          unsub = fs.subscribeToUser(userId, (u: any) => {
+            if (!u) return;
+            const pillars = u.pillars || u.hopePointsBreakdown || {};
+            cb(pillars);
+          });
+        } catch (err) {
+          console.error('subscribeToUserPillars error', err);
+        }
+      })();
+    } else {
+      // local fallback: try to read user from getUserById
+      const u = getUserById(userId);
+      if (u) cb(u.pillars || u.hopePointsBreakdown || {});
+    }
+    return () => { try { unsub(); } catch (e) {} };
+  };
+
   const getRecentActivityForUser = async (userId?: string | null) => {
     try {
       const items: any[] = [];
@@ -1186,7 +1212,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 
   return (
-    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, giveRitualPoint, communityEvents, addCommunityEvent, getRequestById, getOfferingsForRequest, resources, addResource, leaveCommendation, addTapestryThread, recordHopePoints, getLeaderboard, sendEncouragement, getQuickActionsForUser, getRecentActivityForUser }}>
+    <DataContext.Provider value={{ requests, offerings, addRequest, addOffering, fulfillRequest, notifications, getNotificationsForUser, markAsRead, loading, tapestryThreads, acceptNomination, echoThread, initiateHelp, confirmReceipt, giveDailyPoint, giveRitualPoint, communityEvents, addCommunityEvent, getRequestById, getOfferingsForRequest, resources, addResource, leaveCommendation, addTapestryThread, recordHopePoints, getLeaderboard, sendEncouragement, getQuickActionsForUser, getRecentActivityForUser, subscribeToUserPillars }}>
       {children}
     </DataContext.Provider>
   );
