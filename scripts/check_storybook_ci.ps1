@@ -1,6 +1,7 @@
 # Query the GitHub Actions API for the latest 'Build Storybook' run on main
 try {
   $headers = @{ 'User-Agent' = 'Mitche-Agent' }
+  if ($env:GH_API_TOKEN) { $headers.Authorization = "token $($env:GH_API_TOKEN)" }
   $runs = Invoke-RestMethod -Uri 'https://api.github.com/repos/Geodev122/Mitche/actions/runs?per_page=20' -Headers $headers
 
   $match = $runs.workflow_runs | Where-Object { $_.name -eq 'Build Storybook' -and $_.head_branch -eq 'main' } | Select-Object -First 1

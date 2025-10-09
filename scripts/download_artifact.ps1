@@ -5,7 +5,9 @@ try {
   if ($null -eq $artifact) { $artifact = $status.artifacts[0] }
   $url = $artifact.archive_download_url
   Write-Output "Downloading artifact from $url"
-  Invoke-WebRequest -Uri $url -OutFile '.\install_artifact.zip' -Headers @{ 'User-Agent'='Mitche-Agent' }
+  $headers = @{ 'User-Agent' = 'Mitche-Agent' }
+  if ($env:GH_API_TOKEN) { $headers.Authorization = "token $($env:GH_API_TOKEN)" }
+  Invoke-WebRequest -Uri $url -OutFile '.\install_artifact.zip' -Headers $headers
   Expand-Archive -Path '.\install_artifact.zip' -DestinationPath '.\install_artifact' -Force
   Get-ChildItem '.\install_artifact' -Recurse -File | ForEach-Object { Write-Output "---- $($_.FullName) ----"; Get-Content $_.FullName -Raw }
 } catch {
