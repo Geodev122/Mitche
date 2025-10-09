@@ -44,8 +44,9 @@ jobs:
 
       - name: Install dependencies (final)
         run: |
-          # Try again (this will fail the job if install still fails)
-          npm ci --no-audit --no-fund --prefer-offline --no-optional
+          # Try again with legacy peer deps if the first attempt failed. This can resolve peer dependency
+          # resolution issues that appear in CI for some lockfiles.
+          npm ci --no-audit --no-fund --prefer-offline --no-optional || npm ci --no-audit --no-fund --prefer-offline --no-optional --legacy-peer-deps
       - name: Build Storybook
         run: npm run build-storybook
       - name: Upload Storybook artifact
