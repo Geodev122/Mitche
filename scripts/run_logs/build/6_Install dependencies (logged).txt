@@ -1,77 +1,77 @@
-﻿2025-10-09T17:33:51.9824761Z ##[group]Run set -o pipefail || true
-2025-10-09T17:33:51.9825205Z [36;1mset -o pipefail || true[0m
-2025-10-09T17:33:51.9825696Z [36;1m# Log the install attempt (omit optional deps to reduce install surface)[0m
-2025-10-09T17:33:51.9826423Z [36;1mnpm ci --no-audit --no-fund --prefer-offline --omit=optional 2>&1 | tee storybook-install.log || true[0m
-2025-10-09T17:33:51.9863121Z shell: /usr/bin/bash -e {0}
-2025-10-09T17:33:51.9863458Z env:
-2025-10-09T17:33:51.9863710Z   NPM_CONFIG_UNSAFE_PERM: true
-2025-10-09T17:33:51.9864066Z   NODE_OPTIONS: --max-old-space-size=4096
-2025-10-09T17:33:51.9864423Z ##[endgroup]
-2025-10-09T17:33:58.5671298Z npm warn ERESOLVE overriding peer dependency
-2025-10-09T17:33:58.5678128Z npm warn While resolving: @joshwooding/vite-plugin-react-docgen-typescript@0.3.0
-2025-10-09T17:33:58.5679491Z npm warn Found: vite@6.3.6
-2025-10-09T17:33:58.5682483Z npm warn node_modules/vite
-2025-10-09T17:33:58.5683336Z npm warn   dev vite@"^6.2.0" from the root project
-2025-10-09T17:33:58.5684484Z npm warn   1 more (@vitejs/plugin-react)
-2025-10-09T17:33:58.5685192Z npm warn
-2025-10-09T17:33:58.5685850Z npm warn Could not resolve dependency:
-2025-10-09T17:33:58.5687222Z npm warn peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @joshwooding/vite-plugin-react-docgen-typescript@0.3.0
-2025-10-09T17:33:58.5688922Z npm warn node_modules/@joshwooding/vite-plugin-react-docgen-typescript
-2025-10-09T17:33:58.5690710Z npm warn   @joshwooding/vite-plugin-react-docgen-typescript@"0.3.0" from @storybook/react-vite@7.6.20
-2025-10-09T17:33:58.5691968Z npm warn   node_modules/@storybook/react-vite
-2025-10-09T17:33:58.5692586Z npm warn
-2025-10-09T17:33:58.5693161Z npm warn Conflicting peer dependency: vite@5.4.20
-2025-10-09T17:33:58.5693870Z npm warn node_modules/vite
-2025-10-09T17:33:58.5694912Z npm warn   peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @joshwooding/vite-plugin-react-docgen-typescript@0.3.0
-2025-10-09T17:33:58.5696280Z npm warn   node_modules/@joshwooding/vite-plugin-react-docgen-typescript
-2025-10-09T17:33:58.5697772Z npm warn     @joshwooding/vite-plugin-react-docgen-typescript@"0.3.0" from @storybook/react-vite@7.6.20
-2025-10-09T17:33:58.5699191Z npm warn     node_modules/@storybook/react-vite
-2025-10-09T17:33:58.5741173Z npm warn ERESOLVE overriding peer dependency
-2025-10-09T17:33:58.5742118Z npm warn While resolving: @storybook/builder-vite@7.6.20
-2025-10-09T17:33:58.5742660Z npm warn Found: vite@6.3.6
-2025-10-09T17:33:58.5742957Z npm warn node_modules/vite
-2025-10-09T17:33:58.5743297Z npm warn   dev vite@"^6.2.0" from the root project
-2025-10-09T17:33:58.5743658Z npm warn   1 more (@vitejs/plugin-react)
-2025-10-09T17:33:58.5743929Z npm warn
-2025-10-09T17:33:58.5744186Z npm warn Could not resolve dependency:
-2025-10-09T17:33:58.5744629Z npm warn peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @storybook/builder-vite@7.6.20
-2025-10-09T17:33:58.5745063Z npm warn node_modules/@storybook/builder-vite
-2025-10-09T17:33:58.5745568Z npm warn   @storybook/builder-vite@"7.6.20" from @storybook/react-vite@7.6.20
-2025-10-09T17:33:58.5746008Z npm warn   node_modules/@storybook/react-vite
-2025-10-09T17:33:58.5746279Z npm warn
-2025-10-09T17:33:58.5746559Z npm warn Conflicting peer dependency: vite@5.4.20
-2025-10-09T17:33:58.5746860Z npm warn node_modules/vite
-2025-10-09T17:33:58.5747255Z npm warn   peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @storybook/builder-vite@7.6.20
-2025-10-09T17:33:58.5748012Z npm warn   node_modules/@storybook/builder-vite
-2025-10-09T17:33:58.5748486Z npm warn     @storybook/builder-vite@"7.6.20" from @storybook/react-vite@7.6.20
-2025-10-09T17:33:58.5748916Z npm warn     node_modules/@storybook/react-vite
-2025-10-09T17:33:58.5808013Z npm error code ERESOLVE
-2025-10-09T17:33:58.5808650Z npm error ERESOLVE could not resolve
-2025-10-09T17:33:58.5809584Z npm error
-2025-10-09T17:33:58.5810164Z npm error While resolving: @storybook/react-vite@7.6.20
-2025-10-09T17:33:58.5810567Z npm error Found: vite@6.3.6
-2025-10-09T17:33:58.5810852Z npm error node_modules/vite
-2025-10-09T17:33:58.5811220Z npm error   dev vite@"^6.2.0" from the root project
-2025-10-09T17:33:58.5812071Z npm error   peer vite@"^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0" from @vitejs/plugin-react@5.0.4
-2025-10-09T17:33:58.5812598Z npm error   node_modules/@vitejs/plugin-react
-2025-10-09T17:33:58.5813102Z npm error     dev @vitejs/plugin-react@"^5.0.0" from the root project
-2025-10-09T17:33:58.5813475Z npm error
-2025-10-09T17:33:58.5813761Z npm error Could not resolve dependency:
-2025-10-09T17:33:58.5814273Z npm error peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @storybook/react-vite@7.6.20
-2025-10-09T17:33:58.5814752Z npm error node_modules/@storybook/react-vite
-2025-10-09T17:33:58.5815241Z npm error   dev @storybook/react-vite@"^7.0.0" from the root project
-2025-10-09T17:33:58.5815606Z npm error
-2025-10-09T17:33:58.5815937Z npm error Conflicting peer dependency: vite@5.4.20
-2025-10-09T17:33:58.5816301Z npm error node_modules/vite
-2025-10-09T17:33:58.5816777Z npm error   peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @storybook/react-vite@7.6.20
-2025-10-09T17:33:58.5817224Z npm error   node_modules/@storybook/react-vite
-2025-10-09T17:33:58.5818034Z npm error     dev @storybook/react-vite@"^7.0.0" from the root project
-2025-10-09T17:33:58.5818356Z npm error
-2025-10-09T17:33:58.5818657Z npm error Fix the upstream dependency conflict, or retry
-2025-10-09T17:33:58.5819070Z npm error this command with --force or --legacy-peer-deps
-2025-10-09T17:33:58.5819575Z npm error to accept an incorrect (and potentially broken) dependency resolution.
-2025-10-09T17:33:58.5819930Z npm error
-2025-10-09T17:33:58.5820099Z npm error
-2025-10-09T17:33:58.5820424Z npm error For a full report see:
-2025-10-09T17:33:58.5820913Z npm error /home/runner/.npm/_logs/2025-10-09T17_33_52_060Z-eresolve-report.txt
-2025-10-09T17:33:58.5823760Z npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-10-09T17_33_52_060Z-debug-0.log
+﻿2025-10-09T18:49:22.0922537Z ##[group]Run set -o pipefail || true
+2025-10-09T18:49:22.0922890Z [36;1mset -o pipefail || true[0m
+2025-10-09T18:49:22.0923281Z [36;1m# Log the install attempt (omit optional deps to reduce install surface)[0m
+2025-10-09T18:49:22.0923834Z [36;1mnpm ci --no-audit --no-fund --prefer-offline --omit=optional 2>&1 | tee storybook-install.log || true[0m
+2025-10-09T18:49:22.0957423Z shell: /usr/bin/bash -e {0}
+2025-10-09T18:49:22.0957662Z env:
+2025-10-09T18:49:22.0957842Z   NPM_CONFIG_UNSAFE_PERM: true
+2025-10-09T18:49:22.0958097Z   NODE_OPTIONS: --max-old-space-size=4096
+2025-10-09T18:49:22.0958354Z ##[endgroup]
+2025-10-09T18:49:30.3592749Z npm warn ERESOLVE overriding peer dependency
+2025-10-09T18:49:30.3597310Z npm warn While resolving: @joshwooding/vite-plugin-react-docgen-typescript@0.3.0
+2025-10-09T18:49:30.3598137Z npm warn Found: vite@6.3.6
+2025-10-09T18:49:30.3598615Z npm warn node_modules/vite
+2025-10-09T18:49:30.3599187Z npm warn   dev vite@"^6.2.0" from the root project
+2025-10-09T18:49:30.3599923Z npm warn   1 more (@vitejs/plugin-react)
+2025-10-09T18:49:30.3600422Z npm warn
+2025-10-09T18:49:30.3600895Z npm warn Could not resolve dependency:
+2025-10-09T18:49:30.3602102Z npm warn peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @joshwooding/vite-plugin-react-docgen-typescript@0.3.0
+2025-10-09T18:49:30.3603213Z npm warn node_modules/@joshwooding/vite-plugin-react-docgen-typescript
+2025-10-09T18:49:30.3604493Z npm warn   @joshwooding/vite-plugin-react-docgen-typescript@"0.3.0" from @storybook/react-vite@7.6.20
+2025-10-09T18:49:30.3605802Z npm warn   node_modules/@storybook/react-vite
+2025-10-09T18:49:30.3606303Z npm warn
+2025-10-09T18:49:30.3606778Z npm warn Conflicting peer dependency: vite@5.4.20
+2025-10-09T18:49:30.3607372Z npm warn node_modules/vite
+2025-10-09T18:49:30.3608259Z npm warn   peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @joshwooding/vite-plugin-react-docgen-typescript@0.3.0
+2025-10-09T18:49:30.3609360Z npm warn   node_modules/@joshwooding/vite-plugin-react-docgen-typescript
+2025-10-09T18:49:30.3610583Z npm warn     @joshwooding/vite-plugin-react-docgen-typescript@"0.3.0" from @storybook/react-vite@7.6.20
+2025-10-09T18:49:30.3612117Z npm warn     node_modules/@storybook/react-vite
+2025-10-09T18:49:30.3661762Z npm warn ERESOLVE overriding peer dependency
+2025-10-09T18:49:30.3662678Z npm warn While resolving: @storybook/builder-vite@7.6.20
+2025-10-09T18:49:30.3663257Z npm warn Found: vite@6.3.6
+2025-10-09T18:49:30.3663571Z npm warn node_modules/vite
+2025-10-09T18:49:30.3663929Z npm warn   dev vite@"^6.2.0" from the root project
+2025-10-09T18:49:30.3664287Z npm warn   1 more (@vitejs/plugin-react)
+2025-10-09T18:49:30.3664553Z npm warn
+2025-10-09T18:49:30.3664921Z npm warn Could not resolve dependency:
+2025-10-09T18:49:30.3665688Z npm warn peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @storybook/builder-vite@7.6.20
+2025-10-09T18:49:30.3666445Z npm warn node_modules/@storybook/builder-vite
+2025-10-09T18:49:30.3667350Z npm warn   @storybook/builder-vite@"7.6.20" from @storybook/react-vite@7.6.20
+2025-10-09T18:49:30.3667873Z npm warn   node_modules/@storybook/react-vite
+2025-10-09T18:49:30.3668149Z npm warn
+2025-10-09T18:49:30.3668418Z npm warn Conflicting peer dependency: vite@5.4.20
+2025-10-09T18:49:30.3668722Z npm warn node_modules/vite
+2025-10-09T18:49:30.3669125Z npm warn   peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @storybook/builder-vite@7.6.20
+2025-10-09T18:49:30.3669541Z npm warn   node_modules/@storybook/builder-vite
+2025-10-09T18:49:30.3669999Z npm warn     @storybook/builder-vite@"7.6.20" from @storybook/react-vite@7.6.20
+2025-10-09T18:49:30.3670427Z npm warn     node_modules/@storybook/react-vite
+2025-10-09T18:49:30.3748840Z npm error code ERESOLVE
+2025-10-09T18:49:30.3749617Z npm error ERESOLVE could not resolve
+2025-10-09T18:49:30.3750038Z npm error
+2025-10-09T18:49:30.3751730Z npm error While resolving: @storybook/react-vite@7.6.20
+2025-10-09T18:49:30.3752335Z npm error Found: vite@6.3.6
+2025-10-09T18:49:30.3752752Z npm error node_modules/vite
+2025-10-09T18:49:30.3753266Z npm error   dev vite@"^6.2.0" from the root project
+2025-10-09T18:49:30.3754371Z npm error   peer vite@"^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0" from @vitejs/plugin-react@5.0.4
+2025-10-09T18:49:30.3755109Z npm error   node_modules/@vitejs/plugin-react
+2025-10-09T18:49:30.3755826Z npm error     dev @vitejs/plugin-react@"^5.0.0" from the root project
+2025-10-09T18:49:30.3756459Z npm error
+2025-10-09T18:49:30.3756863Z npm error Could not resolve dependency:
+2025-10-09T18:49:30.3757593Z npm error peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @storybook/react-vite@7.6.20
+2025-10-09T18:49:30.3758232Z npm error node_modules/@storybook/react-vite
+2025-10-09T18:49:30.3758694Z npm error   dev @storybook/react-vite@"^7.0.0" from the root project
+2025-10-09T18:49:30.3759049Z npm error
+2025-10-09T18:49:30.3759361Z npm error Conflicting peer dependency: vite@5.4.20
+2025-10-09T18:49:30.3759714Z npm error node_modules/vite
+2025-10-09T18:49:30.3760163Z npm error   peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @storybook/react-vite@7.6.20
+2025-10-09T18:49:30.3760626Z npm error   node_modules/@storybook/react-vite
+2025-10-09T18:49:30.3761093Z npm error     dev @storybook/react-vite@"^7.0.0" from the root project
+2025-10-09T18:49:30.3761684Z npm error
+2025-10-09T18:49:30.3762014Z npm error Fix the upstream dependency conflict, or retry
+2025-10-09T18:49:30.3762466Z npm error this command with --force or --legacy-peer-deps
+2025-10-09T18:49:30.3762968Z npm error to accept an incorrect (and potentially broken) dependency resolution.
+2025-10-09T18:49:30.3763331Z npm error
+2025-10-09T18:49:30.3763503Z npm error
+2025-10-09T18:49:30.3763819Z npm error For a full report see:
+2025-10-09T18:49:30.3764282Z npm error /home/runner/.npm/_logs/2025-10-09T18_49_22_164Z-eresolve-report.txt
+2025-10-09T18:49:30.3769814Z npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-10-09T18_49_22_164Z-debug-0.log

@@ -1,13 +1,81 @@
-﻿2025-10-09T17:34:11.3035236Z ##[group]Run npm run build-storybook
-2025-10-09T17:34:11.3035685Z [36;1mnpm run build-storybook[0m
-2025-10-09T17:34:11.3070390Z shell: /usr/bin/bash -e {0}
-2025-10-09T17:34:11.3070744Z env:
-2025-10-09T17:34:11.3071027Z   NPM_CONFIG_UNSAFE_PERM: true
-2025-10-09T17:34:11.3071422Z   NODE_OPTIONS: --max-old-space-size=4096
-2025-10-09T17:34:11.3071833Z ##[endgroup]
-2025-10-09T17:34:11.4366677Z 
-2025-10-09T17:34:11.4367957Z > mitche-hope-bearer-platform@0.0.0 build-storybook
-2025-10-09T17:34:11.4368755Z > storybook build
-2025-10-09T17:34:11.4368997Z 
-2025-10-09T17:34:11.4410159Z sh: 1: storybook: not found
-2025-10-09T17:34:11.4504582Z ##[error]Process completed with exit code 127.
+﻿2025-10-09T18:49:44.7311073Z ##[group]Run npx storybook build --loglevel=warn
+2025-10-09T18:49:44.7311737Z [36;1mnpx storybook build --loglevel=warn[0m
+2025-10-09T18:49:44.7345118Z shell: /usr/bin/bash -e {0}
+2025-10-09T18:49:44.7345354Z env:
+2025-10-09T18:49:44.7345564Z   NPM_CONFIG_UNSAFE_PERM: true
+2025-10-09T18:49:44.7345831Z   NODE_OPTIONS: --max-old-space-size=4096
+2025-10-09T18:49:44.7346087Z ##[endgroup]
+2025-10-09T18:49:46.3682231Z @storybook/cli v7.6.20
+2025-10-09T18:49:46.3682776Z 
+2025-10-09T18:49:46.3722742Z info => Cleaning outputDir: /storybook-static
+2025-10-09T18:49:46.4850669Z info => Loading presets
+2025-10-09T18:49:46.5938919Z info => Building manager..
+2025-10-09T18:49:46.7622782Z info => Manager built (168 ms)
+2025-10-09T18:49:46.7664495Z info => Building preview..
+2025-10-09T18:49:46.7732023Z info => Copying static files: /home/runner/work/Mitche/Mitche/node_modules/@storybook/manager/static at /home/runner/work/Mitche/Mitche/storybook-static/sb-common-assets
+2025-10-09T18:49:47.1710463Z [36mvite v6.3.6 [32mbuilding for production...[36m[39m
+2025-10-09T18:49:49.4468420Z 
+2025-10-09T18:49:49.4469886Z ./sb-common-assets/fonts.css doesn't exist at build time, it will remain unchanged to be resolved at runtime
+2025-10-09T18:49:49.4545076Z transforming...
+2025-10-09T18:50:00.2784000Z [32m✓[39m 2118 modules transformed.
+2025-10-09T18:50:00.7336830Z rendering chunks...
+2025-10-09T18:50:00.8316583Z [33m[plugin vite:reporter] 
+2025-10-09T18:50:00.8344688Z (!) /home/runner/work/Mitche/Mitche/utils/logger.ts is dynamically imported by /home/runner/work/Mitche/Mitche/services/firebase.ts, /home/runner/work/Mitche/Mitche/services/firebase.ts, /home/runner/work/Mitche/Mitche/services/firebase.ts but also statically imported by /home/runner/work/Mitche/Mitche/services/firebase.ts, dynamic import will not move module into another chunk.
+2025-10-09T18:50:00.8347516Z [39m
+2025-10-09T18:50:01.0321220Z computing gzip size...
+2025-10-09T18:50:01.0608171Z [2mstorybook-static/[22m[32miframe.html                                     [39m[1m[2m 12.78 kB[22m[1m[22m[2m │ gzip:   3.59 kB[22m
+2025-10-09T18:50:01.0609836Z [2mstorybook-static/[22m[2massets/[22m[35mpreview-C7rAyTxa.css                     [39m[1m[2m  0.92 kB[22m[1m[22m[2m │ gzip:   0.54 kB[22m
+2025-10-09T18:50:01.0611837Z [2mstorybook-static/[22m[2massets/[22m[36mWithTooltip-V3YHNWJZ-BbL35KsC.js         [39m[1m[2m  0.39 kB[22m[1m[22m[2m │ gzip:   0.26 kB[22m
+2025-10-09T18:50:01.0613763Z [2mstorybook-static/[22m[2massets/[22m[36msyntaxhighlighter-MJWPISIS-DKIhZw4z.js   [39m[1m[2m  0.40 kB[22m[1m[22m[2m │ gzip:   0.28 kB[22m
+2025-10-09T18:50:01.0615550Z [2mstorybook-static/[22m[2massets/[22m[36mindex-DbGPmmea.js                        [39m[1m[2m  0.47 kB[22m[1m[22m[2m │ gzip:   0.32 kB[22m
+2025-10-09T18:50:01.0617207Z [2mstorybook-static/[22m[2massets/[22m[36mCard-BhywAxIU.js                         [39m[1m[2m  0.51 kB[22m[1m[22m[2m │ gzip:   0.33 kB[22m
+2025-10-09T18:50:01.0618826Z [2mstorybook-static/[22m[2massets/[22m[36mindex-CJ_LmFaV.js                        [39m[1m[2m  0.52 kB[22m[1m[22m[2m │ gzip:   0.37 kB[22m
+2025-10-09T18:50:01.0620447Z [2mstorybook-static/[22m[2massets/[22m[36mButton-D6I_o3D3.js                       [39m[1m[2m  0.57 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+2025-10-09T18:50:01.0622264Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-DPCMOe5H.js                      [39m[1m[2m  0.58 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+2025-10-09T18:50:01.0623963Z [2mstorybook-static/[22m[2massets/[22m[36mCard.stories-tyTgudWu.js                 [39m[1m[2m  0.66 kB[22m[1m[22m[2m │ gzip:   0.40 kB[22m
+2025-10-09T18:50:01.0625645Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-BKARdKxT.js                      [39m[1m[2m  0.72 kB[22m[1m[22m[2m │ gzip:   0.48 kB[22m
+2025-10-09T18:50:01.0626989Z [2mstorybook-static/[22m[2massets/[22m[36m_commonjsHelpers-D6-XlEtG.js             [39m[1m[2m  0.73 kB[22m[1m[22m[2m │ gzip:   0.39 kB[22m
+2025-10-09T18:50:01.0628868Z [2mstorybook-static/[22m[2massets/[22m[36mindex-DrFu-skq.js                        [39m[1m[2m  0.77 kB[22m[1m[22m[2m │ gzip:   0.47 kB[22m
+2025-10-09T18:50:01.0629864Z [2mstorybook-static/[22m[2massets/[22m[36mButton.stories-DkCBOMpj.js               [39m[1m[2m  0.81 kB[22m[1m[22m[2m │ gzip:   0.39 kB[22m
+2025-10-09T18:50:01.0631876Z [2mstorybook-static/[22m[2massets/[22m[36mstorage-helper-B3V6PAcm.js               [39m[1m[2m  0.85 kB[22m[1m[22m[2m │ gzip:   0.54 kB[22m
+2025-10-09T18:50:01.0633635Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-Cv3rAi2i.js                      [39m[1m[2m  0.86 kB[22m[1m[22m[2m │ gzip:   0.55 kB[22m
+2025-10-09T18:50:01.0634856Z [2mstorybook-static/[22m[2massets/[22m[36mConstellationFlower.stories-DuFX_If7.js  [39m[1m[2m  0.97 kB[22m[1m[22m[2m │ gzip:   0.49 kB[22m
+2025-10-09T18:50:01.0635455Z [33m
+2025-10-09T18:50:01.0635818Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2025-10-09T18:50:01.0636289Z - Using dynamic import() to code-split the application
+2025-10-09T18:50:01.0637236Z - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+2025-10-09T18:50:01.0638095Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2025-10-09T18:50:01.0639133Z [2mstorybook-static/[22m[2massets/[22m[36mjsx-runtime-BTJTZTIL.js                  [39m[1m[2m  1.00 kB[22m[1m[22m[2m │ gzip:   0.62 kB[22m
+2025-10-09T18:50:01.0640145Z [2mstorybook-static/[22m[2massets/[22m[36mentry-preview-atjynJc0.js                [39m[1m[2m  1.15 kB[22m[1m[22m[2m │ gzip:   0.67 kB[22m
+2025-10-09T18:50:01.0641130Z [2mstorybook-static/[22m[2massets/[22m[36mindex.esm-DUun7Jrz.js                    [39m[1m[2m  1.26 kB[22m[1m[22m[2m │ gzip:   0.62 kB[22m
+2025-10-09T18:50:01.0642309Z [2mstorybook-static/[22m[2massets/[22m[36mShowcase.stories-CiK51MzL.js             [39m[1m[2m  1.68 kB[22m[1m[22m[2m │ gzip:   0.81 kB[22m
+2025-10-09T18:50:01.0643301Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-BcxrGG1y.js                      [39m[1m[2m  3.19 kB[22m[1m[22m[2m │ gzip:   1.37 kB[22m
+2025-10-09T18:50:01.0644296Z [2mstorybook-static/[22m[2massets/[22m[36mConstellationFlower-3S9gjjOg.js          [39m[1m[2m  3.30 kB[22m[1m[22m[2m │ gzip:   1.55 kB[22m
+2025-10-09T18:50:01.0645281Z [2mstorybook-static/[22m[2massets/[22m[36miframe-DKRQQh4j.js                       [39m[1m[2m  5.04 kB[22m[1m[22m[2m │ gzip:   2.00 kB[22m
+2025-10-09T18:50:01.0646429Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-FHoZfaOb.js                      [39m[1m[2m  5.17 kB[22m[1m[22m[2m │ gzip:   2.37 kB[22m
+2025-10-09T18:50:01.0647386Z [2mstorybook-static/[22m[2massets/[22m[36mindex-ChsGqxH_.js                        [39m[1m[2m  6.78 kB[22m[1m[22m[2m │ gzip:   2.71 kB[22m
+2025-10-09T18:50:01.0648650Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-BAz7FMXc.js                      [39m[1m[2m  7.62 kB[22m[1m[22m[2m │ gzip:   1.56 kB[22m
+2025-10-09T18:50:01.0650334Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-BJKiUloN.js                      [39m[1m[2m  8.11 kB[22m[1m[22m[2m │ gzip:   3.09 kB[22m
+2025-10-09T18:50:01.0652213Z [2mstorybook-static/[22m[2massets/[22m[36mfirebase-enhanced-DlSyj2fS.js            [39m[1m[2m  8.67 kB[22m[1m[22m[2m │ gzip:   2.54 kB[22m
+2025-10-09T18:50:01.0653273Z [2mstorybook-static/[22m[2massets/[22m[36mindex.esm-CYoZbgto.js                    [39m[1m[2m 12.72 kB[22m[1m[22m[2m │ gzip:   3.82 kB[22m
+2025-10-09T18:50:01.0654288Z [2mstorybook-static/[22m[2massets/[22m[36mColor-6VNJS4EI-71--N98D.js               [39m[1m[2m 31.51 kB[22m[1m[22m[2m │ gzip:  12.02 kB[22m
+2025-10-09T18:50:01.0655261Z [2mstorybook-static/[22m[2massets/[22m[36mindex.esm-B6eNFOH0.js                    [39m[1m[2m 47.43 kB[22m[1m[22m[2m │ gzip:  11.88 kB[22m
+2025-10-09T18:50:01.0656438Z [2mstorybook-static/[22m[2massets/[22m[36mindex.esm-CQQ1z5bL.js                    [39m[1m[2m 51.22 kB[22m[1m[22m[2m │ gzip:  12.21 kB[22m
+2025-10-09T18:50:01.0657420Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-JHn1zflh.js                      [39m[1m[2m 72.15 kB[22m[1m[22m[2m │ gzip:  24.50 kB[22m
+2025-10-09T18:50:01.0658525Z [2mstorybook-static/[22m[2massets/[22m[36m_getPrototype-CDZsfJxQ.js                [39m[1m[2m 83.56 kB[22m[1m[22m[2m │ gzip:  24.59 kB[22m
+2025-10-09T18:50:01.0659505Z [2mstorybook-static/[22m[2massets/[22m[36mreact-18-C0AwzDYw.js                     [39m[1m[2m135.37 kB[22m[1m[22m[2m │ gzip:  43.63 kB[22m
+2025-10-09T18:50:01.0660464Z [2mstorybook-static/[22m[2massets/[22m[36mfirebase-CYVISPkl.js                     [39m[1m[2m137.60 kB[22m[1m[22m[2m │ gzip:  28.39 kB[22m
+2025-10-09T18:50:01.0661748Z [2mstorybook-static/[22m[2massets/[22m[36mentry-preview-docs-DYUfYUZu.js           [39m[1m[2m214.88 kB[22m[1m[22m[2m │ gzip:  66.61 kB[22m
+2025-10-09T18:50:01.0662817Z [2mstorybook-static/[22m[2massets/[22m[36mLayout.stories-C-YYUlYF.js               [39m[1m[2m216.46 kB[22m[1m[22m[2m │ gzip:  66.98 kB[22m
+2025-10-09T18:50:01.0663798Z [2mstorybook-static/[22m[2massets/[22m[36mindex.esm-BqhvDsTW.js                    [39m[1m[2m447.61 kB[22m[1m[22m[2m │ gzip: 111.22 kB[22m
+2025-10-09T18:50:01.0664820Z [2mstorybook-static/[22m[2massets/[22m[36mDocsRenderer-NNNQARDV-i239LsRK.js        [39m[1m[33m549.85 kB[39m[22m[2m │ gzip: 178.13 kB[22m
+2025-10-09T18:50:01.0665858Z [2mstorybook-static/[22m[2massets/[22m[36mformatter-SWP5E3XI-BzFTYAvH.js           [39m[1m[33m605.45 kB[39m[22m[2m │ gzip: 186.22 kB[22m
+2025-10-09T18:50:01.0666444Z [32m✓ built in 13.68s[39m
+2025-10-09T18:50:01.0666714Z info => Preview built (14 s)
+2025-10-09T18:50:01.0667138Z info => Output directory: /home/runner/work/Mitche/Mitche/storybook-static
+2025-10-09T18:50:01.0667438Z 
+2025-10-09T18:50:01.0667753Z attention => Storybook now collects completely anonymous telemetry regarding usage.
+2025-10-09T18:50:01.0668338Z This information is used to shape Storybook's roadmap and prioritize features.
+2025-10-09T18:50:01.0669088Z You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+2025-10-09T18:50:01.0669661Z https://storybook.js.org/telemetry
+2025-10-09T18:50:01.0669842Z 

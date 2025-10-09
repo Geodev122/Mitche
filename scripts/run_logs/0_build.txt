@@ -1,292 +1,581 @@
-﻿2025-10-09T17:33:46.3016907Z Current runner version: '2.328.0'
-2025-10-09T17:33:46.3051303Z ##[group]Runner Image Provisioner
-2025-10-09T17:33:46.3052491Z Hosted Compute Agent
-2025-10-09T17:33:46.3053388Z Version: 20250912.392
-2025-10-09T17:33:46.3054524Z Commit: d921fda672a98b64f4f82364647e2f10b2267d0b
-2025-10-09T17:33:46.3055736Z Build Date: 2025-09-12T15:23:14Z
-2025-10-09T17:33:46.3056708Z ##[endgroup]
-2025-10-09T17:33:46.3058152Z ##[group]Operating System
-2025-10-09T17:33:46.3059081Z Ubuntu
-2025-10-09T17:33:46.3059884Z 24.04.3
-2025-10-09T17:33:46.3060722Z LTS
-2025-10-09T17:33:46.3061527Z ##[endgroup]
-2025-10-09T17:33:46.3062722Z ##[group]Runner Image
-2025-10-09T17:33:46.3063905Z Image: ubuntu-24.04
-2025-10-09T17:33:46.3064740Z Version: 20250929.60.1
-2025-10-09T17:33:46.3066396Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250929.60/images/ubuntu/Ubuntu2404-Readme.md
-2025-10-09T17:33:46.3069392Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250929.60
-2025-10-09T17:33:46.3071222Z ##[endgroup]
-2025-10-09T17:33:46.3073096Z ##[group]GITHUB_TOKEN Permissions
-2025-10-09T17:33:46.3076396Z Contents: read
-2025-10-09T17:33:46.3077698Z Metadata: read
-2025-10-09T17:33:46.3078610Z Packages: read
-2025-10-09T17:33:46.3079361Z ##[endgroup]
-2025-10-09T17:33:46.3082868Z Secret source: Actions
-2025-10-09T17:33:46.3083875Z Prepare workflow directory
-2025-10-09T17:33:46.3619752Z Prepare all required actions
-2025-10-09T17:33:46.3677129Z Getting action download info
-2025-10-09T17:33:46.7146571Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
-2025-10-09T17:33:46.8045199Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
-2025-10-09T17:33:46.8983797Z Download action repository 'actions/cache@v4' (SHA:0057852bfaa89a56745cba8c7296529d2fc39830)
-2025-10-09T17:33:47.0040906Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
-2025-10-09T17:33:47.1205259Z Download action repository 'peaceiris/actions-gh-pages@v3' (SHA:373f7f263a76c20808c831209c920827a82a2847)
-2025-10-09T17:33:47.4785862Z Complete job name: build
-2025-10-09T17:33:47.5594876Z ##[group]Run actions/checkout@v4
-2025-10-09T17:33:47.5596127Z with:
-2025-10-09T17:33:47.5596835Z   repository: Geodev122/Mitche
-2025-10-09T17:33:47.5598170Z   token: ***
-2025-10-09T17:33:47.5598908Z   ssh-strict: true
-2025-10-09T17:33:47.5599653Z   ssh-user: git
-2025-10-09T17:33:47.5600399Z   persist-credentials: true
-2025-10-09T17:33:47.5601248Z   clean: true
-2025-10-09T17:33:47.5602018Z   sparse-checkout-cone-mode: true
-2025-10-09T17:33:47.5602951Z   fetch-depth: 1
-2025-10-09T17:33:47.5603689Z   fetch-tags: false
-2025-10-09T17:33:47.5604435Z   show-progress: true
-2025-10-09T17:33:47.5605208Z   lfs: false
-2025-10-09T17:33:47.5605904Z   submodules: false
-2025-10-09T17:33:47.5606674Z   set-safe-directory: true
-2025-10-09T17:33:47.5607987Z env:
-2025-10-09T17:33:47.5608689Z   NPM_CONFIG_UNSAFE_PERM: true
-2025-10-09T17:33:47.5609677Z   NODE_OPTIONS: --max-old-space-size=4096
-2025-10-09T17:33:47.5610654Z ##[endgroup]
-2025-10-09T17:33:47.6989584Z Syncing repository: Geodev122/Mitche
-2025-10-09T17:33:47.6992455Z ##[group]Getting Git version info
-2025-10-09T17:33:47.6993675Z Working directory is '/home/runner/work/Mitche/Mitche'
-2025-10-09T17:33:47.6995423Z [command]/usr/bin/git version
-2025-10-09T17:33:47.7048273Z git version 2.51.0
-2025-10-09T17:33:47.7075236Z ##[endgroup]
-2025-10-09T17:33:47.7091132Z Temporarily overriding HOME='/home/runner/work/_temp/6abf62cf-a706-4310-9b17-083d6e0ef2b4' before making global git config changes
-2025-10-09T17:33:47.7104156Z Adding repository directory to the temporary git global config as a safe directory
-2025-10-09T17:33:47.7106230Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Mitche/Mitche
-2025-10-09T17:33:47.7139729Z Deleting the contents of '/home/runner/work/Mitche/Mitche'
-2025-10-09T17:33:47.7143360Z ##[group]Initializing the repository
-2025-10-09T17:33:47.7147099Z [command]/usr/bin/git init /home/runner/work/Mitche/Mitche
-2025-10-09T17:33:47.7245346Z hint: Using 'master' as the name for the initial branch. This default branch name
-2025-10-09T17:33:47.7249429Z hint: is subject to change. To configure the initial branch name to use in all
-2025-10-09T17:33:47.7252202Z hint: of your new repositories, which will suppress this warning, call:
-2025-10-09T17:33:47.7253655Z hint:
-2025-10-09T17:33:47.7254593Z hint: 	git config --global init.defaultBranch <name>
-2025-10-09T17:33:47.7256163Z hint:
-2025-10-09T17:33:47.7257201Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
-2025-10-09T17:33:47.7259318Z hint: 'development'. The just-created branch can be renamed via this command:
-2025-10-09T17:33:47.7261047Z hint:
-2025-10-09T17:33:47.7261811Z hint: 	git branch -m <name>
-2025-10-09T17:33:47.7262680Z hint:
-2025-10-09T17:33:47.7263800Z hint: Disable this message with "git config set advice.defaultBranchName false"
-2025-10-09T17:33:47.7265576Z Initialized empty Git repository in /home/runner/work/Mitche/Mitche/.git/
-2025-10-09T17:33:47.7268695Z [command]/usr/bin/git remote add origin https://github.com/Geodev122/Mitche
-2025-10-09T17:33:47.7300021Z ##[endgroup]
-2025-10-09T17:33:47.7301528Z ##[group]Disabling automatic garbage collection
-2025-10-09T17:33:47.7303261Z [command]/usr/bin/git config --local gc.auto 0
-2025-10-09T17:33:47.7332863Z ##[endgroup]
-2025-10-09T17:33:47.7334394Z ##[group]Setting up auth
-2025-10-09T17:33:47.7338123Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
-2025-10-09T17:33:47.7367920Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
-2025-10-09T17:33:47.7701965Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
-2025-10-09T17:33:47.7733414Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
-2025-10-09T17:33:47.7954434Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
-2025-10-09T17:33:47.7988199Z ##[endgroup]
-2025-10-09T17:33:47.7989562Z ##[group]Fetching the repository
-2025-10-09T17:33:47.8005513Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +5a18790da664ecb6c3a94e0d2580f5a63287bdbf:refs/remotes/origin/main
-2025-10-09T17:33:48.1354449Z From https://github.com/Geodev122/Mitche
-2025-10-09T17:33:48.1356555Z  * [new ref]         5a18790da664ecb6c3a94e0d2580f5a63287bdbf -> origin/main
-2025-10-09T17:33:48.1389952Z ##[endgroup]
-2025-10-09T17:33:48.1392280Z ##[group]Determining the checkout info
-2025-10-09T17:33:48.1394797Z ##[endgroup]
-2025-10-09T17:33:48.1396956Z [command]/usr/bin/git sparse-checkout disable
-2025-10-09T17:33:48.1438383Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
-2025-10-09T17:33:48.1467256Z ##[group]Checking out the ref
-2025-10-09T17:33:48.1470780Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
-2025-10-09T17:33:48.1758234Z Switched to a new branch 'main'
-2025-10-09T17:33:48.1760451Z branch 'main' set up to track 'origin/main'.
-2025-10-09T17:33:48.1768791Z ##[endgroup]
-2025-10-09T17:33:48.1804854Z [command]/usr/bin/git log -1 --format=%H
-2025-10-09T17:33:48.1826927Z 5a18790da664ecb6c3a94e0d2580f5a63287bdbf
-2025-10-09T17:33:48.2108345Z ##[group]Run actions/setup-node@v4
-2025-10-09T17:33:48.2109277Z with:
-2025-10-09T17:33:48.2109919Z   node-version: 20
-2025-10-09T17:33:48.2110618Z   cache: npm
-2025-10-09T17:33:48.2111292Z   always-auth: false
-2025-10-09T17:33:48.2112032Z   check-latest: false
-2025-10-09T17:33:48.2113001Z   token: ***
-2025-10-09T17:33:48.2113643Z env:
-2025-10-09T17:33:48.2114305Z   NPM_CONFIG_UNSAFE_PERM: true
-2025-10-09T17:33:48.2115234Z   NODE_OPTIONS: --max-old-space-size=4096
-2025-10-09T17:33:48.2116433Z ##[endgroup]
-2025-10-09T17:33:48.4388050Z Found in cache @ /opt/hostedtoolcache/node/20.19.5/x64
-2025-10-09T17:33:48.4394698Z ##[group]Environment details
-2025-10-09T17:33:51.0517223Z node: v20.19.5
-2025-10-09T17:33:51.0519238Z npm: 10.8.2
-2025-10-09T17:33:51.0519758Z yarn: 1.22.22
-2025-10-09T17:33:51.0521056Z ##[endgroup]
-2025-10-09T17:33:51.0541770Z [command]/opt/hostedtoolcache/node/20.19.5/x64/bin/npm config get cache
-2025-10-09T17:33:51.3739245Z /home/runner/.npm
-2025-10-09T17:33:51.5050762Z npm cache is not found
-2025-10-09T17:33:51.6105507Z ##[group]Run actions/cache@v4
-2025-10-09T17:33:51.6105848Z with:
-2025-10-09T17:33:51.6106066Z   path: ~/.npm
+﻿2025-10-09T18:49:14.6758693Z Current runner version: '2.328.0'
+2025-10-09T18:49:14.6781715Z ##[group]Runner Image Provisioner
+2025-10-09T18:49:14.6782565Z Hosted Compute Agent
+2025-10-09T18:49:14.6783087Z Version: 20250912.392
+2025-10-09T18:49:14.6783777Z Commit: d921fda672a98b64f4f82364647e2f10b2267d0b
+2025-10-09T18:49:14.6784439Z Build Date: 2025-09-12T15:23:14Z
+2025-10-09T18:49:14.6785041Z ##[endgroup]
+2025-10-09T18:49:14.6785619Z ##[group]Operating System
+2025-10-09T18:49:14.6786208Z Ubuntu
+2025-10-09T18:49:14.6786661Z 24.04.3
+2025-10-09T18:49:14.6787170Z LTS
+2025-10-09T18:49:14.6787659Z ##[endgroup]
+2025-10-09T18:49:14.6788140Z ##[group]Runner Image
+2025-10-09T18:49:14.6788759Z Image: ubuntu-24.04
+2025-10-09T18:49:14.6789254Z Version: 20250929.60.1
+2025-10-09T18:49:14.6790264Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250929.60/images/ubuntu/Ubuntu2404-Readme.md
+2025-10-09T18:49:14.6792281Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250929.60
+2025-10-09T18:49:14.6793274Z ##[endgroup]
+2025-10-09T18:49:14.6794427Z ##[group]GITHUB_TOKEN Permissions
+2025-10-09T18:49:14.6796192Z Contents: read
+2025-10-09T18:49:14.6796740Z Metadata: read
+2025-10-09T18:49:14.6797328Z Packages: read
+2025-10-09T18:49:14.6797831Z ##[endgroup]
+2025-10-09T18:49:14.6799864Z Secret source: Actions
+2025-10-09T18:49:14.6800667Z Prepare workflow directory
+2025-10-09T18:49:14.7230502Z Prepare all required actions
+2025-10-09T18:49:14.7267742Z Getting action download info
+2025-10-09T18:49:15.2109487Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+2025-10-09T18:49:15.5119317Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2025-10-09T18:49:15.6489702Z Download action repository 'actions/cache@v4' (SHA:0057852bfaa89a56745cba8c7296529d2fc39830)
+2025-10-09T18:49:15.7446817Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2025-10-09T18:49:15.8648764Z Download action repository 'peaceiris/actions-gh-pages@v3' (SHA:373f7f263a76c20808c831209c920827a82a2847)
+2025-10-09T18:49:16.5625391Z Complete job name: build
+2025-10-09T18:49:16.6413057Z ##[group]Run actions/checkout@v4
+2025-10-09T18:49:16.6414261Z with:
+2025-10-09T18:49:16.6414929Z   repository: Geodev122/Mitche
+2025-10-09T18:49:16.6416029Z   token: ***
+2025-10-09T18:49:16.6416702Z   ssh-strict: true
+2025-10-09T18:49:16.6417409Z   ssh-user: git
+2025-10-09T18:49:16.6418117Z   persist-credentials: true
+2025-10-09T18:49:16.6418920Z   clean: true
+2025-10-09T18:49:16.6419632Z   sparse-checkout-cone-mode: true
+2025-10-09T18:49:16.6420513Z   fetch-depth: 1
+2025-10-09T18:49:16.6421195Z   fetch-tags: false
+2025-10-09T18:49:16.6422065Z   show-progress: true
+2025-10-09T18:49:16.6422775Z   lfs: false
+2025-10-09T18:49:16.6423420Z   submodules: false
+2025-10-09T18:49:16.6424143Z   set-safe-directory: true
+2025-10-09T18:49:16.6425143Z env:
+2025-10-09T18:49:16.6425793Z   NPM_CONFIG_UNSAFE_PERM: true
+2025-10-09T18:49:16.6426744Z   NODE_OPTIONS: --max-old-space-size=4096
+2025-10-09T18:49:16.6427699Z ##[endgroup]
+2025-10-09T18:49:16.7817456Z Syncing repository: Geodev122/Mitche
+2025-10-09T18:49:16.7820082Z ##[group]Getting Git version info
+2025-10-09T18:49:16.7821243Z Working directory is '/home/runner/work/Mitche/Mitche'
+2025-10-09T18:49:16.7823112Z [command]/usr/bin/git version
+2025-10-09T18:49:16.7857611Z git version 2.51.0
+2025-10-09T18:49:16.7883439Z ##[endgroup]
+2025-10-09T18:49:16.7904712Z Temporarily overriding HOME='/home/runner/work/_temp/444dd538-ca63-41fe-9e2e-dfa4b8285f41' before making global git config changes
+2025-10-09T18:49:16.7907822Z Adding repository directory to the temporary git global config as a safe directory
+2025-10-09T18:49:16.7911032Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Mitche/Mitche
+2025-10-09T18:49:16.7946939Z Deleting the contents of '/home/runner/work/Mitche/Mitche'
+2025-10-09T18:49:16.7950803Z ##[group]Initializing the repository
+2025-10-09T18:49:16.7956066Z [command]/usr/bin/git init /home/runner/work/Mitche/Mitche
+2025-10-09T18:49:16.8046904Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-10-09T18:49:16.8049248Z hint: is subject to change. To configure the initial branch name to use in all
+2025-10-09T18:49:16.8051842Z hint: of your new repositories, which will suppress this warning, call:
+2025-10-09T18:49:16.8054042Z hint:
+2025-10-09T18:49:16.8055464Z hint: 	git config --global init.defaultBranch <name>
+2025-10-09T18:49:16.8057297Z hint:
+2025-10-09T18:49:16.8058955Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-10-09T18:49:16.8062220Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-10-09T18:49:16.8064535Z hint:
+2025-10-09T18:49:16.8065653Z hint: 	git branch -m <name>
+2025-10-09T18:49:16.8066912Z hint:
+2025-10-09T18:49:16.8068656Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-10-09T18:49:16.8070948Z Initialized empty Git repository in /home/runner/work/Mitche/Mitche/.git/
+2025-10-09T18:49:16.8073980Z [command]/usr/bin/git remote add origin https://github.com/Geodev122/Mitche
+2025-10-09T18:49:16.8102148Z ##[endgroup]
+2025-10-09T18:49:16.8104305Z ##[group]Disabling automatic garbage collection
+2025-10-09T18:49:16.8106340Z [command]/usr/bin/git config --local gc.auto 0
+2025-10-09T18:49:16.8136185Z ##[endgroup]
+2025-10-09T18:49:16.8138200Z ##[group]Setting up auth
+2025-10-09T18:49:16.8143952Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-10-09T18:49:16.8176280Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-10-09T18:49:16.8478126Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-10-09T18:49:16.8508189Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-10-09T18:49:16.8724618Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-10-09T18:49:16.8762244Z ##[endgroup]
+2025-10-09T18:49:16.8764386Z ##[group]Fetching the repository
+2025-10-09T18:49:16.8774406Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +c7f74ed2e050dc8378f7c8cc51dc4ad3db631536:refs/remotes/origin/main
+2025-10-09T18:49:17.6572162Z From https://github.com/Geodev122/Mitche
+2025-10-09T18:49:17.6574545Z  * [new ref]         c7f74ed2e050dc8378f7c8cc51dc4ad3db631536 -> origin/main
+2025-10-09T18:49:17.6601924Z ##[endgroup]
+2025-10-09T18:49:17.6603603Z ##[group]Determining the checkout info
+2025-10-09T18:49:17.6605061Z ##[endgroup]
+2025-10-09T18:49:17.6608431Z [command]/usr/bin/git sparse-checkout disable
+2025-10-09T18:49:17.6646765Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-10-09T18:49:17.6675018Z ##[group]Checking out the ref
+2025-10-09T18:49:17.6677418Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2025-10-09T18:49:17.7117204Z Switched to a new branch 'main'
+2025-10-09T18:49:17.7120300Z branch 'main' set up to track 'origin/main'.
+2025-10-09T18:49:17.7129917Z ##[endgroup]
+2025-10-09T18:49:17.7163546Z [command]/usr/bin/git log -1 --format=%H
+2025-10-09T18:49:17.7185430Z c7f74ed2e050dc8378f7c8cc51dc4ad3db631536
+2025-10-09T18:49:17.7461527Z ##[group]Run actions/setup-node@v4
+2025-10-09T18:49:17.7462539Z with:
+2025-10-09T18:49:17.7463252Z   node-version: 20
+2025-10-09T18:49:17.7464017Z   cache: npm
+2025-10-09T18:49:17.7528834Z   always-auth: false
+2025-10-09T18:49:17.7529811Z   check-latest: false
+2025-10-09T18:49:17.7531034Z   token: ***
+2025-10-09T18:49:17.7532031Z env:
+2025-10-09T18:49:17.7532778Z   NPM_CONFIG_UNSAFE_PERM: true
+2025-10-09T18:49:17.7533806Z   NODE_OPTIONS: --max-old-space-size=4096
+2025-10-09T18:49:17.7535141Z ##[endgroup]
+2025-10-09T18:49:17.9574742Z Found in cache @ /opt/hostedtoolcache/node/20.19.5/x64
+2025-10-09T18:49:17.9580573Z ##[group]Environment details
+2025-10-09T18:49:20.8340950Z node: v20.19.5
+2025-10-09T18:49:20.8341667Z npm: 10.8.2
+2025-10-09T18:49:20.8341971Z yarn: 1.22.22
+2025-10-09T18:49:20.8343467Z ##[endgroup]
+2025-10-09T18:49:20.8366200Z [command]/opt/hostedtoolcache/node/20.19.5/x64/bin/npm config get cache
+2025-10-09T18:49:21.2130102Z /home/runner/.npm
+2025-10-09T18:49:21.4937173Z npm cache is not found
+2025-10-09T18:49:21.5991081Z ##[group]Run actions/cache@v4
+2025-10-09T18:49:21.5991627Z with:
+2025-10-09T18:49:21.5991928Z   path: ~/.npm
 ./.npm
 
-2025-10-09T17:33:51.6106513Z   key: Linux-node-9f64890caffc1b4f251fa6caeddab0e17e2d2796304ec7092282823a345d2e44
-2025-10-09T17:33:51.6107063Z   restore-keys: Linux-node-
+2025-10-09T18:49:21.5992299Z   key: Linux-node-88ea8f00837f1de973dff4ca8d43f5b77ea027fbf4c06da18248be94853e5099
+2025-10-09T18:49:21.5992719Z   restore-keys: Linux-node-
 
-2025-10-09T17:33:51.6107358Z   enableCrossOsArchive: false
-2025-10-09T17:33:51.6107969Z   fail-on-cache-miss: false
-2025-10-09T17:33:51.6108332Z   lookup-only: false
-2025-10-09T17:33:51.6108597Z   save-always: false
-2025-10-09T17:33:51.6108817Z env:
-2025-10-09T17:33:51.6109025Z   NPM_CONFIG_UNSAFE_PERM: true
-2025-10-09T17:33:51.6109316Z   NODE_OPTIONS: --max-old-space-size=4096
-2025-10-09T17:33:51.6109643Z ##[endgroup]
-2025-10-09T17:33:51.8431931Z Cache not found for input keys: Linux-node-9f64890caffc1b4f251fa6caeddab0e17e2d2796304ec7092282823a345d2e44, Linux-node-
-2025-10-09T17:33:51.8513599Z ##[group]Run node -v
-2025-10-09T17:33:51.8513905Z [36;1mnode -v[0m
-2025-10-09T17:33:51.8514110Z [36;1mnpm -v[0m
-2025-10-09T17:33:51.8625884Z shell: /usr/bin/bash -e {0}
-2025-10-09T17:33:51.8626224Z env:
-2025-10-09T17:33:51.8626478Z   NPM_CONFIG_UNSAFE_PERM: true
-2025-10-09T17:33:51.8626847Z   NODE_OPTIONS: --max-old-space-size=4096
-2025-10-09T17:33:51.8627205Z ##[endgroup]
-2025-10-09T17:33:51.8735018Z v20.19.5
-2025-10-09T17:33:51.9735888Z 10.8.2
-2025-10-09T17:33:51.9824780Z ##[group]Run set -o pipefail || true
-2025-10-09T17:33:51.9825213Z [36;1mset -o pipefail || true[0m
-2025-10-09T17:33:51.9825701Z [36;1m# Log the install attempt (omit optional deps to reduce install surface)[0m
-2025-10-09T17:33:51.9826427Z [36;1mnpm ci --no-audit --no-fund --prefer-offline --omit=optional 2>&1 | tee storybook-install.log || true[0m
-2025-10-09T17:33:51.9863135Z shell: /usr/bin/bash -e {0}
-2025-10-09T17:33:51.9863462Z env:
-2025-10-09T17:33:51.9863714Z   NPM_CONFIG_UNSAFE_PERM: true
-2025-10-09T17:33:51.9864071Z   NODE_OPTIONS: --max-old-space-size=4096
-2025-10-09T17:33:51.9864427Z ##[endgroup]
-2025-10-09T17:33:58.5671345Z npm warn ERESOLVE overriding peer dependency
-2025-10-09T17:33:58.5678145Z npm warn While resolving: @joshwooding/vite-plugin-react-docgen-typescript@0.3.0
-2025-10-09T17:33:58.5679500Z npm warn Found: vite@6.3.6
-2025-10-09T17:33:58.5682494Z npm warn node_modules/vite
-2025-10-09T17:33:58.5683424Z npm warn   dev vite@"^6.2.0" from the root project
-2025-10-09T17:33:58.5684494Z npm warn   1 more (@vitejs/plugin-react)
-2025-10-09T17:33:58.5685200Z npm warn
-2025-10-09T17:33:58.5685859Z npm warn Could not resolve dependency:
-2025-10-09T17:33:58.5687235Z npm warn peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @joshwooding/vite-plugin-react-docgen-typescript@0.3.0
-2025-10-09T17:33:58.5688931Z npm warn node_modules/@joshwooding/vite-plugin-react-docgen-typescript
-2025-10-09T17:33:58.5690716Z npm warn   @joshwooding/vite-plugin-react-docgen-typescript@"0.3.0" from @storybook/react-vite@7.6.20
-2025-10-09T17:33:58.5691977Z npm warn   node_modules/@storybook/react-vite
-2025-10-09T17:33:58.5692592Z npm warn
-2025-10-09T17:33:58.5693167Z npm warn Conflicting peer dependency: vite@5.4.20
-2025-10-09T17:33:58.5693876Z npm warn node_modules/vite
-2025-10-09T17:33:58.5694919Z npm warn   peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @joshwooding/vite-plugin-react-docgen-typescript@0.3.0
-2025-10-09T17:33:58.5696299Z npm warn   node_modules/@joshwooding/vite-plugin-react-docgen-typescript
-2025-10-09T17:33:58.5697786Z npm warn     @joshwooding/vite-plugin-react-docgen-typescript@"0.3.0" from @storybook/react-vite@7.6.20
-2025-10-09T17:33:58.5699201Z npm warn     node_modules/@storybook/react-vite
-2025-10-09T17:33:58.5741189Z npm warn ERESOLVE overriding peer dependency
-2025-10-09T17:33:58.5742129Z npm warn While resolving: @storybook/builder-vite@7.6.20
-2025-10-09T17:33:58.5742665Z npm warn Found: vite@6.3.6
-2025-10-09T17:33:58.5742960Z npm warn node_modules/vite
-2025-10-09T17:33:58.5743300Z npm warn   dev vite@"^6.2.0" from the root project
-2025-10-09T17:33:58.5743660Z npm warn   1 more (@vitejs/plugin-react)
-2025-10-09T17:33:58.5743931Z npm warn
-2025-10-09T17:33:58.5744188Z npm warn Could not resolve dependency:
-2025-10-09T17:33:58.5744632Z npm warn peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @storybook/builder-vite@7.6.20
-2025-10-09T17:33:58.5745065Z npm warn node_modules/@storybook/builder-vite
-2025-10-09T17:33:58.5745582Z npm warn   @storybook/builder-vite@"7.6.20" from @storybook/react-vite@7.6.20
-2025-10-09T17:33:58.5746011Z npm warn   node_modules/@storybook/react-vite
-2025-10-09T17:33:58.5746281Z npm warn
-2025-10-09T17:33:58.5746561Z npm warn Conflicting peer dependency: vite@5.4.20
-2025-10-09T17:33:58.5746862Z npm warn node_modules/vite
-2025-10-09T17:33:58.5747257Z npm warn   peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @storybook/builder-vite@7.6.20
-2025-10-09T17:33:58.5748018Z npm warn   node_modules/@storybook/builder-vite
-2025-10-09T17:33:58.5748489Z npm warn     @storybook/builder-vite@"7.6.20" from @storybook/react-vite@7.6.20
-2025-10-09T17:33:58.5748919Z npm warn     node_modules/@storybook/react-vite
-2025-10-09T17:33:58.5808028Z npm error code ERESOLVE
-2025-10-09T17:33:58.5808655Z npm error ERESOLVE could not resolve
-2025-10-09T17:33:58.5809592Z npm error
-2025-10-09T17:33:58.5810170Z npm error While resolving: @storybook/react-vite@7.6.20
-2025-10-09T17:33:58.5810570Z npm error Found: vite@6.3.6
-2025-10-09T17:33:58.5810854Z npm error node_modules/vite
-2025-10-09T17:33:58.5811484Z npm error   dev vite@"^6.2.0" from the root project
-2025-10-09T17:33:58.5812074Z npm error   peer vite@"^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0" from @vitejs/plugin-react@5.0.4
-2025-10-09T17:33:58.5812601Z npm error   node_modules/@vitejs/plugin-react
-2025-10-09T17:33:58.5813104Z npm error     dev @vitejs/plugin-react@"^5.0.0" from the root project
-2025-10-09T17:33:58.5813477Z npm error
-2025-10-09T17:33:58.5813764Z npm error Could not resolve dependency:
-2025-10-09T17:33:58.5814276Z npm error peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @storybook/react-vite@7.6.20
-2025-10-09T17:33:58.5814754Z npm error node_modules/@storybook/react-vite
-2025-10-09T17:33:58.5815244Z npm error   dev @storybook/react-vite@"^7.0.0" from the root project
-2025-10-09T17:33:58.5815609Z npm error
-2025-10-09T17:33:58.5815940Z npm error Conflicting peer dependency: vite@5.4.20
-2025-10-09T17:33:58.5816303Z npm error node_modules/vite
-2025-10-09T17:33:58.5816788Z npm error   peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @storybook/react-vite@7.6.20
-2025-10-09T17:33:58.5817226Z npm error   node_modules/@storybook/react-vite
-2025-10-09T17:33:58.5818039Z npm error     dev @storybook/react-vite@"^7.0.0" from the root project
-2025-10-09T17:33:58.5818358Z npm error
-2025-10-09T17:33:58.5818659Z npm error Fix the upstream dependency conflict, or retry
-2025-10-09T17:33:58.5819073Z npm error this command with --force or --legacy-peer-deps
-2025-10-09T17:33:58.5819577Z npm error to accept an incorrect (and potentially broken) dependency resolution.
-2025-10-09T17:33:58.5819932Z npm error
-2025-10-09T17:33:58.5820100Z npm error
-2025-10-09T17:33:58.5820427Z npm error For a full report see:
-2025-10-09T17:33:58.5820915Z npm error /home/runner/.npm/_logs/2025-10-09T17_33_52_060Z-eresolve-report.txt
-2025-10-09T17:33:58.5823777Z npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-10-09T17_33_52_060Z-debug-0.log
-2025-10-09T17:33:58.6094006Z ##[group]Run actions/upload-artifact@v4
-2025-10-09T17:33:58.6094347Z with:
-2025-10-09T17:33:58.6094573Z   name: storybook-install-log
-2025-10-09T17:33:58.6094869Z   path: storybook-install.log
-2025-10-09T17:33:58.6095311Z   if-no-files-found: warn
-2025-10-09T17:33:58.6095582Z   compression-level: 6
-2025-10-09T17:33:58.6095826Z   overwrite: false
-2025-10-09T17:33:58.6096078Z   include-hidden-files: false
-2025-10-09T17:33:58.6096347Z env:
-2025-10-09T17:33:58.6096561Z   NPM_CONFIG_UNSAFE_PERM: true
-2025-10-09T17:33:58.6096873Z   NODE_OPTIONS: --max-old-space-size=4096
-2025-10-09T17:33:58.6097191Z ##[endgroup]
-2025-10-09T17:33:58.8700757Z With the provided path, there will be 1 file uploaded
-2025-10-09T17:33:58.8705831Z Artifact name is valid!
-2025-10-09T17:33:58.8707165Z Root directory input is valid!
-2025-10-09T17:33:59.0461745Z Beginning upload of artifact content to blob storage
-2025-10-09T17:33:59.0960296Z Uploaded bytes 820
-2025-10-09T17:33:59.1096380Z Finished uploading artifact content to blob storage!
-2025-10-09T17:33:59.1100827Z SHA256 digest of uploaded artifact zip is 0ce263c2347fc52ac4a9e01b926a0baa8756739380edcda9a5279dc8f420851d
-2025-10-09T17:33:59.1102534Z Finalizing artifact upload
-2025-10-09T17:33:59.2124018Z Artifact storybook-install-log.zip successfully finalized. Artifact ID 4229207904
-2025-10-09T17:33:59.2127238Z Artifact storybook-install-log has been successfully uploaded! Final size is 820 bytes. Artifact ID is 4229207904
-2025-10-09T17:33:59.2135009Z Artifact download URL: https://github.com/Geodev122/Mitche/actions/runs/18384122499/artifacts/4229207904
-2025-10-09T17:33:59.2242219Z ##[group]Run # Final install: accept peer conflicts to allow Storybook packages to install
-2025-10-09T17:33:59.2243006Z [36;1m# Final install: accept peer conflicts to allow Storybook packages to install[0m
-2025-10-09T17:33:59.2243672Z [36;1mnpm ci --no-audit --no-fund --prefer-offline --legacy-peer-deps[0m
-2025-10-09T17:33:59.2276175Z shell: /usr/bin/bash -e {0}
-2025-10-09T17:33:59.2276478Z env:
-2025-10-09T17:33:59.2276733Z   NPM_CONFIG_UNSAFE_PERM: true
-2025-10-09T17:33:59.2277079Z   NODE_OPTIONS: --max-old-space-size=4096
-2025-10-09T17:33:59.2277435Z ##[endgroup]
-2025-10-09T17:34:02.8413151Z npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
-2025-10-09T17:34:04.2715582Z npm warn deprecated @storybook/expect@28.1.3-5: In Storybook 8, this package functionality has been integrated to a new package called @storybook/test, which uses Vitest APIs for an improved experience. When upgrading to Storybook 8 with 'npx storybook@latest upgrade', you will get prompted and will get an automigration for the new package. Please migrate when you can.
-2025-10-09T17:34:04.8452475Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
-2025-10-09T17:34:05.4663259Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
-2025-10-09T17:34:11.2690153Z 
-2025-10-09T17:34:11.2690714Z added 802 packages in 12s
-2025-10-09T17:34:11.3035250Z ##[group]Run npm run build-storybook
-2025-10-09T17:34:11.3035689Z [36;1mnpm run build-storybook[0m
-2025-10-09T17:34:11.3070400Z shell: /usr/bin/bash -e {0}
-2025-10-09T17:34:11.3070747Z env:
-2025-10-09T17:34:11.3071030Z   NPM_CONFIG_UNSAFE_PERM: true
-2025-10-09T17:34:11.3071425Z   NODE_OPTIONS: --max-old-space-size=4096
-2025-10-09T17:34:11.3071836Z ##[endgroup]
-2025-10-09T17:34:11.4366735Z 
-2025-10-09T17:34:11.4367969Z > mitche-hope-bearer-platform@0.0.0 build-storybook
-2025-10-09T17:34:11.4368765Z > storybook build
-2025-10-09T17:34:11.4369002Z 
-2025-10-09T17:34:11.4410178Z sh: 1: storybook: not found
-2025-10-09T17:34:11.4504596Z ##[error]Process completed with exit code 127.
-2025-10-09T17:34:11.4615690Z Post job cleanup.
-2025-10-09T17:34:11.5867717Z [command]/usr/bin/git version
-2025-10-09T17:34:11.5907063Z git version 2.51.0
-2025-10-09T17:34:11.5952296Z Temporarily overriding HOME='/home/runner/work/_temp/4593cd93-9da6-461a-b362-b8cfe1be57d3' before making global git config changes
-2025-10-09T17:34:11.5954133Z Adding repository directory to the temporary git global config as a safe directory
-2025-10-09T17:34:11.5967717Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Mitche/Mitche
-2025-10-09T17:34:11.6005845Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
-2025-10-09T17:34:11.6042153Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
-2025-10-09T17:34:11.6288846Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
-2025-10-09T17:34:11.6312529Z http.https://github.com/.extraheader
-2025-10-09T17:34:11.6326137Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
-2025-10-09T17:34:11.6360163Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
-2025-10-09T17:34:11.6706395Z Cleaning up orphan processes
+2025-10-09T18:49:21.5992959Z   enableCrossOsArchive: false
+2025-10-09T18:49:21.5993189Z   fail-on-cache-miss: false
+2025-10-09T18:49:21.5993429Z   lookup-only: false
+2025-10-09T18:49:21.5993640Z   save-always: false
+2025-10-09T18:49:21.5993817Z env:
+2025-10-09T18:49:21.5993993Z   NPM_CONFIG_UNSAFE_PERM: true
+2025-10-09T18:49:21.5994233Z   NODE_OPTIONS: --max-old-space-size=4096
+2025-10-09T18:49:21.5994506Z ##[endgroup]
+2025-10-09T18:49:21.9588929Z Cache not found for input keys: Linux-node-88ea8f00837f1de973dff4ca8d43f5b77ea027fbf4c06da18248be94853e5099, Linux-node-
+2025-10-09T18:49:21.9665343Z ##[group]Run node -v
+2025-10-09T18:49:21.9665655Z [36;1mnode -v[0m
+2025-10-09T18:49:21.9665849Z [36;1mnpm -v[0m
+2025-10-09T18:49:21.9798389Z shell: /usr/bin/bash -e {0}
+2025-10-09T18:49:21.9798645Z env:
+2025-10-09T18:49:21.9798829Z   NPM_CONFIG_UNSAFE_PERM: true
+2025-10-09T18:49:21.9799091Z   NODE_OPTIONS: --max-old-space-size=4096
+2025-10-09T18:49:21.9799344Z ##[endgroup]
+2025-10-09T18:49:21.9902054Z v20.19.5
+2025-10-09T18:49:22.0848401Z 10.8.2
+2025-10-09T18:49:22.0922553Z ##[group]Run set -o pipefail || true
+2025-10-09T18:49:22.0922894Z [36;1mset -o pipefail || true[0m
+2025-10-09T18:49:22.0923285Z [36;1m# Log the install attempt (omit optional deps to reduce install surface)[0m
+2025-10-09T18:49:22.0923838Z [36;1mnpm ci --no-audit --no-fund --prefer-offline --omit=optional 2>&1 | tee storybook-install.log || true[0m
+2025-10-09T18:49:22.0957433Z shell: /usr/bin/bash -e {0}
+2025-10-09T18:49:22.0957665Z env:
+2025-10-09T18:49:22.0957844Z   NPM_CONFIG_UNSAFE_PERM: true
+2025-10-09T18:49:22.0958101Z   NODE_OPTIONS: --max-old-space-size=4096
+2025-10-09T18:49:22.0958357Z ##[endgroup]
+2025-10-09T18:49:30.3592791Z npm warn ERESOLVE overriding peer dependency
+2025-10-09T18:49:30.3597327Z npm warn While resolving: @joshwooding/vite-plugin-react-docgen-typescript@0.3.0
+2025-10-09T18:49:30.3598147Z npm warn Found: vite@6.3.6
+2025-10-09T18:49:30.3598624Z npm warn node_modules/vite
+2025-10-09T18:49:30.3599288Z npm warn   dev vite@"^6.2.0" from the root project
+2025-10-09T18:49:30.3599930Z npm warn   1 more (@vitejs/plugin-react)
+2025-10-09T18:49:30.3600430Z npm warn
+2025-10-09T18:49:30.3600902Z npm warn Could not resolve dependency:
+2025-10-09T18:49:30.3602113Z npm warn peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @joshwooding/vite-plugin-react-docgen-typescript@0.3.0
+2025-10-09T18:49:30.3603223Z npm warn node_modules/@joshwooding/vite-plugin-react-docgen-typescript
+2025-10-09T18:49:30.3604515Z npm warn   @joshwooding/vite-plugin-react-docgen-typescript@"0.3.0" from @storybook/react-vite@7.6.20
+2025-10-09T18:49:30.3605815Z npm warn   node_modules/@storybook/react-vite
+2025-10-09T18:49:30.3606309Z npm warn
+2025-10-09T18:49:30.3606786Z npm warn Conflicting peer dependency: vite@5.4.20
+2025-10-09T18:49:30.3607380Z npm warn node_modules/vite
+2025-10-09T18:49:30.3608269Z npm warn   peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @joshwooding/vite-plugin-react-docgen-typescript@0.3.0
+2025-10-09T18:49:30.3609387Z npm warn   node_modules/@joshwooding/vite-plugin-react-docgen-typescript
+2025-10-09T18:49:30.3610593Z npm warn     @joshwooding/vite-plugin-react-docgen-typescript@"0.3.0" from @storybook/react-vite@7.6.20
+2025-10-09T18:49:30.3612130Z npm warn     node_modules/@storybook/react-vite
+2025-10-09T18:49:30.3661780Z npm warn ERESOLVE overriding peer dependency
+2025-10-09T18:49:30.3662692Z npm warn While resolving: @storybook/builder-vite@7.6.20
+2025-10-09T18:49:30.3663261Z npm warn Found: vite@6.3.6
+2025-10-09T18:49:30.3663574Z npm warn node_modules/vite
+2025-10-09T18:49:30.3663932Z npm warn   dev vite@"^6.2.0" from the root project
+2025-10-09T18:49:30.3664297Z npm warn   1 more (@vitejs/plugin-react)
+2025-10-09T18:49:30.3664555Z npm warn
+2025-10-09T18:49:30.3664926Z npm warn Could not resolve dependency:
+2025-10-09T18:49:30.3665695Z npm warn peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @storybook/builder-vite@7.6.20
+2025-10-09T18:49:30.3666450Z npm warn node_modules/@storybook/builder-vite
+2025-10-09T18:49:30.3667374Z npm warn   @storybook/builder-vite@"7.6.20" from @storybook/react-vite@7.6.20
+2025-10-09T18:49:30.3667877Z npm warn   node_modules/@storybook/react-vite
+2025-10-09T18:49:30.3668152Z npm warn
+2025-10-09T18:49:30.3668421Z npm warn Conflicting peer dependency: vite@5.4.20
+2025-10-09T18:49:30.3668724Z npm warn node_modules/vite
+2025-10-09T18:49:30.3669128Z npm warn   peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @storybook/builder-vite@7.6.20
+2025-10-09T18:49:30.3669544Z npm warn   node_modules/@storybook/builder-vite
+2025-10-09T18:49:30.3670002Z npm warn     @storybook/builder-vite@"7.6.20" from @storybook/react-vite@7.6.20
+2025-10-09T18:49:30.3670429Z npm warn     node_modules/@storybook/react-vite
+2025-10-09T18:49:30.3748854Z npm error code ERESOLVE
+2025-10-09T18:49:30.3749623Z npm error ERESOLVE could not resolve
+2025-10-09T18:49:30.3750042Z npm error
+2025-10-09T18:49:30.3751742Z npm error While resolving: @storybook/react-vite@7.6.20
+2025-10-09T18:49:30.3752340Z npm error Found: vite@6.3.6
+2025-10-09T18:49:30.3752755Z npm error node_modules/vite
+2025-10-09T18:49:30.3753539Z npm error   dev vite@"^6.2.0" from the root project
+2025-10-09T18:49:30.3754375Z npm error   peer vite@"^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0" from @vitejs/plugin-react@5.0.4
+2025-10-09T18:49:30.3755113Z npm error   node_modules/@vitejs/plugin-react
+2025-10-09T18:49:30.3755830Z npm error     dev @vitejs/plugin-react@"^5.0.0" from the root project
+2025-10-09T18:49:30.3756463Z npm error
+2025-10-09T18:49:30.3756867Z npm error Could not resolve dependency:
+2025-10-09T18:49:30.3757596Z npm error peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @storybook/react-vite@7.6.20
+2025-10-09T18:49:30.3758235Z npm error node_modules/@storybook/react-vite
+2025-10-09T18:49:30.3758696Z npm error   dev @storybook/react-vite@"^7.0.0" from the root project
+2025-10-09T18:49:30.3759051Z npm error
+2025-10-09T18:49:30.3759363Z npm error Conflicting peer dependency: vite@5.4.20
+2025-10-09T18:49:30.3759717Z npm error node_modules/vite
+2025-10-09T18:49:30.3760173Z npm error   peer vite@"^3.0.0 || ^4.0.0 || ^5.0.0" from @storybook/react-vite@7.6.20
+2025-10-09T18:49:30.3760628Z npm error   node_modules/@storybook/react-vite
+2025-10-09T18:49:30.3761095Z npm error     dev @storybook/react-vite@"^7.0.0" from the root project
+2025-10-09T18:49:30.3761687Z npm error
+2025-10-09T18:49:30.3762016Z npm error Fix the upstream dependency conflict, or retry
+2025-10-09T18:49:30.3762469Z npm error this command with --force or --legacy-peer-deps
+2025-10-09T18:49:30.3762971Z npm error to accept an incorrect (and potentially broken) dependency resolution.
+2025-10-09T18:49:30.3763333Z npm error
+2025-10-09T18:49:30.3763505Z npm error
+2025-10-09T18:49:30.3763821Z npm error For a full report see:
+2025-10-09T18:49:30.3764284Z npm error /home/runner/.npm/_logs/2025-10-09T18_49_22_164Z-eresolve-report.txt
+2025-10-09T18:49:30.3769824Z npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-10-09T18_49_22_164Z-debug-0.log
+2025-10-09T18:49:30.3935684Z ##[group]Run actions/upload-artifact@v4
+2025-10-09T18:49:30.3935960Z with:
+2025-10-09T18:49:30.3936141Z   name: storybook-install-log
+2025-10-09T18:49:30.3936369Z   path: storybook-install.log
+2025-10-09T18:49:30.3936848Z   if-no-files-found: warn
+2025-10-09T18:49:30.3937057Z   compression-level: 6
+2025-10-09T18:49:30.3937246Z   overwrite: false
+2025-10-09T18:49:30.3937439Z   include-hidden-files: false
+2025-10-09T18:49:30.3937642Z env:
+2025-10-09T18:49:30.3937815Z   NPM_CONFIG_UNSAFE_PERM: true
+2025-10-09T18:49:30.3938056Z   NODE_OPTIONS: --max-old-space-size=4096
+2025-10-09T18:49:30.3938297Z ##[endgroup]
+2025-10-09T18:49:30.6376093Z With the provided path, there will be 1 file uploaded
+2025-10-09T18:49:30.6381791Z Artifact name is valid!
+2025-10-09T18:49:30.6383172Z Root directory input is valid!
+2025-10-09T18:49:30.9097935Z Beginning upload of artifact content to blob storage
+2025-10-09T18:49:31.1349860Z Uploaded bytes 821
+2025-10-09T18:49:31.1938033Z Finished uploading artifact content to blob storage!
+2025-10-09T18:49:31.1941865Z SHA256 digest of uploaded artifact zip is 5a04f0edf64433b5de8c9854fa4f91f0ecf381018622625975b43da696240853
+2025-10-09T18:49:31.1943538Z Finalizing artifact upload
+2025-10-09T18:49:31.3730876Z Artifact storybook-install-log.zip successfully finalized. Artifact ID 4229936025
+2025-10-09T18:49:31.3733159Z Artifact storybook-install-log has been successfully uploaded! Final size is 821 bytes. Artifact ID is 4229936025
+2025-10-09T18:49:31.3740606Z Artifact download URL: https://github.com/Geodev122/Mitche/actions/runs/18385956592/artifacts/4229936025
+2025-10-09T18:49:31.3829756Z ##[group]Run # Final install: accept peer conflicts to allow Storybook packages to install
+2025-10-09T18:49:31.3830323Z [36;1m# Final install: accept peer conflicts to allow Storybook packages to install[0m
+2025-10-09T18:49:31.3830802Z [36;1mnpm ci --no-audit --no-fund --prefer-offline --legacy-peer-deps[0m
+2025-10-09T18:49:31.3863460Z shell: /usr/bin/bash -e {0}
+2025-10-09T18:49:31.3863697Z env:
+2025-10-09T18:49:31.3863878Z   NPM_CONFIG_UNSAFE_PERM: true
+2025-10-09T18:49:31.3864140Z   NODE_OPTIONS: --max-old-space-size=4096
+2025-10-09T18:49:31.3864403Z ##[endgroup]
+2025-10-09T18:49:34.6930857Z npm warn deprecated rimraf@2.7.1: Rimraf versions prior to v4 are no longer supported
+2025-10-09T18:49:35.6622777Z npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2025-10-09T18:49:37.4238269Z npm warn deprecated @storybook/expect@28.1.3-5: In Storybook 8, this package functionality has been integrated to a new package called @storybook/test, which uses Vitest APIs for an improved experience. When upgrading to Storybook 8 with 'npx storybook@latest upgrade', you will get prompted and will get an automigration for the new package. Please migrate when you can.
+2025-10-09T18:49:39.1266984Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-10-09T18:49:39.1811721Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-10-09T18:49:39.1813232Z npm warn deprecated rimraf@2.6.3: Rimraf versions prior to v4 are no longer supported
+2025-10-09T18:49:39.2486581Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-10-09T18:49:39.6478470Z npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+2025-10-09T18:49:39.6536613Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-10-09T18:49:40.0733333Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-10-09T18:49:44.6906486Z 
+2025-10-09T18:49:44.6907057Z added 1161 packages in 13s
+2025-10-09T18:49:44.7311091Z ##[group]Run npx storybook build --loglevel=warn
+2025-10-09T18:49:44.7311742Z [36;1mnpx storybook build --loglevel=warn[0m
+2025-10-09T18:49:44.7345124Z shell: /usr/bin/bash -e {0}
+2025-10-09T18:49:44.7345357Z env:
+2025-10-09T18:49:44.7345567Z   NPM_CONFIG_UNSAFE_PERM: true
+2025-10-09T18:49:44.7345834Z   NODE_OPTIONS: --max-old-space-size=4096
+2025-10-09T18:49:44.7346090Z ##[endgroup]
+2025-10-09T18:49:46.3682274Z @storybook/cli v7.6.20
+2025-10-09T18:49:46.3682788Z 
+2025-10-09T18:49:46.3722761Z info => Cleaning outputDir: /storybook-static
+2025-10-09T18:49:46.4850709Z info => Loading presets
+2025-10-09T18:49:46.5938950Z info => Building manager..
+2025-10-09T18:49:46.7622814Z info => Manager built (168 ms)
+2025-10-09T18:49:46.7664511Z info => Building preview..
+2025-10-09T18:49:46.7732048Z info => Copying static files: /home/runner/work/Mitche/Mitche/node_modules/@storybook/manager/static at /home/runner/work/Mitche/Mitche/storybook-static/sb-common-assets
+2025-10-09T18:49:47.1710607Z [36mvite v6.3.6 [32mbuilding for production...[36m[39m
+2025-10-09T18:49:49.4468474Z 
+2025-10-09T18:49:49.4469907Z ./sb-common-assets/fonts.css doesn't exist at build time, it will remain unchanged to be resolved at runtime
+2025-10-09T18:49:49.4545093Z transforming...
+2025-10-09T18:50:00.2784053Z [32m✓[39m 2118 modules transformed.
+2025-10-09T18:50:00.7336871Z rendering chunks...
+2025-10-09T18:50:00.8316623Z [33m[plugin vite:reporter] 
+2025-10-09T18:50:00.8344723Z (!) /home/runner/work/Mitche/Mitche/utils/logger.ts is dynamically imported by /home/runner/work/Mitche/Mitche/services/firebase.ts, /home/runner/work/Mitche/Mitche/services/firebase.ts, /home/runner/work/Mitche/Mitche/services/firebase.ts but also statically imported by /home/runner/work/Mitche/Mitche/services/firebase.ts, dynamic import will not move module into another chunk.
+2025-10-09T18:50:00.8347521Z [39m
+2025-10-09T18:50:01.0321244Z computing gzip size...
+2025-10-09T18:50:01.0608231Z [2mstorybook-static/[22m[32miframe.html                                     [39m[1m[2m 12.78 kB[22m[1m[22m[2m │ gzip:   3.59 kB[22m
+2025-10-09T18:50:01.0609846Z [2mstorybook-static/[22m[2massets/[22m[35mpreview-C7rAyTxa.css                     [39m[1m[2m  0.92 kB[22m[1m[22m[2m │ gzip:   0.54 kB[22m
+2025-10-09T18:50:01.0611848Z [2mstorybook-static/[22m[2massets/[22m[36mWithTooltip-V3YHNWJZ-BbL35KsC.js         [39m[1m[2m  0.39 kB[22m[1m[22m[2m │ gzip:   0.26 kB[22m
+2025-10-09T18:50:01.0613768Z [2mstorybook-static/[22m[2massets/[22m[36msyntaxhighlighter-MJWPISIS-DKIhZw4z.js   [39m[1m[2m  0.40 kB[22m[1m[22m[2m │ gzip:   0.28 kB[22m
+2025-10-09T18:50:01.0615556Z [2mstorybook-static/[22m[2massets/[22m[36mindex-DbGPmmea.js                        [39m[1m[2m  0.47 kB[22m[1m[22m[2m │ gzip:   0.32 kB[22m
+2025-10-09T18:50:01.0617212Z [2mstorybook-static/[22m[2massets/[22m[36mCard-BhywAxIU.js                         [39m[1m[2m  0.51 kB[22m[1m[22m[2m │ gzip:   0.33 kB[22m
+2025-10-09T18:50:01.0618843Z [2mstorybook-static/[22m[2massets/[22m[36mindex-CJ_LmFaV.js                        [39m[1m[2m  0.52 kB[22m[1m[22m[2m │ gzip:   0.37 kB[22m
+2025-10-09T18:50:01.0620451Z [2mstorybook-static/[22m[2massets/[22m[36mButton-D6I_o3D3.js                       [39m[1m[2m  0.57 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+2025-10-09T18:50:01.0622270Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-DPCMOe5H.js                      [39m[1m[2m  0.58 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+2025-10-09T18:50:01.0623968Z [2mstorybook-static/[22m[2massets/[22m[36mCard.stories-tyTgudWu.js                 [39m[1m[2m  0.66 kB[22m[1m[22m[2m │ gzip:   0.40 kB[22m
+2025-10-09T18:50:01.0625658Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-BKARdKxT.js                      [39m[1m[2m  0.72 kB[22m[1m[22m[2m │ gzip:   0.48 kB[22m
+2025-10-09T18:50:01.0627326Z [2mstorybook-static/[22m[2massets/[22m[36m_commonjsHelpers-D6-XlEtG.js             [39m[1m[2m  0.73 kB[22m[1m[22m[2m │ gzip:   0.39 kB[22m
+2025-10-09T18:50:01.0628874Z [2mstorybook-static/[22m[2massets/[22m[36mindex-DrFu-skq.js                        [39m[1m[2m  0.77 kB[22m[1m[22m[2m │ gzip:   0.47 kB[22m
+2025-10-09T18:50:01.0629867Z [2mstorybook-static/[22m[2massets/[22m[36mButton.stories-DkCBOMpj.js               [39m[1m[2m  0.81 kB[22m[1m[22m[2m │ gzip:   0.39 kB[22m
+2025-10-09T18:50:01.0631885Z [2mstorybook-static/[22m[2massets/[22m[36mstorage-helper-B3V6PAcm.js               [39m[1m[2m  0.85 kB[22m[1m[22m[2m │ gzip:   0.54 kB[22m
+2025-10-09T18:50:01.0633639Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-Cv3rAi2i.js                      [39m[1m[2m  0.86 kB[22m[1m[22m[2m │ gzip:   0.55 kB[22m
+2025-10-09T18:50:01.0634859Z [2mstorybook-static/[22m[2massets/[22m[36mConstellationFlower.stories-DuFX_If7.js  [39m[1m[2m  0.97 kB[22m[1m[22m[2m │ gzip:   0.49 kB[22m
+2025-10-09T18:50:01.0635458Z [33m
+2025-10-09T18:50:01.0635835Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2025-10-09T18:50:01.0636292Z - Using dynamic import() to code-split the application
+2025-10-09T18:50:01.0637241Z - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+2025-10-09T18:50:01.0638099Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2025-10-09T18:50:01.0639139Z [2mstorybook-static/[22m[2massets/[22m[36mjsx-runtime-BTJTZTIL.js                  [39m[1m[2m  1.00 kB[22m[1m[22m[2m │ gzip:   0.62 kB[22m
+2025-10-09T18:50:01.0640147Z [2mstorybook-static/[22m[2massets/[22m[36mentry-preview-atjynJc0.js                [39m[1m[2m  1.15 kB[22m[1m[22m[2m │ gzip:   0.67 kB[22m
+2025-10-09T18:50:01.0641132Z [2mstorybook-static/[22m[2massets/[22m[36mindex.esm-DUun7Jrz.js                    [39m[1m[2m  1.26 kB[22m[1m[22m[2m │ gzip:   0.62 kB[22m
+2025-10-09T18:50:01.0642321Z [2mstorybook-static/[22m[2massets/[22m[36mShowcase.stories-CiK51MzL.js             [39m[1m[2m  1.68 kB[22m[1m[22m[2m │ gzip:   0.81 kB[22m
+2025-10-09T18:50:01.0643304Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-BcxrGG1y.js                      [39m[1m[2m  3.19 kB[22m[1m[22m[2m │ gzip:   1.37 kB[22m
+2025-10-09T18:50:01.0644299Z [2mstorybook-static/[22m[2massets/[22m[36mConstellationFlower-3S9gjjOg.js          [39m[1m[2m  3.30 kB[22m[1m[22m[2m │ gzip:   1.55 kB[22m
+2025-10-09T18:50:01.0645283Z [2mstorybook-static/[22m[2massets/[22m[36miframe-DKRQQh4j.js                       [39m[1m[2m  5.04 kB[22m[1m[22m[2m │ gzip:   2.00 kB[22m
+2025-10-09T18:50:01.0646435Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-FHoZfaOb.js                      [39m[1m[2m  5.17 kB[22m[1m[22m[2m │ gzip:   2.37 kB[22m
+2025-10-09T18:50:01.0647388Z [2mstorybook-static/[22m[2massets/[22m[36mindex-ChsGqxH_.js                        [39m[1m[2m  6.78 kB[22m[1m[22m[2m │ gzip:   2.71 kB[22m
+2025-10-09T18:50:01.0648666Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-BAz7FMXc.js                      [39m[1m[2m  7.62 kB[22m[1m[22m[2m │ gzip:   1.56 kB[22m
+2025-10-09T18:50:01.0650338Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-BJKiUloN.js                      [39m[1m[2m  8.11 kB[22m[1m[22m[2m │ gzip:   3.09 kB[22m
+2025-10-09T18:50:01.0652218Z [2mstorybook-static/[22m[2massets/[22m[36mfirebase-enhanced-DlSyj2fS.js            [39m[1m[2m  8.67 kB[22m[1m[22m[2m │ gzip:   2.54 kB[22m
+2025-10-09T18:50:01.0653283Z [2mstorybook-static/[22m[2massets/[22m[36mindex.esm-CYoZbgto.js                    [39m[1m[2m 12.72 kB[22m[1m[22m[2m │ gzip:   3.82 kB[22m
+2025-10-09T18:50:01.0654291Z [2mstorybook-static/[22m[2massets/[22m[36mColor-6VNJS4EI-71--N98D.js               [39m[1m[2m 31.51 kB[22m[1m[22m[2m │ gzip:  12.02 kB[22m
+2025-10-09T18:50:01.0655441Z [2mstorybook-static/[22m[2massets/[22m[36mindex.esm-B6eNFOH0.js                    [39m[1m[2m 47.43 kB[22m[1m[22m[2m │ gzip:  11.88 kB[22m
+2025-10-09T18:50:01.0656441Z [2mstorybook-static/[22m[2massets/[22m[36mindex.esm-CQQ1z5bL.js                    [39m[1m[2m 51.22 kB[22m[1m[22m[2m │ gzip:  12.21 kB[22m
+2025-10-09T18:50:01.0657423Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-JHn1zflh.js                      [39m[1m[2m 72.15 kB[22m[1m[22m[2m │ gzip:  24.50 kB[22m
+2025-10-09T18:50:01.0658528Z [2mstorybook-static/[22m[2massets/[22m[36m_getPrototype-CDZsfJxQ.js                [39m[1m[2m 83.56 kB[22m[1m[22m[2m │ gzip:  24.59 kB[22m
+2025-10-09T18:50:01.0659507Z [2mstorybook-static/[22m[2massets/[22m[36mreact-18-C0AwzDYw.js                     [39m[1m[2m135.37 kB[22m[1m[22m[2m │ gzip:  43.63 kB[22m
+2025-10-09T18:50:01.0660467Z [2mstorybook-static/[22m[2massets/[22m[36mfirebase-CYVISPkl.js                     [39m[1m[2m137.60 kB[22m[1m[22m[2m │ gzip:  28.39 kB[22m
+2025-10-09T18:50:01.0661762Z [2mstorybook-static/[22m[2massets/[22m[36mentry-preview-docs-DYUfYUZu.js           [39m[1m[2m214.88 kB[22m[1m[22m[2m │ gzip:  66.61 kB[22m
+2025-10-09T18:50:01.0662820Z [2mstorybook-static/[22m[2massets/[22m[36mLayout.stories-C-YYUlYF.js               [39m[1m[2m216.46 kB[22m[1m[22m[2m │ gzip:  66.98 kB[22m
+2025-10-09T18:50:01.0663801Z [2mstorybook-static/[22m[2massets/[22m[36mindex.esm-BqhvDsTW.js                    [39m[1m[2m447.61 kB[22m[1m[22m[2m │ gzip: 111.22 kB[22m
+2025-10-09T18:50:01.0664822Z [2mstorybook-static/[22m[2massets/[22m[36mDocsRenderer-NNNQARDV-i239LsRK.js        [39m[1m[33m549.85 kB[39m[22m[2m │ gzip: 178.13 kB[22m
+2025-10-09T18:50:01.0665861Z [2mstorybook-static/[22m[2massets/[22m[36mformatter-SWP5E3XI-BzFTYAvH.js           [39m[1m[33m605.45 kB[39m[22m[2m │ gzip: 186.22 kB[22m
+2025-10-09T18:50:01.0666447Z [32m✓ built in 13.68s[39m
+2025-10-09T18:50:01.0666717Z info => Preview built (14 s)
+2025-10-09T18:50:01.0667149Z info => Output directory: /home/runner/work/Mitche/Mitche/storybook-static
+2025-10-09T18:50:01.0667440Z 
+2025-10-09T18:50:01.0667756Z attention => Storybook now collects completely anonymous telemetry regarding usage.
+2025-10-09T18:50:01.0668340Z This information is used to shape Storybook's roadmap and prioritize features.
+2025-10-09T18:50:01.0669090Z You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+2025-10-09T18:50:01.0669663Z https://storybook.js.org/telemetry
+2025-10-09T18:50:01.0669844Z 
+2025-10-09T18:50:01.9035207Z ##[group]Run actions/upload-artifact@v4
+2025-10-09T18:50:01.9035699Z with:
+2025-10-09T18:50:01.9036011Z   name: storybook-static
+2025-10-09T18:50:01.9036396Z   path: storybook-static
+2025-10-09T18:50:01.9036767Z   if-no-files-found: warn
+2025-10-09T18:50:01.9037139Z   compression-level: 6
+2025-10-09T18:50:01.9037497Z   overwrite: false
+2025-10-09T18:50:01.9037838Z   include-hidden-files: false
+2025-10-09T18:50:01.9038277Z env:
+2025-10-09T18:50:01.9038603Z   NPM_CONFIG_UNSAFE_PERM: true
+2025-10-09T18:50:01.9039041Z   NODE_OPTIONS: --max-old-space-size=4096
+2025-10-09T18:50:01.9039490Z ##[endgroup]
+2025-10-09T18:50:02.1625754Z With the provided path, there will be 102 files uploaded
+2025-10-09T18:50:02.1630291Z Artifact name is valid!
+2025-10-09T18:50:02.1631701Z Root directory input is valid!
+2025-10-09T18:50:02.4122096Z Beginning upload of artifact content to blob storage
+2025-10-09T18:50:03.4759445Z Uploaded bytes 3672085
+2025-10-09T18:50:03.5392326Z Finished uploading artifact content to blob storage!
+2025-10-09T18:50:03.5396093Z SHA256 digest of uploaded artifact zip is a1ea52280c0d967f7c7033787bf0c98e28cd16f976fdd3f60f775296f2a70bc7
+2025-10-09T18:50:03.5397754Z Finalizing artifact upload
+2025-10-09T18:50:03.7098032Z Artifact storybook-static.zip successfully finalized. Artifact ID 4229941085
+2025-10-09T18:50:03.7099615Z Artifact storybook-static has been successfully uploaded! Final size is 3672085 bytes. Artifact ID is 4229941085
+2025-10-09T18:50:03.7107543Z Artifact download URL: https://github.com/Geodev122/Mitche/actions/runs/18385956592/artifacts/4229941085
+2025-10-09T18:50:03.7249296Z ##[group]Run peaceiris/actions-gh-pages@v3
+2025-10-09T18:50:03.7249577Z with:
+2025-10-09T18:50:03.7250166Z   github_token: ***
+2025-10-09T18:50:03.7250403Z   publish_dir: ./storybook-static
+2025-10-09T18:50:03.7250661Z   publish_branch: gh-pages
+2025-10-09T18:50:03.7250896Z   allow_empty_commit: false
+2025-10-09T18:50:03.7251545Z   keep_files: false
+2025-10-09T18:50:03.7251765Z   force_orphan: false
+2025-10-09T18:50:03.7251967Z   enable_jekyll: false
+2025-10-09T18:50:03.7252198Z   disable_nojekyll: false
+2025-10-09T18:50:03.7252413Z   exclude_assets: .github
+2025-10-09T18:50:03.7252613Z env:
+2025-10-09T18:50:03.7252796Z   NPM_CONFIG_UNSAFE_PERM: true
+2025-10-09T18:50:03.7253046Z   NODE_OPTIONS: --max-old-space-size=4096
+2025-10-09T18:50:03.7253314Z ##[endgroup]
+2025-10-09T18:50:03.8067687Z [INFO] Usage https://github.com/peaceiris/actions-gh-pages#readme
+2025-10-09T18:50:03.8073088Z ##[group]Dump inputs
+2025-10-09T18:50:03.8073608Z [INFO] GithubToken: true
+2025-10-09T18:50:03.8074210Z [INFO] PublishBranch: gh-pages
+2025-10-09T18:50:03.8074806Z [INFO] PublishDir: ./storybook-static
+2025-10-09T18:50:03.8075336Z [INFO] DestinationDir: 
+2025-10-09T18:50:03.8075815Z [INFO] ExternalRepository: 
+2025-10-09T18:50:03.8076343Z [INFO] AllowEmptyCommit: false
+2025-10-09T18:50:03.8076838Z [INFO] KeepFiles: false
+2025-10-09T18:50:03.8077298Z [INFO] ForceOrphan: false
+2025-10-09T18:50:03.8077734Z [INFO] UserName: 
+2025-10-09T18:50:03.8078128Z [INFO] UserEmail: 
+2025-10-09T18:50:03.8078541Z [INFO] CommitMessage: 
+2025-10-09T18:50:03.8078988Z [INFO] FullCommitMessage: 
+2025-10-09T18:50:03.8079401Z [INFO] TagName: 
+2025-10-09T18:50:03.8079795Z [INFO] TagMessage: 
+2025-10-09T18:50:03.8080338Z [INFO] EnableJekyll (DisableNoJekyll): false
+2025-10-09T18:50:03.8080835Z [INFO] CNAME: 
+2025-10-09T18:50:03.8081244Z [INFO] ExcludeAssets .github
+2025-10-09T18:50:03.8081740Z 
+2025-10-09T18:50:03.8082186Z ##[endgroup]
+2025-10-09T18:50:03.8082853Z ##[group]Setup auth token
+2025-10-09T18:50:03.8083327Z [INFO] setup GITHUB_TOKEN
+2025-10-09T18:50:03.8084667Z ##[endgroup]
+2025-10-09T18:50:03.8085277Z ##[group]Prepare publishing assets
+2025-10-09T18:50:03.8086053Z [INFO] ForceOrphan: false
+2025-10-09T18:50:03.8133384Z [command]/usr/bin/git clone --depth=1 --single-branch --branch gh-pages ***github.com/Geodev122/Mitche.git /home/runner/actions_github_pages_1760035803807
+2025-10-09T18:50:03.8168166Z Cloning into '/home/runner/actions_github_pages_1760035803807'...
+2025-10-09T18:50:04.2203914Z fatal: Remote branch gh-pages not found in upstream origin
+2025-10-09T18:50:04.2245703Z [INFO] first deployment, create new branch gh-pages
+2025-10-09T18:50:04.2246361Z [INFO] The process '/usr/bin/git' failed with exit code 128
+2025-10-09T18:50:04.2252079Z [INFO] chdir /home/runner/actions_github_pages_1760035803807
+2025-10-09T18:50:04.2263674Z [command]/usr/bin/git init
+2025-10-09T18:50:04.2301521Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-10-09T18:50:04.2302338Z hint: is subject to change. To configure the initial branch name to use in all
+2025-10-09T18:50:04.2303343Z hint: of your new repositories, which will suppress this warning, call:
+2025-10-09T18:50:04.2303980Z hint:
+2025-10-09T18:50:04.2304546Z hint: 	git config --global init.defaultBranch <name>
+2025-10-09T18:50:04.2305000Z hint:
+2025-10-09T18:50:04.2305665Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-10-09T18:50:04.2306684Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-10-09T18:50:04.2307351Z hint:
+2025-10-09T18:50:04.2307743Z hint: 	git branch -m <name>
+2025-10-09T18:50:04.2308164Z hint:
+2025-10-09T18:50:04.2308894Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-10-09T18:50:04.2310042Z Initialized empty Git repository in /home/runner/actions_github_pages_1760035803807/.git/
+2025-10-09T18:50:04.2321072Z [command]/usr/bin/git checkout --orphan gh-pages
+2025-10-09T18:50:04.2343034Z Switched to a new branch 'gh-pages'
+2025-10-09T18:50:04.2349155Z [INFO] prepare publishing assets
+2025-10-09T18:50:04.2350089Z [INFO] copy /home/runner/work/Mitche/Mitche/storybook-static to /home/runner/actions_github_pages_1760035803807
+2025-10-09T18:50:04.2653227Z cp: no such file or directory: /home/runner/work/Mitche/Mitche/storybook-static/.*
+2025-10-09T18:50:04.2655641Z [INFO] delete excluded assets
+2025-10-09T18:50:04.2683833Z rm: no paths given
+2025-10-09T18:50:04.2685853Z [INFO] Created /home/runner/actions_github_pages_1760035803807/.nojekyll
+2025-10-09T18:50:04.2687588Z ##[endgroup]
+2025-10-09T18:50:04.2688148Z ##[group]Setup Git config
+2025-10-09T18:50:04.2701106Z [command]/usr/bin/git remote rm origin
+2025-10-09T18:50:04.2724205Z error: No such remote: 'origin'
+2025-10-09T18:50:04.2729461Z [INFO] The process '/usr/bin/git' failed with exit code 2
+2025-10-09T18:50:04.2746489Z [command]/usr/bin/git remote add origin ***github.com/Geodev122/Mitche.git
+2025-10-09T18:50:04.2792929Z [command]/usr/bin/git add --all
+2025-10-09T18:50:04.4575706Z [command]/usr/bin/git config user.name Geodev122
+2025-10-09T18:50:04.4622779Z [command]/usr/bin/git config user.email Geodev122@users.noreply.github.com
+2025-10-09T18:50:04.4652580Z ##[endgroup]
+2025-10-09T18:50:04.4653168Z ##[group]Create a commit
+2025-10-09T18:50:04.4668397Z [command]/usr/bin/git commit -m deploy: c7f74ed2e050dc8378f7c8cc51dc4ad3db631536
+2025-10-09T18:50:04.5057545Z [gh-pages (root-commit) 1b9d2ac] deploy: c7f74ed2e050dc8378f7c8cc51dc4ad3db631536
+2025-10-09T18:50:04.5058335Z  103 files changed, 7551 insertions(+)
+2025-10-09T18:50:04.5058787Z  create mode 100644 .nojekyll
+2025-10-09T18:50:04.5059147Z  create mode 100644 assets/Button-D6I_o3D3.js
+2025-10-09T18:50:04.5059529Z  create mode 100644 assets/Button.stories-DkCBOMpj.js
+2025-10-09T18:50:04.5059887Z  create mode 100644 assets/Card-BhywAxIU.js
+2025-10-09T18:50:04.5060238Z  create mode 100644 assets/Card.stories-tyTgudWu.js
+2025-10-09T18:50:04.5060607Z  create mode 100644 assets/Color-6VNJS4EI-71--N98D.js
+2025-10-09T18:50:04.5061015Z  create mode 100644 assets/ConstellationFlower-3S9gjjOg.js
+2025-10-09T18:50:04.5061591Z  create mode 100644 assets/ConstellationFlower.stories-DuFX_If7.js
+2025-10-09T18:50:04.5062185Z  create mode 100644 assets/DocsRenderer-NNNQARDV-i239LsRK.js
+2025-10-09T18:50:04.5062764Z  create mode 100644 assets/Layout.stories-C-YYUlYF.js
+2025-10-09T18:50:04.5063167Z  create mode 100644 assets/Showcase.stories-CiK51MzL.js
+2025-10-09T18:50:04.5063561Z  create mode 100644 assets/WithTooltip-V3YHNWJZ-BbL35KsC.js
+2025-10-09T18:50:04.5063952Z  create mode 100644 assets/_commonjsHelpers-D6-XlEtG.js
+2025-10-09T18:50:04.5064374Z  create mode 100644 assets/_getPrototype-CDZsfJxQ.js
+2025-10-09T18:50:04.5064899Z  create mode 100644 assets/entry-preview-atjynJc0.js
+2025-10-09T18:50:04.5065359Z  create mode 100644 assets/entry-preview-docs-DYUfYUZu.js
+2025-10-09T18:50:04.5065890Z  create mode 100644 assets/firebase-CYVISPkl.js
+2025-10-09T18:50:04.5066390Z  create mode 100644 assets/firebase-enhanced-DlSyj2fS.js
+2025-10-09T18:50:04.5066897Z  create mode 100644 assets/formatter-SWP5E3XI-BzFTYAvH.js
+2025-10-09T18:50:04.5067435Z  create mode 100644 assets/iframe-DKRQQh4j.js
+2025-10-09T18:50:04.5067837Z  create mode 100644 assets/index-CJ_LmFaV.js
+2025-10-09T18:50:04.5068223Z  create mode 100644 assets/index-ChsGqxH_.js
+2025-10-09T18:50:04.5068666Z  create mode 100644 assets/index-DbGPmmea.js
+2025-10-09T18:50:04.5068998Z  create mode 100644 assets/index-DrFu-skq.js
+2025-10-09T18:50:04.5069472Z  create mode 100644 assets/index.esm-B6eNFOH0.js
+2025-10-09T18:50:04.5069932Z  create mode 100644 assets/index.esm-BqhvDsTW.js
+2025-10-09T18:50:04.5070305Z  create mode 100644 assets/index.esm-CQQ1z5bL.js
+2025-10-09T18:50:04.5070780Z  create mode 100644 assets/index.esm-CYoZbgto.js
+2025-10-09T18:50:04.5071228Z  create mode 100644 assets/index.esm-DUun7Jrz.js
+2025-10-09T18:50:04.5071824Z  create mode 100644 assets/jsx-runtime-BTJTZTIL.js
+2025-10-09T18:50:04.5072334Z  create mode 100644 assets/preview-BAz7FMXc.js
+2025-10-09T18:50:04.5072958Z  create mode 100644 assets/preview-BJKiUloN.js
+2025-10-09T18:50:04.5073379Z  create mode 100644 assets/preview-BKARdKxT.js
+2025-10-09T18:50:04.5073873Z  create mode 100644 assets/preview-BcxrGG1y.js
+2025-10-09T18:50:04.5074256Z  create mode 100644 assets/preview-C7rAyTxa.css
+2025-10-09T18:50:04.5074689Z  create mode 100644 assets/preview-Cv3rAi2i.js
+2025-10-09T18:50:04.5075374Z  create mode 100644 assets/preview-DPCMOe5H.js
+2025-10-09T18:50:04.5075859Z  create mode 100644 assets/preview-FHoZfaOb.js
+2025-10-09T18:50:04.5076193Z  create mode 100644 assets/preview-JHn1zflh.js
+2025-10-09T18:50:04.5076670Z  create mode 100644 assets/react-18-C0AwzDYw.js
+2025-10-09T18:50:04.5077036Z  create mode 100644 assets/storage-helper-B3V6PAcm.js
+2025-10-09T18:50:04.5077632Z  create mode 100644 assets/syntaxhighlighter-MJWPISIS-DKIhZw4z.js
+2025-10-09T18:50:04.5078232Z  create mode 100644 awardlogo.png
+2025-10-09T18:50:04.5078525Z  create mode 100644 favicon.svg
+2025-10-09T18:50:04.5078790Z  create mode 100644 iframe.html
+2025-10-09T18:50:04.5079056Z  create mode 100644 index.html
+2025-10-09T18:50:04.5079309Z  create mode 100644 index.json
+2025-10-09T18:50:04.5079602Z  create mode 100644 optimized/awardlogo-160.avif
+2025-10-09T18:50:04.5079948Z  create mode 100644 optimized/awardlogo-160.png
+2025-10-09T18:50:04.5080278Z  create mode 100644 optimized/awardlogo-160.webp
+2025-10-09T18:50:04.5080615Z  create mode 100644 optimized/awardlogo-320.avif
+2025-10-09T18:50:04.5080942Z  create mode 100644 optimized/awardlogo-320.png
+2025-10-09T18:50:04.5081510Z  create mode 100644 optimized/awardlogo-320.webp
+2025-10-09T18:50:04.5081847Z  create mode 100644 optimized/awardlogo-48.avif
+2025-10-09T18:50:04.5082174Z  create mode 100644 optimized/awardlogo-48.png
+2025-10-09T18:50:04.5082494Z  create mode 100644 optimized/awardlogo-48.webp
+2025-10-09T18:50:04.5082807Z  create mode 100644 optimized/awardlogo-64.avif
+2025-10-09T18:50:04.5083123Z  create mode 100644 optimized/awardlogo-64.png
+2025-10-09T18:50:04.5083444Z  create mode 100644 optimized/awardlogo-64.webp
+2025-10-09T18:50:04.5083782Z  create mode 100644 optimized/awardlogo-640.avif
+2025-10-09T18:50:04.5084107Z  create mode 100644 optimized/awardlogo-640.png
+2025-10-09T18:50:04.5084425Z  create mode 100644 optimized/awardlogo-640.webp
+2025-10-09T18:50:04.5084751Z  create mode 100644 optimized/awardlogo-96.avif
+2025-10-09T18:50:04.5085079Z  create mode 100644 optimized/awardlogo-96.png
+2025-10-09T18:50:04.5085421Z  create mode 100644 optimized/awardlogo-96.webp
+2025-10-09T18:50:04.5085771Z  create mode 100644 optimized/awardlogo-orig.webp
+2025-10-09T18:50:04.5086082Z  create mode 100644 project.json
+2025-10-09T18:50:04.5086452Z  create mode 100644 sb-addons/essentials-actions-1/manager-bundle.js
+2025-10-09T18:50:04.5086951Z  create mode 100644 sb-addons/essentials-actions-1/manager-bundle.js.LEGAL.txt
+2025-10-09T18:50:04.5087453Z  create mode 100644 sb-addons/essentials-backgrounds-2/manager-bundle.js
+2025-10-09T18:50:04.5087975Z  create mode 100644 sb-addons/essentials-backgrounds-2/manager-bundle.js.LEGAL.txt
+2025-10-09T18:50:04.5088490Z  create mode 100644 sb-addons/essentials-controls-0/manager-bundle.js
+2025-10-09T18:50:04.5088993Z  create mode 100644 sb-addons/essentials-controls-0/manager-bundle.js.LEGAL.txt
+2025-10-09T18:50:04.5089495Z  create mode 100644 sb-addons/essentials-measure-5/manager-bundle.js
+2025-10-09T18:50:04.5089992Z  create mode 100644 sb-addons/essentials-measure-5/manager-bundle.js.LEGAL.txt
+2025-10-09T18:50:04.5090480Z  create mode 100644 sb-addons/essentials-outline-6/manager-bundle.js
+2025-10-09T18:50:04.5090967Z  create mode 100644 sb-addons/essentials-outline-6/manager-bundle.js.LEGAL.txt
+2025-10-09T18:50:04.5091597Z  create mode 100644 sb-addons/essentials-toolbars-4/manager-bundle.js
+2025-10-09T18:50:04.5092109Z  create mode 100644 sb-addons/essentials-toolbars-4/manager-bundle.js.LEGAL.txt
+2025-10-09T18:50:04.5092603Z  create mode 100644 sb-addons/essentials-viewport-3/manager-bundle.js
+2025-10-09T18:50:04.5093254Z  create mode 100644 sb-addons/essentials-viewport-3/manager-bundle.js.LEGAL.txt
+2025-10-09T18:50:04.5093763Z  create mode 100644 sb-addons/interactions-7/manager-bundle.js
+2025-10-09T18:50:04.5094228Z  create mode 100644 sb-addons/interactions-7/manager-bundle.js.LEGAL.txt
+2025-10-09T18:50:04.5094631Z  create mode 100644 sb-common-assets/fonts.css
+2025-10-09T18:50:04.5095022Z  create mode 100644 sb-common-assets/nunito-sans-bold-italic.woff2
+2025-10-09T18:50:04.5096143Z  create mode 100644 sb-common-assets/nunito-sans-bold.woff2
+2025-10-09T18:50:04.5096911Z  create mode 100644 sb-common-assets/nunito-sans-italic.woff2
+2025-10-09T18:50:04.5097363Z  create mode 100644 sb-common-assets/nunito-sans-regular.woff2
+2025-10-09T18:50:04.5097800Z  create mode 100644 sb-manager/WithTooltip-V3YHNWJZ-MXTFSDU5.js
+2025-10-09T18:50:04.5098189Z  create mode 100644 sb-manager/chunk-5QAFKPS7.js
+2025-10-09T18:50:04.5098528Z  create mode 100644 sb-manager/chunk-7PRFHFSS.js
+2025-10-09T18:50:04.5098864Z  create mode 100644 sb-manager/chunk-XE6LDGTE.js
+2025-10-09T18:50:04.5099214Z  create mode 100644 sb-manager/chunk-YDUB7CS6.js
+2025-10-09T18:50:04.5099563Z  create mode 100644 sb-manager/chunk-ZEU7PDD3.js
+2025-10-09T18:50:04.5099963Z  create mode 100644 sb-manager/formatter-SWP5E3XI-7BGIK6BL.js
+2025-10-09T18:50:04.5100370Z  create mode 100644 sb-manager/globals-module-info.js
+2025-10-09T18:50:04.5100710Z  create mode 100644 sb-manager/globals.js
+2025-10-09T18:50:04.5101016Z  create mode 100644 sb-manager/index.js
+2025-10-09T18:50:04.5101567Z  create mode 100644 sb-manager/runtime.js
+2025-10-09T18:50:04.5101971Z  create mode 100644 sb-manager/syntaxhighlighter-MJWPISIS-JOSCT6CQ.js
+2025-10-09T18:50:04.5102360Z  create mode 100644 sb-preview/globals.js
+2025-10-09T18:50:04.5102657Z  create mode 100644 sb-preview/runtime.js
+2025-10-09T18:50:04.5102986Z  create mode 100644 stories.json
+2025-10-09T18:50:04.5103542Z ##[endgroup]
+2025-10-09T18:50:04.5103899Z ##[group]Push the commit or tag
+2025-10-09T18:50:04.5104231Z [command]/usr/bin/git push origin gh-pages
+2025-10-09T18:50:04.8666740Z remote: Permission to Geodev122/Mitche.git denied to github-actions[bot].
+2025-10-09T18:50:04.8667867Z fatal: unable to access 'https://github.com/Geodev122/Mitche.git/': The requested URL returned error: 403
+2025-10-09T18:50:04.8712725Z ##[error]Action failed with "The process '/usr/bin/git' failed with exit code 128"
+2025-10-09T18:50:04.8820907Z Post job cleanup.
+2025-10-09T18:50:05.0046705Z [command]/usr/bin/git version
+2025-10-09T18:50:05.0082665Z git version 2.51.0
+2025-10-09T18:50:05.0125841Z Temporarily overriding HOME='/home/runner/work/_temp/bd436b88-cb0c-4e5f-b8f0-c29a7e70bd05' before making global git config changes
+2025-10-09T18:50:05.0127276Z Adding repository directory to the temporary git global config as a safe directory
+2025-10-09T18:50:05.0138910Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Mitche/Mitche
+2025-10-09T18:50:05.0172686Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-10-09T18:50:05.0205145Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-10-09T18:50:05.0429118Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-10-09T18:50:05.0448969Z http.https://github.com/.extraheader
+2025-10-09T18:50:05.0461813Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2025-10-09T18:50:05.0490848Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-10-09T18:50:05.0819599Z Cleaning up orphan processes

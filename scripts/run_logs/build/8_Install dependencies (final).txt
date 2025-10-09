@@ -1,14 +1,20 @@
-﻿2025-10-09T17:33:59.2242209Z ##[group]Run # Final install: accept peer conflicts to allow Storybook packages to install
-2025-10-09T17:33:59.2243003Z [36;1m# Final install: accept peer conflicts to allow Storybook packages to install[0m
-2025-10-09T17:33:59.2243669Z [36;1mnpm ci --no-audit --no-fund --prefer-offline --legacy-peer-deps[0m
-2025-10-09T17:33:59.2276169Z shell: /usr/bin/bash -e {0}
-2025-10-09T17:33:59.2276475Z env:
-2025-10-09T17:33:59.2276731Z   NPM_CONFIG_UNSAFE_PERM: true
-2025-10-09T17:33:59.2277076Z   NODE_OPTIONS: --max-old-space-size=4096
-2025-10-09T17:33:59.2277432Z ##[endgroup]
-2025-10-09T17:34:02.8413097Z npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
-2025-10-09T17:34:04.2715443Z npm warn deprecated @storybook/expect@28.1.3-5: In Storybook 8, this package functionality has been integrated to a new package called @storybook/test, which uses Vitest APIs for an improved experience. When upgrading to Storybook 8 with 'npx storybook@latest upgrade', you will get prompted and will get an automigration for the new package. Please migrate when you can.
-2025-10-09T17:34:04.8452414Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
-2025-10-09T17:34:05.4663207Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
-2025-10-09T17:34:11.2690097Z 
-2025-10-09T17:34:11.2690709Z added 802 packages in 12s
+﻿2025-10-09T18:49:31.3829747Z ##[group]Run # Final install: accept peer conflicts to allow Storybook packages to install
+2025-10-09T18:49:31.3830320Z [36;1m# Final install: accept peer conflicts to allow Storybook packages to install[0m
+2025-10-09T18:49:31.3830800Z [36;1mnpm ci --no-audit --no-fund --prefer-offline --legacy-peer-deps[0m
+2025-10-09T18:49:31.3863453Z shell: /usr/bin/bash -e {0}
+2025-10-09T18:49:31.3863695Z env:
+2025-10-09T18:49:31.3863876Z   NPM_CONFIG_UNSAFE_PERM: true
+2025-10-09T18:49:31.3864137Z   NODE_OPTIONS: --max-old-space-size=4096
+2025-10-09T18:49:31.3864401Z ##[endgroup]
+2025-10-09T18:49:34.6930806Z npm warn deprecated rimraf@2.7.1: Rimraf versions prior to v4 are no longer supported
+2025-10-09T18:49:35.6622726Z npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2025-10-09T18:49:37.4238136Z npm warn deprecated @storybook/expect@28.1.3-5: In Storybook 8, this package functionality has been integrated to a new package called @storybook/test, which uses Vitest APIs for an improved experience. When upgrading to Storybook 8 with 'npx storybook@latest upgrade', you will get prompted and will get an automigration for the new package. Please migrate when you can.
+2025-10-09T18:49:39.1266942Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-10-09T18:49:39.1811672Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-10-09T18:49:39.1813216Z npm warn deprecated rimraf@2.6.3: Rimraf versions prior to v4 are no longer supported
+2025-10-09T18:49:39.2486554Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-10-09T18:49:39.6478423Z npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+2025-10-09T18:49:39.6536562Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-10-09T18:49:40.0733282Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-10-09T18:49:44.6906437Z 
+2025-10-09T18:49:44.6907052Z added 1161 packages in 13s
