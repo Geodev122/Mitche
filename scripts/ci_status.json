@@ -1,0 +1,17 @@
+﻿{
+    "id":  18376256419,
+    "name":  "Build Storybook",
+    "status":  "completed",
+    "conclusion":  "failure",
+    "html_url":  "https://github.com/Geodev122/Mitche/actions/runs/18376256419",
+    "created_at":  "2025-10-09T12:25:52Z",
+    "updated_at":  "2025-10-09T12:26:12Z",
+    "artifacts":  [
+                      {
+                          "id":  4226067201,
+                          "name":  "storybook-install-log",
+                          "size_in_bytes":  919,
+                          "archive_download_url":  "https://api.github.com/repos/Geodev122/Mitche/actions/artifacts/4226067201/zip"
+                      }
+                  ]
+}
