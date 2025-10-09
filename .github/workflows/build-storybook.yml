@@ -37,7 +37,8 @@ jobs:
         continue-on-error: true
         run: |
           set -o pipefail || true
-          npm ci --no-audit --no-fund --prefer-offline --no-optional --legacy-peer-deps 2>&1 | tee storybook-install.log
+          # Log the install attempt (omit optional deps to reduce install surface)
+          npm ci --no-audit --no-fund --prefer-offline --omit=optional 2>&1 | tee storybook-install.log || true
 
       - name: Upload npm install log
         if: always()
@@ -48,8 +49,8 @@ jobs:
 
       - name: Install dependencies (final)
         run: |
-          # Final install: prefer legacy-peer-deps to avoid peer resolution failures in CI.
-          npm ci --no-audit --no-fund --prefer-offline --no-optional --legacy-peer-deps
+          # Final install: omit optional deps; if peer conflicts occur, retry with legacy peer deps.
+          npm ci --no-audit --no-fund --prefer-offline --omit=optional || npm ci --no-audit --no-fund --prefer-offline --omit=optional --legacy-peer-deps
       - name: Build Storybook
         run: npm run build-storybook
       - name: Upload Storybook artifact
