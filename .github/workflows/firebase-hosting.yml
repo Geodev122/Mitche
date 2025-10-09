@@ -27,4 +27,4 @@ jobs:
         chmod +x ./scripts/deploy-hosting.sh
         ./scripts/deploy-hosting.sh
       env:
-        FIREBASE_SERVICE_ACCOUNT_MITCHE_PLATFORM: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MITCHE_PLATFORM }}
+        FIREBASE_CLI_EXPERIMENTS: webframeworks

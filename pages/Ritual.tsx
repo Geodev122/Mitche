@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import DailyRitual from '../components/ui/DailyRitual';
 import Layout from '../components/layout/Layout';
 

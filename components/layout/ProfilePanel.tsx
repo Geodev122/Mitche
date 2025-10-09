@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import Card from '../ui/Card';
@@ -13,6 +13,7 @@ import AchievementsPanel from '../ui/AchievementsPanel';
 import * as ReactRouterDOM from 'react-router-dom';
 import { isPushSupported, subscribeUser, unsubscribeUser, getSubscription } from '../../utils/notifications';
 import LanguageSwitcher from '../ui/LanguageSwitcher';
+import { CogIcon, ArrowLeftOnRectangleIcon, ChevronRightIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 
 
 interface BeforeInstallPromptEvent extends Event {
@@ -24,17 +25,27 @@ interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
 }
 
-const SettingsButton: React.FC<{icon: React.ElementType, label: string, onClick?: () => void, isDestructive?: boolean, children?: React.ReactNode}> = ({icon: Icon, label, onClick, isDestructive, children}) => (
-    <div>
-      <button onClick={onClick} className={`w-full flex items-center justify-between text-left p-3 rounded-lg bg-gray-50/50 hover:bg-gray-100 transition-colors duration-200 active:bg-gray-200 ${isDestructive ? 'text-red-600' : 'text-gray-700'}`}>
-          <div className="flex items-center">
-              <Icon className={`w-5 h-5 mr-3 rtl:mr-0 rtl:ml-3 ${isDestructive ? 'text-red-500' : 'text-gray-500'}`} />
-              <span className="font-semibold text-sm">{label}</span>
-          </div>
-          {!isDestructive && <ChevronRight className="w-5 h-5 text-gray-400" />}
-      </button>
-       {children && <div className="px-3 pb-2">{children}</div>}
-    </div>
+interface SettingsButtonProps {
+    icon: React.ElementType;
+    label: string;
+    onClick?: () => void;
+    isDestructive?: boolean;
+    children?: React.ReactNode;
+}
+
+const SettingsButton: React.FC<SettingsButtonProps> = ({icon: Icon, label, onClick, isDestructive, children}) => (
+    <button
+        onClick={onClick}
+        className={`w-full flex items-center text-left p-3 rounded-md transition-colors ${
+            isDestructive 
+                ? 'text-red-600 hover:bg-red-50' 
+                : 'text-gray-700 hover:bg-gray-100'
+        }`}
+    >
+        <Icon className="w-5 h-5 mr-3" />
+        <span className="flex-grow">{label}</span>
+        {children}
+    </button>
 );
 
 interface ProfilePanelProps {
@@ -43,7 +54,7 @@ interface ProfilePanelProps {
 }
 
 const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
-  const { user, logout } = useAuth();
+  const { user, logout, signOutUser } = useAuth();
   const { t } = useTranslation();
   const navigate = ReactRouterDOM.useNavigate();
   const [deferredPrompt, setDeferredPrompt] = React.useState<BeforeInstallPromptEvent | null>(null);
@@ -178,6 +189,15 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
         }
     };
 
+  const handleLogout = async () => {
+    try {
+        await signOutUser();
+        // Optional: redirect to login page or show a toast
+    } catch (error) {
+        console.error("Error signing out: ", error);
+    }
+};
+
   if (!user) return null;
 
   const isOrg = user.role === Role.NGO || user.role === Role.PublicWorker;
@@ -205,7 +225,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
             </header>
             
             <div className="flex-grow overflow-y-auto p-4 space-y-4">
-                 <Card>
+                <Card>
                     <div className="text-center">
                         <p className="text-sm bg-gray-100 text-gray-600 font-semibold inline-block px-3 py-1 rounded-full">{t(`roles.${user.role}`)}</p>
                         {user.isVerified && <p className="mt-2 text-xs font-bold text-blue-600 flex items-center justify-center gap-1"><ShieldCheck size={14}/> {t('verifiedOrg')}</p>}
@@ -226,21 +246,13 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
                             {user.bio && <p className="italic px-4">"{user.bio}"</p>}
                         </div>
                     </div>
-                    <div className="mt-4 pt-4 border-t flex justify-around items-center text-center">
-                        <div>
-                            <p className="text-xs text-gray-500">{t('constellation.personalConstellation')}</p>
-                            <Constellation breakdown={user.hopePointsBreakdown} size={110} />
+                    {user.qrCodeUrl && (
+                        <div className="mt-4 pt-4 border-t border-gray-200 flex justify-center">
+                            <button onClick={() => setIsQrModalOpen(true)} className="mt-3 p-2 rounded-full hover:bg-gray-200/50">
+                                <QrCode className="w-6 h-6" />
+                            </button>
                         </div>
-                        {user.qrCodeUrl && <div className="border-l my-[-1rem] mx-2"></div>}
-                        {user.qrCodeUrl && (
-                            <div>
-                                <p className="text-xs text-gray-500">{t('constellation.showQrCode')}</p>
-                                <button onClick={() => setIsQrModalOpen(true)} className="inline-flex items-center justify-center gap-2 text-2xl my-1 p-2 rounded-full text-[#D4AF37] bg-amber-50 hover:bg-amber-100 transition-colors">
-                                    <QrCode className="w-6 h-6" />
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                    )}
                 </Card>
 
                                 {/* Profile action CTAs: Give daily point and Motivate */}
@@ -356,7 +368,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ isOpen, onClose }) => {
                                 {showAnalytics && (
                                     <SettingsButton icon={Zap} label={t('analytics.title', 'Analytics')} onClick={() => handleNavigation('/analytics')} />
                                 )}
-                                <SettingsButton icon={LogOut} label={t('constellation.logout')} onClick={logout} isDestructive />
+                                <SettingsButton icon={ArrowLeftOnRectangleIcon} label={t('profile.logout')} onClick={handleLogout} isDestructive />
                     </div>
                 </Card>
 

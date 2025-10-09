@@ -103,4 +103,3 @@ jobs:
       - name: Skip deploy (missing auth or project)
         if: ${{ needs.preflight.outputs.auth_method == 'none' }}
         run: echo "No GCP auth available (workload identity or service account). Skipping deploy."
-gcloud auth application-default login

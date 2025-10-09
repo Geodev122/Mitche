@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Request, Offering, RequestType, RequestMode, Notification, HopePointCategory, RequestStatus, TapestryThread, TapestryThreadColor, TapestryThreadPattern, User, CommunityEvent, CommunityEventType, Role, Resource, ResourceCategory, CommendationType } from '../types';
 import { useAuth } from './AuthContext';
 // Lazy-load firebaseService to keep SDK out of main bundle
@@ -202,7 +202,7 @@ const MOCK_THREADS: TapestryThread[] = [
 ];
 
 
-export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }: { children: React.ReactNode }) => {
   const [requests, setRequests] = React.useState<Request[]>([]);
   const [offerings, setOfferings] = React.useState<Offering[]>([]);
   const [notifications, setNotifications] = React.useState<Notification[]>([]);
@@ -303,8 +303,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             isRead: false,
             type: 'Nomination',
         };
-        setNotifications(prev => {
-            if (prev.find(n => n.id === nominationNotification.id)) return prev;
+        setNotifications((prev: any[]) => {
+            if (prev.find((n: any) => n.id === nominationNotification.id)) return prev;
             return [nominationNotification, ...prev];
         });
         updateUser({ nominationStatus: 'Nominated' });
@@ -341,7 +341,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } else {
       // Fallback to local state
       const localRequest: Request = { ...newRequest, id: `req_${Date.now()}` };
-      setRequests(prev => [localRequest, ...prev]);
+      setRequests((prev: any[]) => [localRequest, ...prev]);
     }
   };
 
@@ -373,7 +373,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } else {
       // Fallback to local state
       const localEvent: CommunityEvent = { ...newEvent, id: `evt_${Date.now()}` };
-      setCommunityEvents(prev => [localEvent, ...prev]);
+      setCommunityEvents((prev: any[]) => [localEvent, ...prev]);
     }
   };
 

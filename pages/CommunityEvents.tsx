@@ -1,9 +1,9 @@
-import React from 'react';
+import * as React from 'react';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
-import { PlusCircle, Calendar, Users, ShieldCheck, Star } from 'lucide-react';
+import { PlusCircle, Users, ShieldCheck, Star } from 'lucide-react';
 import * as ReactRouterDOM from 'react-router-dom';
-import { CommunityEvent, CommunityEventType, Role } from '../types';
+import { CommunityEvent, Role } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
 import Button from '../components/ui/Button';
 import { useAuth } from '../context/AuthContext';
@@ -11,20 +11,27 @@ import { useRatingModal } from '../context/RatingModalContext';
 import { useTranslation } from 'react-i18next';
 import { timeSince } from '../utils/time';
 
+const typeStyles: { [key: string]: { text: string, classes: string } } = {
+  Volunteer: { text: 'Volunteer', classes: 'bg-green-100 text-green-800' },
+  Event: { text: 'Event', classes: 'bg-blue-100 text-blue-800' },
+};
+
 const EventCard: React.FC<{ event: CommunityEvent }> = ({ event }) => {
   const { t } = useTranslation();
   const { enhancedFirebase } = useAuth();
   const { openRatingModal } = useRatingModal();
 
   React.useEffect(() => {
-    enhancedFirebase?.recordAnalytics?.('card_impression', { targetType: 'event', targetId: event.id });
-  }, [event.id, enhancedFirebase]);
-  
-  const typeStyles = {
-    [CommunityEventType.Volunteer]: { text: t(`communityEventTypes.${CommunityEventType.Volunteer}`), classes: 'bg-green-100 text-green-700' },
-    [CommunityEventType.Event]: { text: t(`communityEventTypes.${CommunityEventType.Event}`), classes: 'bg-purple-100 text-purple-700' },
-  };
-  const currentTypeStyle = typeStyles[event.type];
+    if (event?.id) {
+      enhancedFirebase?.recordAnalytics?.('card_impression', { targetType: 'event', targetId: event.id });
+    }
+  }, [event?.id, enhancedFirebase]);
+
+  if (!event) {
+    return null;
+  }
+
+  const currentTypeStyle = typeStyles[event.type as string];
 
   return (
     <Card className="mb-4 transition-transform transform hover:scale-[1.02] relative">
@@ -37,8 +44,8 @@ const EventCard: React.FC<{ event: CommunityEvent }> = ({ event }) => {
         <div className="flex-grow">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-                <h3 className="font-bold text-gray-800">{event.organizerSymbolicName}</h3>
-                {event.organizerIsVerified && <ShieldCheck className="w-4 h-4 text-blue-500" aria-label={t('verifiedOrg') as string} />}
+              <h3 className="font-bold text-gray-800">{event.organizerSymbolicName}</h3>
+              {event.organizerIsVerified && <ShieldCheck className="w-4 h-4 text-blue-500" aria-label={t('verifiedOrg') as string} />}
             </div>
             <span className="text-xs text-gray-400">{timeSince(event.timestamp, t)}</span>
           </div>
@@ -64,8 +71,9 @@ const EventCard: React.FC<{ event: CommunityEvent }> = ({ event }) => {
   );
 };
 
-const Skeleton: React.FC<{ className?: string }> = ({ className }) => (
-  <div className={`bg-gray-200 rounded animate-pulse ${className}`}></div>
+const Skeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
+  <div className={`bg-white rounded-lg shadow-md p-6 ${className}`}>
+  </div>
 );
 
 const EventCardSkeleton: React.FC = () => (
@@ -113,15 +121,15 @@ const CommunityEvents: React.FC = () => {
         </div>
       ) : (
         <div className="text-center py-16 text-gray-500">
-            <Users size={48} className="mx-auto text-gray-300 mb-4" />
-            <p className="font-semibold">{t('events.emptyTitle')}</p>
-            <p className="text-sm">{t('events.emptySubtitle')}</p>
+          <Users size={48} className="mx-auto text-gray-300 mb-4" />
+          <p className="font-semibold">{t('events.emptyTitle')}</p>
+          <p className="text-sm">{t('events.emptySubtitle')}</p>
         </div>
       )}
 
       {canCreateEvent && (
         <ReactRouterDOM.Link to="/events/new" className="fixed bottom-24 right-6 rtl:right-auto rtl:left-6">
-          <Button variant="primary"><PlusCircle size={20} className="mr-2"/> {t('events.create')}</Button>
+          <Button variant="primary"><PlusCircle size={20} className="mr-2" /> {t('events.create')}</Button>
         </ReactRouterDOM.Link>
       )}
     </div>

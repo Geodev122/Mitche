@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Pillars = { anchor?: number; bridge?: number; symbol?: number; dialog?: number; transpersonal?: number };
 
@@ -10,7 +11,7 @@ const ease = (n: number) => `${n}ms cubic-bezier(.2,.9,.3,1)`;
 
 const ConstellationFlower: React.FC<{pillars?: Pillars; size?: number; highlight?: (keyof Pillars)[]}> = ({ pillars = {}, size = 120, highlight = [] }) => {
   const max = Math.max(...names.map(n => Number(pillars[n] || 0)), 1);
-  const center = Math.round((Object.values(pillars).reduce((s, v) => s + (Number(v) || 0), 0)) || 0);
+  const center = Math.round((Object.values(pillars).reduce((s: number, v) => s + (Number(v) || 0), 0)) || 0);
   const [pulses, setPulses] = useState<Record<string, number>>({});
 
   useEffect(() => {
@@ -27,7 +28,7 @@ const ConstellationFlower: React.FC<{pillars?: Pillars; size?: number; highlight
         <g transform={`translate(${size/2},${size/2})`}>
           {names.map((n, i) => {
             const angle = (i / names.length) * Math.PI * 2 - Math.PI/2;
-            const valRaw = Number(pillars[n] || 0);
+            const valRaw = Number((pillars as any)[n] || 0);
             const val = valRaw / max;
             const r = 18 + val * (size/2 - 20);
             const x = Math.cos(angle) * r;

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { User, Role, HopePointCategory, VerificationStatus } from '../types';
 // Import enhanced types for Phase 1 features
 import { User as EnhancedUser, SearchFilters } from '../types-enhanced';
@@ -22,6 +22,7 @@ interface AuthContextType {
   signup: (username: string, password: string, meta?: { role?: Role; submittedDocuments?: string[]; submittedFiles?: File[] }) => Promise<{ success: boolean; message?: string }>;
   signInWithGoogle: () => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
+  signOutUser: () => Promise<void>;
   addHopePoints: (points: number, category: HopePointCategory) => void;
   updateUser: (updatedUserData: Partial<User>) => Promise<void>;
   getUserById: (userId: string) => User | undefined;
@@ -39,7 +40,7 @@ const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 const ADJECTIVES = ['Silent', 'Hopeful', 'Golden', 'Brave', 'Kind', 'Guiding', 'Gentle', 'Mystic', 'Radiant', 'Shining'];
 const NOUNS = ['Star', 'Echo', 'River', 'Guardian', 'Light', 'Flower', 'Stone', 'Heart', 'Voice', 'Hand'];
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = React.useState<User | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isFirebaseEnabled, setIsFirebaseEnabled] = React.useState(false);
@@ -314,6 +315,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const signOutUser = async () => {
+    const fs = await getFirebaseService();
+    await fs.signOut();
+    setUser(null);
+    // also clear local storage for good measure
+    localStorage.removeItem('user');
+    localStorage.removeItem('users');
+  };
+
   const updateUser = async (updatedUserData: Partial<User>): Promise<void> => {
     if (!user) return;
     
@@ -443,23 +453,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
+    <AuthContext.Provider value={{
+      user,
       isLoading,
       isFirebaseEnabled,
-      login, 
+      login,
       signup,
-      signInWithGoogle, 
-      logout, 
-      addHopePoints, 
-      updateUser, 
-      getUserById, 
-      updateAnyUser, 
-      getAllUsers, 
-      generateUniqueUsernames, 
+      signInWithGoogle,
+      logout,
+      signOutUser,
+      addHopePoints,
+      updateUser,
+      getUserById,
+      updateAnyUser,
+      getAllUsers,
+      generateUniqueUsernames,
       updateVerificationStatus,
       migrateToFirebase,
-      enhancedFirebase
+      enhancedFirebase,
     }}>
       {children}
     </AuthContext.Provider>

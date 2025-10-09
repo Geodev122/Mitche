@@ -21,14 +21,15 @@
       ]
     },
     "allowImportingTsExtensions": true,
-    "noEmit": false,
+    "noEmit": true,
     "outDir": "dist-scripts",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "typeRoots": ["./node_modules/@types", "./types"]
   },
   "ts-node": {
     "esm": true

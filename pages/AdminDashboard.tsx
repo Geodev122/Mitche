@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
@@ -11,7 +11,13 @@ import AchievementsPanel from '../components/ui/AchievementsPanel';
 import NominationsPanel from '../components/admin/NominationsPanel';
 import SymbolGeneratorPanel from '../components/admin/SymbolGeneratorPanel';
 
-const StatCard: React.FC<{ icon: React.ElementType, value: number, label: string }> = ({ icon: Icon, value, label }) => (
+import Button from '../design-system/Button';
+import { Input } from '../design-system/Input';
+import { Select } from '../design-system/Select';
+import { Textarea } from '../design-system/Textarea';
+import { Checkbox } from '../design-system/Checkbox';
+
+const StatCard: React.FC<{ icon: React.ElementType; value: number; label: string }> = ({ icon: Icon, value, label }: { icon: React.ElementType; value: number; label: string }) => (
     <Card className="flex items-center p-4">
         <div className="p-3 bg-gray-100 rounded-full mr-4 rtl:mr-0 rtl:ml-4">
             <Icon className="w-6 h-6 text-[#D4AF37]" />
@@ -23,14 +29,15 @@ const StatCard: React.FC<{ icon: React.ElementType, value: number, label: string
     </Card>
 );
 
-const VerificationStatusBadge: React.FC<{ status?: VerificationStatus }> = ({ status }) => {
+const VerificationStatusBadge: React.FC<{ status?: VerificationStatus }> = ({ status }: { status?: VerificationStatus }) => {
     const { t } = useTranslation();
     if (!status || status === 'NotRequested') return null;
 
-    const styles = {
+    const styles: { [key in VerificationStatus]: string } = {
         Pending: 'bg-yellow-100 text-yellow-700',
         Approved: 'bg-green-100 text-green-700',
         Rejected: 'bg-red-100 text-red-700',
+        NotRequested: '',
     };
     
     return (
@@ -41,7 +48,7 @@ const VerificationStatusBadge: React.FC<{ status?: VerificationStatus }> = ({ st
 };
 
 
-const UserRow: React.FC<{ user: User }> = ({ user }) => {
+const UserRow: React.FC<{ user: User }> = ({ user }: { user: User }) => {
     const { t } = useTranslation();
     return (
         <div className="flex items-center justify-between p-3 bg-white rounded-lg border gap-2">
@@ -69,15 +76,34 @@ const UserRow: React.FC<{ user: User }> = ({ user }) => {
 };
 
 
+interface DemoItem {
+    id: string;
+    title: string;
+    type: 'resource' | 'event' | 'request';
+    content: string;
+    [key: string]: any;
+}
+
+interface RitualEvent {
+    id: string;
+    date: string;
+    timestamp: any; 
+    data?: {
+        userId?: string;
+        prompt?: string;
+    };
+    [key: string]: any;
+}
+
 const AdminDashboard: React.FC = () => {
     const { getAllUsers, user, updateVerificationStatus } = useAuth();
     const { requests, communityEvents, loading } = useData();
     const { t } = useTranslation();
     const [users, setUsers] = React.useState<User[]>([]);
-    const [demoItems, setDemoItems] = React.useState<any[]>([]);
+    const [demoItems, setDemoItems] = React.useState<DemoItem[]>([]);
     const [demoLoading, setDemoLoading] = React.useState(false);
     const [demoTitle, setDemoTitle] = React.useState('');
-    const [demoType, setDemoType] = React.useState('resource');
+    const [demoType, setDemoType] = React.useState<'resource' | 'event' | 'request'>('resource');
     const [demoContent, setDemoContent] = React.useState('');
     const [activityTitle, setActivityTitle] = React.useState('Daily Motivation');
     const [activityActive, setActivityActive] = React.useState(true);
@@ -111,7 +137,7 @@ const AdminDashboard: React.FC = () => {
         try {
             const { enhancedFirebaseService } = await import('../services/firebase-enhanced');
             const res = await enhancedFirebaseService.getDemoContent();
-            if (res.success) setDemoItems(res.data || []);
+            if (res.success) setDemoItems(res.data as DemoItem[] || []);
         } catch (err) {
             console.error('Failed to load demo content', err);
         } finally {
@@ -127,10 +153,10 @@ const AdminDashboard: React.FC = () => {
     const fetchActivities = React.useCallback(async () => {
         try {
             const { db } = await import('../services/firebase');
-            const { collection, query, where, getDocs, orderBy } = await import('firebase/firestore');
+            const { collection, query, getDocs, orderBy } = await import('firebase/firestore');
             const q = query(collection(db, 'activities'), orderBy('createdAt', 'desc'));
-            const snap = await getDocs(q as any);
-            setActivities(snap.docs.map(d => ({ id: d.id, ...(d.data() as any) })));
+            const snap = await getDocs(q);
+            setActivities(snap.docs.map(d => ({ id: d.id, ...d.data() })));
         } catch (err) {
             console.error('Error fetching activities', err);
             setActivities([]);
@@ -146,12 +172,12 @@ const AdminDashboard: React.FC = () => {
             const { db } = await import('../services/firebase');
             const { getDoc, doc } = await import('firebase/firestore');
             const docRef = doc(db, 'leaderboard_aggregates', 'global');
-            const snap = await getDoc(docRef as any);
+            const snap = await getDoc(docRef);
             if (!snap.exists()) {
                 setAggregates([]);
                 setAggRaw(null);
             } else {
-                const data = snap.data() as any || {};
+                const data = snap.data() || {};
                 setAggRaw(data);
                 const totals = data.totals || {};
                 const rows = Object.entries(totals).map(([id, pts]) => ({ id, points: Number(pts || 0) }));
@@ -176,7 +202,7 @@ const AdminDashboard: React.FC = () => {
             const res = await fn({ receiverIds: opts?.receiverIds, num: opts?.num });
             const payload = (res && (res.data as any)) || {};
             if (payload.success) {
-                toast.show(`Created ${((payload.created || []) as any).length} ledger entries`, 'success');
+                toast.show(`Created ${((payload.created || []) as any[]).length} ledger entries`, 'success');
                 // Refresh aggregates after a short delay to allow triggers to run
                 setTimeout(() => fetchAggregates(), 3000);
             } else {
@@ -194,8 +220,8 @@ const AdminDashboard: React.FC = () => {
             const { db } = await import('../services/firebase');
             const { getDoc, doc } = await import('firebase/firestore');
             const ref = doc(db, 'leaderboard_aggregates', userId);
-            const snap = await getDoc(ref as any);
-            setPerUserDetails(prev => ({ ...prev, [userId]: snap.exists() ? snap.data() : null }));
+            const snap = await getDoc(ref);
+            setPerUserDetails((prev: Record<string, any>) => ({ ...prev, [userId]: snap.exists() ? snap.data() : null }));
         } catch (err) {
             console.error('Error fetching per-user aggregate:', err);
         }
@@ -204,7 +230,7 @@ const AdminDashboard: React.FC = () => {
     // Ritual analytics state
     const [ritualTotal, setRitualTotal] = React.useState<number | null>(null);
     const [ritualToday, setRitualToday] = React.useState<number | null>(null);
-    const [ritualRecent, setRitualRecent] = React.useState<any[]>([]);
+    const [ritualRecent, setRitualRecent] = React.useState<RitualEvent[]>([]);
     const [ritualLoading, setRitualLoading] = React.useState(false);
 
     const fetchRitualAnalytics = React.useCallback(async () => {
@@ -213,8 +239,8 @@ const AdminDashboard: React.FC = () => {
             const { db } = await import('../services/firebase');
             const { collection, query, where, orderBy, getDocs } = await import('firebase/firestore');
             const q = query(collection(db, 'analytics'), where('eventType', '==', 'daily_ritual_completed'), orderBy('timestamp', 'desc'));
-            const snap = await getDocs(q as any);
-            const events = snap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+            const snap = await getDocs(q);
+            const events: RitualEvent[] = snap.docs.map(d => ({ id: d.id, ...d.data() } as RitualEvent));
             setRitualRecent(events.slice(0, 30));
             setRitualTotal(events.length);
             const today = new Date().toISOString().split('T')[0];
@@ -251,7 +277,7 @@ const AdminDashboard: React.FC = () => {
                             <h3 className="text-sm font-semibold mb-2">Recent Ritual Events</h3>
                             {ritualRecent.length === 0 ? <p className="text-sm text-gray-500">No recent rituals.</p> : (
                                 <div className="space-y-2">
-                                    {ritualRecent.map(ev => (
+                                    {ritualRecent.map((ev: RitualEvent) => (
                                         <div key={ev.id} className="p-2 bg-white rounded border text-xs">
                                             <div className="flex items-center justify-between">
                                                 <div className="text-sm">{ev.data?.userId || ev.data?.userId}</div>
@@ -313,7 +339,7 @@ const AdminDashboard: React.FC = () => {
         refreshUsers();
     };
     
-    const pendingUsers = users.filter(u => u.verificationStatus === 'Pending');
+    const pendingUsers = users.filter((u: User) => u.verificationStatus === 'Pending');
 
     return (
         <div className="p-4 pb-24 space-y-6">
@@ -347,7 +373,7 @@ const AdminDashboard: React.FC = () => {
                 <h2 className="text-xl font-bold text-gray-800 mb-4">{t('admin.verificationRequests')}</h2>
                 {pendingUsers.length > 0 ? (
                     <div className="space-y-2">
-                        {pendingUsers.map(u => (
+                        {pendingUsers.map((u: User) => (
                              <div key={u.id} className="flex items-center justify-between p-3 bg-amber-50/50 rounded-lg border border-amber-200">
                                 <div className="flex items-center space-x-3 rtl:space-x-reverse min-w-0">
                                     <SymbolIcon name={u.symbolicIcon} className="w-8 h-8 text-amber-700 flex-shrink-0" />
@@ -356,13 +382,13 @@ const AdminDashboard: React.FC = () => {
                                         <p className="text-xs text-gray-500 truncate">@{u.username} - {t(`roles.${u.role}`)}</p>
                                     </div>
                                 </div>
-                                <div className="flex gap-2 flex-shrink-0">
-                                     <button onClick={() => handleVerificationAction(u.id, 'Rejected')} className="p-2 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition-colors" title={t('admin.reject') as string}>
+                                 <div className="flex gap-2 flex-shrink-0">
+                                     <Button onClick={() => handleVerificationAction(u.id, 'Rejected')} variant="destructive" size="icon" title={t('admin.reject') as string}>
                                         <X size={16} />
-                                     </button>
-                                     <button onClick={() => handleVerificationAction(u.id, 'Approved')} className="p-2 bg-green-100 text-green-600 rounded-full hover:bg-green-200 transition-colors" title={t('admin.approve') as string}>
+                                     </Button>
+                                     <Button onClick={() => handleVerificationAction(u.id, 'Approved')} variant="default" size="icon" title={t('admin.approve') as string}>
                                         <Check size={16} />
-                                     </button>
+                                     </Button>
                                 </div>
                             </div>
                         ))}
@@ -380,7 +406,7 @@ const AdminDashboard: React.FC = () => {
                 <div className="flex items-center justify-between mb-3">
                     <h2 className="text-xl font-bold text-gray-800">Ritual Analytics</h2>
                     <div className="flex items-center gap-2">
-                        <button onClick={async () => await fetchRitualAnalytics()} className="px-3 py-1 bg-amber-500 text-white rounded">Refresh</button>
+                        <Button onClick={async () => await fetchRitualAnalytics()}>Refresh</Button>
                     </div>
                 </div>
                 <RitualAnalyticsPanel />
@@ -392,7 +418,7 @@ const AdminDashboard: React.FC = () => {
              <Card>
                 <h2 className="text-xl font-bold text-gray-800 mb-4">{t('admin.userManagement')}</h2>
                 <div className="space-y-2">
-                    {users.map(u => <UserRow key={u.id} user={u} />)}
+                    {users.map((u: User) => <UserRow key={u.id} user={u} />)}
                 </div>
             </Card>
 
@@ -404,16 +430,16 @@ const AdminDashboard: React.FC = () => {
             <Card>
                 <h2 className="text-xl font-bold text-gray-800 mb-4">Manage Ritual Activities</h2>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-2 items-center mb-3">
-                    <input className="p-2 border rounded col-span-2" value={activityTitle} onChange={e => setActivityTitle(e.target.value)} />
-                    <input type="number" className="p-2 border rounded" value={activityLimit as any} onChange={e => setActivityLimit(e.target.value ? Number(e.target.value) : '')} min={1} />
-                    <label className="flex items-center gap-2"><input type="checkbox" checked={activityActive} onChange={e => setActivityActive(e.target.checked)} /> Active</label>
+                    <Input className="col-span-2" value={activityTitle} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setActivityTitle(e.target.value)} placeholder="Activity Title" />
+                    <Input type="number" value={activityLimit as any} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setActivityLimit(e.target.value ? Number(e.target.value) : '')} min={1} placeholder="Limit" />
+                    <Checkbox label="Active" checked={activityActive} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setActivityActive(e.target.checked)} />
                 </div>
                 <div className="flex gap-2">
-                    <button onClick={async () => {
+                    <Button onClick={async () => {
                         try {
                             const { db } = await import('../services/firebase');
                             const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
-                            const docRef = await addDoc(collection(db, 'activities'), { title: activityTitle, type: 'ritual', active: activityActive, limitPerUserPerDay: Number(activityLimit) || 1, createdAt: serverTimestamp() });
+                            await addDoc(collection(db, 'activities'), { title: activityTitle, type: 'ritual', active: activityActive, limitPerUserPerDay: Number(activityLimit) || 1, createdAt: serverTimestamp() });
                             toast.show('Activity created', 'success');
                             setActivityTitle('Daily Motivation');
                             setActivityLimit(1);
@@ -423,13 +449,13 @@ const AdminDashboard: React.FC = () => {
                             console.error('Failed creating activity', err);
                             toast.show('Failed to create activity', 'error');
                         }
-                    }} className="px-3 py-1 bg-amber-500 text-white rounded">Create</button>
-                    <button onClick={async () => { await fetchActivities(); toast.show('Refreshed', 'success'); }} className="px-3 py-1 border rounded">Refresh</button>
+                    }}>Create</Button>
+                    <Button onClick={async () => { await fetchActivities(); toast.show('Refreshed', 'success'); }} variant="outline">Refresh</Button>
                 </div>
 
                 <div className="mt-4 space-y-2">
                     {activities.length === 0 ? <div className="text-sm text-gray-500">No activities</div> : (
-                        activities.map(a => (
+                        activities.map((a: any) => (
                             <div key={a.id} className="p-2 bg-white rounded border flex items-center justify-between">
                                 <div>
                                     <div className="font-semibold">{a.title}</div>
@@ -448,26 +474,26 @@ const AdminDashboard: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-2 items-center">
                         <div className="col-span-2 flex items-center gap-2">
                             <Search className="w-5 h-5 text-gray-400" />
-                            <input className="p-2 border rounded w-full" placeholder={t('admin.searchDemo') || 'Search demo items'} value={queryText} onChange={e => { setQueryText(e.target.value); setPage(1); }} />
+                            <Input className="w-full" placeholder={t('admin.searchDemo') || 'Search demo items'} value={queryText} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setQueryText(e.target.value); setPage(1); }} />
                         </div>
-                        <select className="p-2 border rounded" value={pageSize} onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}>
+                        <Select value={pageSize} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => { setPageSize(Number(e.target.value)); setPage(1); }}>
                             <option value={5}>5</option>
                             <option value={8}>8</option>
                             <option value={12}>12</option>
-                        </select>
+                        </Select>
                         <div className="flex gap-2 justify-end">
-                            <input className="p-2 border rounded w-full" placeholder={t('admin.demoTitle') || 'Title'} value={demoTitle} onChange={e => setDemoTitle(e.target.value)} />
-                            <select className="p-2 border rounded" value={demoType} onChange={e => setDemoType(e.target.value)}>
+                            <Input className="w-full" placeholder={t('admin.demoTitle') || 'Title'} value={demoTitle} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDemoTitle(e.target.value)} />
+                            <Select value={demoType} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setDemoType(e.target.value as any)}>
                                 <option value="resource">{t('types.resource') || 'Resource'}</option>
                                 <option value="event">{t('types.event') || 'Event'}</option>
                                 <option value="request">{t('types.request') || 'Request'}</option>
-                            </select>
-                            <button onClick={handleAddDemo} className="p-2 bg-amber-500 text-white rounded flex items-center justify-center gap-2">
+                            </Select>
+                            <Button onClick={handleAddDemo} className="flex items-center justify-center gap-2">
                                 <Plus size={16} /> {t('admin.add') || 'Add'}
-                            </button>
+                            </Button>
                         </div>
                     </div>
-                    <textarea className="w-full p-2 border rounded" placeholder={t('admin.demoContent') || 'Content'} value={demoContent} onChange={e => setDemoContent(e.target.value)} />
+                    <Textarea placeholder={t('admin.demoContent') || 'Content'} value={demoContent} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDemoContent(e.target.value)} />
 
                     <div>
                         {demoLoading ? (
@@ -478,7 +504,7 @@ const AdminDashboard: React.FC = () => {
                             <div className="space-y-2">
                                 {/** Apply search and paginate client-side */}
                                 {(() => {
-                                    const filtered = demoItems.filter(item => {
+                                    const filtered = demoItems.filter((item: DemoItem) => {
                                         if (!queryText) return true;
                                         const q = queryText.toLowerCase();
                                         return (item.title || '').toLowerCase().includes(q) || (item.content || '').toLowerCase().includes(q) || (item.type || '').toLowerCase().includes(q);
@@ -489,16 +515,16 @@ const AdminDashboard: React.FC = () => {
                                     return (
                                         <>
                                             <div className="space-y-2">
-                                                {paged.map(item => (
+                                                {paged.map((item: DemoItem) => (
                                                     <div key={item.id} className="flex items-center justify-between p-3 bg-white rounded-lg border">
                                                         <div className="min-w-0">
                                                             <p className="font-semibold text-gray-800 truncate">{item.title}</p>
                                                             <p className="text-xs text-gray-500 truncate">{item.type} — {item.content}</p>
                                                         </div>
                                                         <div className="flex items-center gap-2">
-                                                            <button onClick={() => handleDeleteDemo(item.id)} className="p-2 bg-red-50 text-red-600 rounded-full hover:bg-red-100">
+                                                            <Button onClick={() => handleDeleteDemo(item.id)} variant="destructive" size="icon">
                                                                 <Trash size={14} />
-                                                            </button>
+                                                            </Button>
                                                         </div>
                                                     </div>
                                                 ))}
@@ -506,8 +532,8 @@ const AdminDashboard: React.FC = () => {
                                             <div className="flex items-center justify-between text-sm text-gray-600 mt-2">
                                                 <div>{t('admin.showing') || 'Showing'} {Math.min(start+1, total)}–{Math.min(start+pageSize, total)} of {total}</div>
                                                 <div className="flex items-center gap-2">
-                                                    <button disabled={page <= 1} onClick={() => setPage(p => Math.max(1, p-1))} className="px-3 py-1 border rounded disabled:opacity-50">Prev</button>
-                                                    <button disabled={start + pageSize >= total} onClick={() => setPage(p => p+1)} className="px-3 py-1 border rounded disabled:opacity-50">Next</button>
+                                                    <Button disabled={page <= 1} onClick={() => setPage((p: number) => Math.max(1, p-1))} variant="outline">Prev</Button>
+                                                    <Button disabled={start + pageSize >= total} onClick={() => setPage((p: number) => p+1)} variant="outline">Next</Button>
                                                 </div>
                                             </div>
                                         </>
@@ -524,9 +550,9 @@ const AdminDashboard: React.FC = () => {
                 <div className="flex items-center justify-between mb-3">
                     <h2 className="text-xl font-bold text-gray-800">Leaderboard Aggregates (debug)</h2>
                     <div className="flex items-center gap-2">
-                        <button onClick={async () => await fetchAggregates()} className="px-3 py-1 bg-amber-500 text-white rounded">Refresh</button>
-                        <button onClick={() => setShowRawAgg(s => !s)} className="px-3 py-1 border rounded">{showRawAgg ? 'Hide Raw' : 'Show Raw'}</button>
-                        <button onClick={() => { if (confirm('Create sample ledger entries?')) runLedgerTest({ num: 8 }); }} className="px-3 py-1 bg-red-100 text-red-700 rounded">Run Test</button>
+                        <Button onClick={async () => await fetchAggregates()}>Refresh</Button>
+                        <Button onClick={() => setShowRawAgg((s: boolean) => !s)} variant="outline">{showRawAgg ? 'Hide Raw' : 'Show Raw'}</Button>
+                        <Button onClick={() => { if (confirm('Create sample ledger entries?')) runLedgerTest({ num: 8 }); }} variant="destructive">Run Test</Button>
                     </div>
                 </div>
 
@@ -538,7 +564,7 @@ const AdminDashboard: React.FC = () => {
                             <p className="text-sm text-gray-500">No aggregates found.</p>
                         ) : (
                             <div className="space-y-1">
-                                {aggregates.slice(0, 50).map((row, idx) => (
+                                {aggregates.slice(0, 50).map((row: { id: string; points: number }, idx: number) => (
                                     <div key={row.id} className="flex items-center justify-between p-2 bg-white rounded border">
                                         <div className="flex items-center gap-3 min-w-0">
                                             <div className="font-mono text-sm text-gray-500 w-10">#{idx+1}</div>
@@ -549,7 +575,7 @@ const AdminDashboard: React.FC = () => {
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <div className="font-bold text-amber-600">{row.points}</div>
-                                            <button onClick={() => fetchPerUserDetail(row.id)} className="px-2 py-1 text-xs border rounded">Inspect</button>
+                                            <Button onClick={() => fetchPerUserDetail(row.id)} variant="outline" size="sm">Inspect</Button>
                                         </div>
                                     </div>
                                 ))}
@@ -574,9 +600,7 @@ const AdminDashboard: React.FC = () => {
                         )}
                     </div>
                 )}
-            </Card>
-
-        </div>
+            </Card>        </div>
     );
 };
 

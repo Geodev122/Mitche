@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import BottomNav from './BottomNav';
 import Header from './Header';

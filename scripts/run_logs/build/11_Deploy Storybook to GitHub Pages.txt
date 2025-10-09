@@ -1,0 +1,192 @@
+﻿2025-10-09T18:50:03.7249286Z ##[group]Run peaceiris/actions-gh-pages@v3
+2025-10-09T18:50:03.7249575Z with:
+2025-10-09T18:50:03.7250163Z   github_token: ***
+2025-10-09T18:50:03.7250400Z   publish_dir: ./storybook-static
+2025-10-09T18:50:03.7250658Z   publish_branch: gh-pages
+2025-10-09T18:50:03.7250893Z   allow_empty_commit: false
+2025-10-09T18:50:03.7251538Z   keep_files: false
+2025-10-09T18:50:03.7251758Z   force_orphan: false
+2025-10-09T18:50:03.7251964Z   enable_jekyll: false
+2025-10-09T18:50:03.7252195Z   disable_nojekyll: false
+2025-10-09T18:50:03.7252411Z   exclude_assets: .github
+2025-10-09T18:50:03.7252611Z env:
+2025-10-09T18:50:03.7252793Z   NPM_CONFIG_UNSAFE_PERM: true
+2025-10-09T18:50:03.7253043Z   NODE_OPTIONS: --max-old-space-size=4096
+2025-10-09T18:50:03.7253312Z ##[endgroup]
+2025-10-09T18:50:03.8067658Z [INFO] Usage https://github.com/peaceiris/actions-gh-pages#readme
+2025-10-09T18:50:03.8073065Z ##[group]Dump inputs
+2025-10-09T18:50:03.8073599Z [INFO] GithubToken: true
+2025-10-09T18:50:03.8074140Z [INFO] PublishBranch: gh-pages
+2025-10-09T18:50:03.8074798Z [INFO] PublishDir: ./storybook-static
+2025-10-09T18:50:03.8075327Z [INFO] DestinationDir: 
+2025-10-09T18:50:03.8075807Z [INFO] ExternalRepository: 
+2025-10-09T18:50:03.8076337Z [INFO] AllowEmptyCommit: false
+2025-10-09T18:50:03.8076830Z [INFO] KeepFiles: false
+2025-10-09T18:50:03.8077290Z [INFO] ForceOrphan: false
+2025-10-09T18:50:03.8077726Z [INFO] UserName: 
+2025-10-09T18:50:03.8078120Z [INFO] UserEmail: 
+2025-10-09T18:50:03.8078535Z [INFO] CommitMessage: 
+2025-10-09T18:50:03.8078982Z [INFO] FullCommitMessage: 
+2025-10-09T18:50:03.8079394Z [INFO] TagName: 
+2025-10-09T18:50:03.8079786Z [INFO] TagMessage: 
+2025-10-09T18:50:03.8080329Z [INFO] EnableJekyll (DisableNoJekyll): false
+2025-10-09T18:50:03.8080830Z [INFO] CNAME: 
+2025-10-09T18:50:03.8081238Z [INFO] ExcludeAssets .github
+2025-10-09T18:50:03.8081731Z 
+2025-10-09T18:50:03.8082181Z ##[endgroup]
+2025-10-09T18:50:03.8082847Z ##[group]Setup auth token
+2025-10-09T18:50:03.8083307Z [INFO] setup GITHUB_TOKEN
+2025-10-09T18:50:03.8084656Z ##[endgroup]
+2025-10-09T18:50:03.8085270Z ##[group]Prepare publishing assets
+2025-10-09T18:50:03.8086044Z [INFO] ForceOrphan: false
+2025-10-09T18:50:03.8133369Z [command]/usr/bin/git clone --depth=1 --single-branch --branch gh-pages ***github.com/Geodev122/Mitche.git /home/runner/actions_github_pages_1760035803807
+2025-10-09T18:50:03.8168150Z Cloning into '/home/runner/actions_github_pages_1760035803807'...
+2025-10-09T18:50:04.2203882Z fatal: Remote branch gh-pages not found in upstream origin
+2025-10-09T18:50:04.2245688Z [INFO] first deployment, create new branch gh-pages
+2025-10-09T18:50:04.2246357Z [INFO] The process '/usr/bin/git' failed with exit code 128
+2025-10-09T18:50:04.2252069Z [INFO] chdir /home/runner/actions_github_pages_1760035803807
+2025-10-09T18:50:04.2263665Z [command]/usr/bin/git init
+2025-10-09T18:50:04.2301503Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-10-09T18:50:04.2302305Z hint: is subject to change. To configure the initial branch name to use in all
+2025-10-09T18:50:04.2303330Z hint: of your new repositories, which will suppress this warning, call:
+2025-10-09T18:50:04.2303972Z hint:
+2025-10-09T18:50:04.2304535Z hint: 	git config --global init.defaultBranch <name>
+2025-10-09T18:50:04.2304994Z hint:
+2025-10-09T18:50:04.2305657Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-10-09T18:50:04.2306675Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-10-09T18:50:04.2307343Z hint:
+2025-10-09T18:50:04.2307736Z hint: 	git branch -m <name>
+2025-10-09T18:50:04.2308157Z hint:
+2025-10-09T18:50:04.2308885Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-10-09T18:50:04.2310030Z Initialized empty Git repository in /home/runner/actions_github_pages_1760035803807/.git/
+2025-10-09T18:50:04.2321058Z [command]/usr/bin/git checkout --orphan gh-pages
+2025-10-09T18:50:04.2343020Z Switched to a new branch 'gh-pages'
+2025-10-09T18:50:04.2348859Z [INFO] prepare publishing assets
+2025-10-09T18:50:04.2350085Z [INFO] copy /home/runner/work/Mitche/Mitche/storybook-static to /home/runner/actions_github_pages_1760035803807
+2025-10-09T18:50:04.2653206Z cp: no such file or directory: /home/runner/work/Mitche/Mitche/storybook-static/.*
+2025-10-09T18:50:04.2655632Z [INFO] delete excluded assets
+2025-10-09T18:50:04.2683820Z rm: no paths given
+2025-10-09T18:50:04.2685847Z [INFO] Created /home/runner/actions_github_pages_1760035803807/.nojekyll
+2025-10-09T18:50:04.2687583Z ##[endgroup]
+2025-10-09T18:50:04.2688144Z ##[group]Setup Git config
+2025-10-09T18:50:04.2701098Z [command]/usr/bin/git remote rm origin
+2025-10-09T18:50:04.2724190Z error: No such remote: 'origin'
+2025-10-09T18:50:04.2729453Z [INFO] The process '/usr/bin/git' failed with exit code 2
+2025-10-09T18:50:04.2746474Z [command]/usr/bin/git remote add origin ***github.com/Geodev122/Mitche.git
+2025-10-09T18:50:04.2792915Z [command]/usr/bin/git add --all
+2025-10-09T18:50:04.4575657Z [command]/usr/bin/git config user.name Geodev122
+2025-10-09T18:50:04.4622759Z [command]/usr/bin/git config user.email Geodev122@users.noreply.github.com
+2025-10-09T18:50:04.4652563Z ##[endgroup]
+2025-10-09T18:50:04.4653163Z ##[group]Create a commit
+2025-10-09T18:50:04.4668385Z [command]/usr/bin/git commit -m deploy: c7f74ed2e050dc8378f7c8cc51dc4ad3db631536
+2025-10-09T18:50:04.5057530Z [gh-pages (root-commit) 1b9d2ac] deploy: c7f74ed2e050dc8378f7c8cc51dc4ad3db631536
+2025-10-09T18:50:04.5058328Z  103 files changed, 7551 insertions(+)
+2025-10-09T18:50:04.5058783Z  create mode 100644 .nojekyll
+2025-10-09T18:50:04.5059144Z  create mode 100644 assets/Button-D6I_o3D3.js
+2025-10-09T18:50:04.5059526Z  create mode 100644 assets/Button.stories-DkCBOMpj.js
+2025-10-09T18:50:04.5059884Z  create mode 100644 assets/Card-BhywAxIU.js
+2025-10-09T18:50:04.5060236Z  create mode 100644 assets/Card.stories-tyTgudWu.js
+2025-10-09T18:50:04.5060605Z  create mode 100644 assets/Color-6VNJS4EI-71--N98D.js
+2025-10-09T18:50:04.5060988Z  create mode 100644 assets/ConstellationFlower-3S9gjjOg.js
+2025-10-09T18:50:04.5061588Z  create mode 100644 assets/ConstellationFlower.stories-DuFX_If7.js
+2025-10-09T18:50:04.5062177Z  create mode 100644 assets/DocsRenderer-NNNQARDV-i239LsRK.js
+2025-10-09T18:50:04.5062760Z  create mode 100644 assets/Layout.stories-C-YYUlYF.js
+2025-10-09T18:50:04.5063164Z  create mode 100644 assets/Showcase.stories-CiK51MzL.js
+2025-10-09T18:50:04.5063559Z  create mode 100644 assets/WithTooltip-V3YHNWJZ-BbL35KsC.js
+2025-10-09T18:50:04.5063950Z  create mode 100644 assets/_commonjsHelpers-D6-XlEtG.js
+2025-10-09T18:50:04.5064371Z  create mode 100644 assets/_getPrototype-CDZsfJxQ.js
+2025-10-09T18:50:04.5064896Z  create mode 100644 assets/entry-preview-atjynJc0.js
+2025-10-09T18:50:04.5065355Z  create mode 100644 assets/entry-preview-docs-DYUfYUZu.js
+2025-10-09T18:50:04.5065886Z  create mode 100644 assets/firebase-CYVISPkl.js
+2025-10-09T18:50:04.5066385Z  create mode 100644 assets/firebase-enhanced-DlSyj2fS.js
+2025-10-09T18:50:04.5066884Z  create mode 100644 assets/formatter-SWP5E3XI-BzFTYAvH.js
+2025-10-09T18:50:04.5067431Z  create mode 100644 assets/iframe-DKRQQh4j.js
+2025-10-09T18:50:04.5067833Z  create mode 100644 assets/index-CJ_LmFaV.js
+2025-10-09T18:50:04.5068221Z  create mode 100644 assets/index-ChsGqxH_.js
+2025-10-09T18:50:04.5068662Z  create mode 100644 assets/index-DbGPmmea.js
+2025-10-09T18:50:04.5068995Z  create mode 100644 assets/index-DrFu-skq.js
+2025-10-09T18:50:04.5069470Z  create mode 100644 assets/index.esm-B6eNFOH0.js
+2025-10-09T18:50:04.5069925Z  create mode 100644 assets/index.esm-BqhvDsTW.js
+2025-10-09T18:50:04.5070303Z  create mode 100644 assets/index.esm-CQQ1z5bL.js
+2025-10-09T18:50:04.5070777Z  create mode 100644 assets/index.esm-CYoZbgto.js
+2025-10-09T18:50:04.5071223Z  create mode 100644 assets/index.esm-DUun7Jrz.js
+2025-10-09T18:50:04.5071820Z  create mode 100644 assets/jsx-runtime-BTJTZTIL.js
+2025-10-09T18:50:04.5072331Z  create mode 100644 assets/preview-BAz7FMXc.js
+2025-10-09T18:50:04.5072674Z  create mode 100644 assets/preview-BJKiUloN.js
+2025-10-09T18:50:04.5073375Z  create mode 100644 assets/preview-BKARdKxT.js
+2025-10-09T18:50:04.5073870Z  create mode 100644 assets/preview-BcxrGG1y.js
+2025-10-09T18:50:04.5074251Z  create mode 100644 assets/preview-C7rAyTxa.css
+2025-10-09T18:50:04.5074687Z  create mode 100644 assets/preview-Cv3rAi2i.js
+2025-10-09T18:50:04.5075370Z  create mode 100644 assets/preview-DPCMOe5H.js
+2025-10-09T18:50:04.5075856Z  create mode 100644 assets/preview-FHoZfaOb.js
+2025-10-09T18:50:04.5076191Z  create mode 100644 assets/preview-JHn1zflh.js
+2025-10-09T18:50:04.5076667Z  create mode 100644 assets/react-18-C0AwzDYw.js
+2025-10-09T18:50:04.5077034Z  create mode 100644 assets/storage-helper-B3V6PAcm.js
+2025-10-09T18:50:04.5077627Z  create mode 100644 assets/syntaxhighlighter-MJWPISIS-DKIhZw4z.js
+2025-10-09T18:50:04.5078228Z  create mode 100644 awardlogo.png
+2025-10-09T18:50:04.5078516Z  create mode 100644 favicon.svg
+2025-10-09T18:50:04.5078787Z  create mode 100644 iframe.html
+2025-10-09T18:50:04.5079042Z  create mode 100644 index.html
+2025-10-09T18:50:04.5079307Z  create mode 100644 index.json
+2025-10-09T18:50:04.5079600Z  create mode 100644 optimized/awardlogo-160.avif
+2025-10-09T18:50:04.5079946Z  create mode 100644 optimized/awardlogo-160.png
+2025-10-09T18:50:04.5080277Z  create mode 100644 optimized/awardlogo-160.webp
+2025-10-09T18:50:04.5080613Z  create mode 100644 optimized/awardlogo-320.avif
+2025-10-09T18:50:04.5080940Z  create mode 100644 optimized/awardlogo-320.png
+2025-10-09T18:50:04.5081507Z  create mode 100644 optimized/awardlogo-320.webp
+2025-10-09T18:50:04.5081845Z  create mode 100644 optimized/awardlogo-48.avif
+2025-10-09T18:50:04.5082171Z  create mode 100644 optimized/awardlogo-48.png
+2025-10-09T18:50:04.5082492Z  create mode 100644 optimized/awardlogo-48.webp
+2025-10-09T18:50:04.5082805Z  create mode 100644 optimized/awardlogo-64.avif
+2025-10-09T18:50:04.5083121Z  create mode 100644 optimized/awardlogo-64.png
+2025-10-09T18:50:04.5083442Z  create mode 100644 optimized/awardlogo-64.webp
+2025-10-09T18:50:04.5083774Z  create mode 100644 optimized/awardlogo-640.avif
+2025-10-09T18:50:04.5084105Z  create mode 100644 optimized/awardlogo-640.png
+2025-10-09T18:50:04.5084423Z  create mode 100644 optimized/awardlogo-640.webp
+2025-10-09T18:50:04.5084749Z  create mode 100644 optimized/awardlogo-96.avif
+2025-10-09T18:50:04.5085077Z  create mode 100644 optimized/awardlogo-96.png
+2025-10-09T18:50:04.5085418Z  create mode 100644 optimized/awardlogo-96.webp
+2025-10-09T18:50:04.5085768Z  create mode 100644 optimized/awardlogo-orig.webp
+2025-10-09T18:50:04.5086080Z  create mode 100644 project.json
+2025-10-09T18:50:04.5086450Z  create mode 100644 sb-addons/essentials-actions-1/manager-bundle.js
+2025-10-09T18:50:04.5086942Z  create mode 100644 sb-addons/essentials-actions-1/manager-bundle.js.LEGAL.txt
+2025-10-09T18:50:04.5087450Z  create mode 100644 sb-addons/essentials-backgrounds-2/manager-bundle.js
+2025-10-09T18:50:04.5087973Z  create mode 100644 sb-addons/essentials-backgrounds-2/manager-bundle.js.LEGAL.txt
+2025-10-09T18:50:04.5088483Z  create mode 100644 sb-addons/essentials-controls-0/manager-bundle.js
+2025-10-09T18:50:04.5088991Z  create mode 100644 sb-addons/essentials-controls-0/manager-bundle.js.LEGAL.txt
+2025-10-09T18:50:04.5089493Z  create mode 100644 sb-addons/essentials-measure-5/manager-bundle.js
+2025-10-09T18:50:04.5089990Z  create mode 100644 sb-addons/essentials-measure-5/manager-bundle.js.LEGAL.txt
+2025-10-09T18:50:04.5090478Z  create mode 100644 sb-addons/essentials-outline-6/manager-bundle.js
+2025-10-09T18:50:04.5090965Z  create mode 100644 sb-addons/essentials-outline-6/manager-bundle.js.LEGAL.txt
+2025-10-09T18:50:04.5091579Z  create mode 100644 sb-addons/essentials-toolbars-4/manager-bundle.js
+2025-10-09T18:50:04.5092107Z  create mode 100644 sb-addons/essentials-toolbars-4/manager-bundle.js.LEGAL.txt
+2025-10-09T18:50:04.5092601Z  create mode 100644 sb-addons/essentials-viewport-3/manager-bundle.js
+2025-10-09T18:50:04.5093093Z  create mode 100644 sb-addons/essentials-viewport-3/manager-bundle.js.LEGAL.txt
+2025-10-09T18:50:04.5093759Z  create mode 100644 sb-addons/interactions-7/manager-bundle.js
+2025-10-09T18:50:04.5094226Z  create mode 100644 sb-addons/interactions-7/manager-bundle.js.LEGAL.txt
+2025-10-09T18:50:04.5094628Z  create mode 100644 sb-common-assets/fonts.css
+2025-10-09T18:50:04.5095020Z  create mode 100644 sb-common-assets/nunito-sans-bold-italic.woff2
+2025-10-09T18:50:04.5096133Z  create mode 100644 sb-common-assets/nunito-sans-bold.woff2
+2025-10-09T18:50:04.5096905Z  create mode 100644 sb-common-assets/nunito-sans-italic.woff2
+2025-10-09T18:50:04.5097361Z  create mode 100644 sb-common-assets/nunito-sans-regular.woff2
+2025-10-09T18:50:04.5097798Z  create mode 100644 sb-manager/WithTooltip-V3YHNWJZ-MXTFSDU5.js
+2025-10-09T18:50:04.5098187Z  create mode 100644 sb-manager/chunk-5QAFKPS7.js
+2025-10-09T18:50:04.5098526Z  create mode 100644 sb-manager/chunk-7PRFHFSS.js
+2025-10-09T18:50:04.5098862Z  create mode 100644 sb-manager/chunk-XE6LDGTE.js
+2025-10-09T18:50:04.5099203Z  create mode 100644 sb-manager/chunk-YDUB7CS6.js
+2025-10-09T18:50:04.5099561Z  create mode 100644 sb-manager/chunk-ZEU7PDD3.js
+2025-10-09T18:50:04.5099961Z  create mode 100644 sb-manager/formatter-SWP5E3XI-7BGIK6BL.js
+2025-10-09T18:50:04.5100367Z  create mode 100644 sb-manager/globals-module-info.js
+2025-10-09T18:50:04.5100707Z  create mode 100644 sb-manager/globals.js
+2025-10-09T18:50:04.5101014Z  create mode 100644 sb-manager/index.js
+2025-10-09T18:50:04.5101564Z  create mode 100644 sb-manager/runtime.js
+2025-10-09T18:50:04.5101963Z  create mode 100644 sb-manager/syntaxhighlighter-MJWPISIS-JOSCT6CQ.js
+2025-10-09T18:50:04.5102357Z  create mode 100644 sb-preview/globals.js
+2025-10-09T18:50:04.5102655Z  create mode 100644 sb-preview/runtime.js
+2025-10-09T18:50:04.5102982Z  create mode 100644 stories.json
+2025-10-09T18:50:04.5103539Z ##[endgroup]
+2025-10-09T18:50:04.5103897Z ##[group]Push the commit or tag
+2025-10-09T18:50:04.5104229Z [command]/usr/bin/git push origin gh-pages
+2025-10-09T18:50:04.8666682Z remote: Permission to Geodev122/Mitche.git denied to github-actions[bot].
+2025-10-09T18:50:04.8667861Z fatal: unable to access 'https://github.com/Geodev122/Mitche.git/': The requested URL returned error: 403
+2025-10-09T18:50:04.8712710Z ##[error]Action failed with "The process '/usr/bin/git' failed with exit code 128"

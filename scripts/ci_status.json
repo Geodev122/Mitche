@@ -1,23 +1,23 @@
 ﻿{
-    "id":  18385956592,
+    "id":  18386281273,
     "name":  "Build Storybook",
     "status":  "completed",
-    "conclusion":  "failure",
-    "html_url":  "https://github.com/Geodev122/Mitche/actions/runs/18385956592",
-    "created_at":  "2025-10-09T18:49:11Z",
-    "updated_at":  "2025-10-09T18:50:07Z",
+    "conclusion":  "success",
+    "html_url":  "https://github.com/Geodev122/Mitche/actions/runs/18386281273",
+    "created_at":  "2025-10-09T19:03:00Z",
+    "updated_at":  "2025-10-09T19:04:05Z",
     "artifacts":  [
                       {
-                          "id":  4229936025,
+                          "id":  4230065170,
                           "name":  "storybook-install-log",
                           "size_in_bytes":  821,
-                          "archive_download_url":  "https://api.github.com/repos/Geodev122/Mitche/actions/artifacts/4229936025/zip"
+                          "archive_download_url":  "https://api.github.com/repos/Geodev122/Mitche/actions/artifacts/4230065170/zip"
                       },
                       {
-                          "id":  4229941085,
+                          "id":  4230070251,
                           "name":  "storybook-static",
                           "size_in_bytes":  3672085,
-                          "archive_download_url":  "https://api.github.com/repos/Geodev122/Mitche/actions/artifacts/4229941085/zip"
+                          "archive_download_url":  "https://api.github.com/repos/Geodev122/Mitche/actions/artifacts/4230070251/zip"
                       }
                   ]
 }

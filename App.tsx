@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
@@ -27,8 +27,8 @@ import Ritual from './pages/Ritual';
 import ResourceHub from './pages/ResourceHub';
 import CreateResource from './pages/CreateResource';
 import ResourceDetail from './pages/ResourceDetail';
-import OnErrorBoundary from './components/ui/ErrorBoundary';
-import ReactLazy from 'react';
+import ErrorBoundary from './components/ui/ErrorBoundary';
+import * as ReactLazy from 'react';
 import AchievementsPage from './pages/AchievementsPage';
 
 const AdminDashboard = ReactLazy.lazy(() => import('./pages/AdminDashboard'));
@@ -67,9 +67,9 @@ const App: React.FC = () => {
               <React.Suspense fallback={<LoadingFallback />}>
                 {/* Rating modal provider makes inline rating modal available to all pages */}
                 <RatingModalProvider>
-                  <OnErrorBoundary>
+                  <ErrorBoundary>
                     <Main />
-                  </OnErrorBoundary>
+                  </ErrorBoundary>
                 </RatingModalProvider>
               </React.Suspense>
                   </LanguageManager>
@@ -81,7 +81,7 @@ const App: React.FC = () => {
   );
 };
 
-const ProtectedRoute: React.FC<{ children: React.ReactNode; roles: Role[]; verifiedOnly?: boolean }> = ({ children, roles, verifiedOnly = false }) => {
+const ProtectedRoute: React.FC<{ children: React.ReactNode; roles: Role[]; verifiedOnly?: boolean }> = ({ children, roles, verifiedOnly = false }: { children: React.ReactNode; roles: Role[]; verifiedOnly?: boolean }) => {
   const { user } = useAuth();
   if (!user || !roles.includes(user.role)) {
     return <ReactRouterDOM.Navigate to="/" />;

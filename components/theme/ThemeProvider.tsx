@@ -1,4 +1,5 @@
-import React from 'react';
+import * as React from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 export type ThemeTokens = {
   colors: {
@@ -22,14 +23,34 @@ export const defaultTheme: ThemeTokens = {
   shadows: { card: '0 6px 18px rgba(11,15,25,0.06)' }
 };
 
-const ThemeContext = React.createContext<ThemeTokens>(defaultTheme);
+export type Theme = 'light' | 'dark';
 
-export const ThemeProvider: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
-  // For now, theme tokens come from CSS variables with sensible fallbacks.
-  // This provider centralizes the tokens so components and Storybook can consume them.
-  return <ThemeContext.Provider value={defaultTheme}>{children}</ThemeContext.Provider>;
+export type ThemeContextType = {
+  theme: Theme;
+  setTheme: React.Dispatch<React.SetStateAction<Theme>>;
+  accentColor: string;
+  setAccentColor: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export const useTheme = () => React.useContext(ThemeContext);
+export const ThemeContext = React.createContext<ThemeContextType | undefined>(undefined);
+
+export const ThemeProvider: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
+  const [theme, setTheme] = useState<Theme>('light');
+  const [accentColor, setAccentColor] = useState<string>('#D4AF37'); // Default gold
+
+  const value = useMemo(() => ({ theme, setTheme, accentColor, setAccentColor }), [theme, accentColor]);
+
+  // For now, theme tokens come from CSS variables with sensible fallbacks.
+  // This provider centralizes the tokens so components and Storybook can consume them.
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+};
+
+export const useTheme = () => {
+  const context = React.useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+};
 
 export default ThemeProvider;

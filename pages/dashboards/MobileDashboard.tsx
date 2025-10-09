@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import ResponsiveLogo from '../../components/ui/ResponsiveLogo';
@@ -49,8 +49,8 @@ const MobileDashboard: React.FC = () => {
   }, [user?.id]);
 
   return (
-    <div className="min-h-screen">
-      <header className="flex items-center justify-between mb-4">
+    <div className="shell">
+      <header className="shell-header">
         <ResponsiveLogo className="w-12 h-12" />
         <div className="flex items-center gap-2">
           <button aria-label="create-request" title={t('createRequest.title')} onClick={() => navigate('/echoes/new')} className="p-2 rounded-md bg-[var(--accent)] text-white">
@@ -59,16 +59,18 @@ const MobileDashboard: React.FC = () => {
         </div>
       </header>
 
-      <div className="grid-3">
+      <div className="shell-content">
         {/* Left sidebar */}
-        <aside className="card sidebar-profile">
-          <div className="text-sm font-semibold">{user?.symbolicName || user?.username}</div>
-          <div className="text-xs text-gray-500 mt-1">{user?.role}</div>
-          {/* Placeholder for more profile stats */}
+        <aside className="shell-sidebar">
+          <div className="card">
+            <div className="text-sm font-semibold">{user?.symbolicName || user?.username}</div>
+            <div className="text-xs text-gray-500 mt-1">{user?.role}</div>
+            {/* Placeholder for more profile stats */}
+          </div>
         </aside>
 
         {/* Center: main feed */}
-        <main>
+        <main className="shell-main">
           <h2 className="text-xl font-bold">{t('dashboard.welcome', { name: user?.symbolicName || '' })}</h2>
           <p className="text-sm text-gray-500 mt-1">{t('dashboard.mobileIntro')}</p>
 
@@ -91,8 +93,8 @@ const MobileDashboard: React.FC = () => {
         </main>
 
         {/* Right: quick actions + ritual hero */}
-        <aside>
-          <div className="card right-hero mb-4">
+        <aside className="shell-sidebar-right">
+          <div className="card">
             <h3 className="font-semibold mb-2">{t('dashboard.quickActions')}</h3>
             {quickActions.length === 0 ? (
               <div className="text-sm text-gray-500">{t('dashboard.noQuickActions')}</div>
@@ -117,14 +119,14 @@ const MobileDashboard: React.FC = () => {
             )}
           </div>
 
-          <div className="card right-hero">
+          <div className="card mt-4">
             <h3 className="font-semibold mb-2">Daily Ritual</h3>
             <p className="text-sm text-gray-600">{t('dashboard.ritualIntro') || 'Complete your daily ritual to earn hope points.'}</p>
             <div className="mt-3">
               <a href="/ritual" className="inline-block px-3 py-2 rounded-md bg-[var(--accent)] text-white">Start Ritual</a>
             </div>
           </div>
-          <div className="card right-hero mt-4">
+          <div className="card mt-4">
             <h3 className="font-semibold mb-2">{t('constellation.title') || 'Constellation'}</h3>
             <div className="flex items-center justify-center">
               <ConstellationFlower pillars={pillars} size={140} />

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { useId } from 'react';
 // Use explicit extension to help some editor/tsserver configurations resolve the module
 import Tooltip from './Tooltip.tsx';

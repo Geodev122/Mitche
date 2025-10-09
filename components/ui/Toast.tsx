@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 type ToastType = 'success' | 'error' | 'info';
 type ToastItem = { id: string; message: string; type: ToastType; action?: { label: string; cb: () => void } };
@@ -13,20 +13,20 @@ const variantClasses: Record<ToastType, string> = {
   info: 'bg-slate-800'
 };
 
-export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }: { children: React.ReactNode }) => {
   const [toasts, setToasts] = React.useState<ToastItem[]>([]);
 
   const show = (message: string, type: ToastType = 'info', action?: { label: string; cb: () => void }) => {
     const id = `toast_${Date.now()}_${Math.round(Math.random() * 1000)}`;
-    setToasts(prev => [...prev, { id, message, type, action }]);
+    setToasts((prev: any[]) => [...prev, { id, message, type, action }]);
     // Auto-dismiss respecting reduced motion/user expectation
     const timeout = 4000;
     setTimeout(() => {
-      setToasts(prev => prev.filter(t => t.id !== id));
+      setToasts((prev: any[]) => prev.filter((t: any) => t.id !== id));
     }, timeout);
   };
 
-  const dismiss = (id: string) => setToasts(prev => prev.filter(t => t.id !== id));
+  const dismiss = (id: string) => setToasts((prev: any[]) => prev.filter((t: any) => t.id !== id));
 
   return (
     <ToastContext.Provider value={{ show }}>
@@ -36,12 +36,12 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       <div aria-live="polite" aria-atomic="false" className="sr-only" />
 
       <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm">
-        {toasts.map(t => (
+        {toasts.map((t: any) => (
           <div
             key={t.id}
             role="status"
             aria-live="polite"
-            className={`flex items-start gap-3 p-3 rounded shadow-lg text-white ${variantClasses[t.type]} ring-1 ring-black/5`}>
+            className={`flex items-start gap-3 p-3 rounded shadow-lg text-white ${variantClasses[t.type as ToastType]} ring-1 ring-black/5`}>
             <div className="flex-shrink-0 mt-0.5">
               {t.type === 'success' ? (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>

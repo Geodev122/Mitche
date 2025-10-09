@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Bell, X, BookOpen, QrCode, Trophy, Zap } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
@@ -11,18 +11,43 @@ import ResponsiveLogo from '../ui/ResponsiveLogo';
 import ProfilePanel from './ProfilePanel';
 
 
+import { useToast } from '../ui/Toast';
+
 const Header: React.FC = () => {
     const { user } = useAuth();
-    const { getNotificationsForUser, markAsRead } = useData();
+    const { getNotificationsForUser, markAsRead, giveRitualPoint } = useData();
     const [showNotifications, setShowNotifications] = React.useState(false);
     const [isProfileOpen, setProfileOpen] = React.useState(false);
     const navigate = ReactRouterDOM.useNavigate();
     const { t } = useTranslation();
+    const toast = useToast();
 
     if (!user) return null;
 
     const notifications = getNotificationsForUser(user.id);
     const unreadCount = notifications.filter(n => !n.isRead).length;
+
+    const handleRitualClick = async () => {
+        const today = new Date();
+        const lastRitualDate = user.lastRitualTimestamp ? new Date(user.lastRitualTimestamp) : null;
+        if (lastRitualDate && lastRitualDate.getUTCFullYear() === today.getUTCFullYear() && lastRitualDate.getUTCMonth() === today.getUTCMonth() && lastRitualDate.getUTCDate() === today.getUTCDate()) {
+            toast.show(t('ritual.alreadyCompleted', 'You have already completed the daily ritual today.'), 'info');
+            return;
+        }
+
+        try {
+            const requestId = `ritual_${user.id}_${Date.now()}`;
+            const res = await giveRitualPoint({ requestId });
+            if (res.success) {
+                toast.show(t('ritual.success', 'Daily ritual completed — Hope point awarded!'), 'success');
+            } else {
+                toast.show(t(res.messageKey || 'ritual.error', 'Unable to complete the ritual.'), 'error');
+            }
+        } catch (error) {
+            console.error("Error completing ritual from header:", error);
+            toast.show(t('ritual.error', 'Unable to complete the ritual.'), 'error');
+        }
+    };
 
     const handleBellClick = () => {
         setShowNotifications(true);
@@ -51,7 +76,7 @@ const Header: React.FC = () => {
 
     return (
         <>
-            <header className="sticky top-0 bg-white/80 backdrop-blur-sm z-20 p-2 sm:p-4 flex justify-between items-center border-b">
+            <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-sm z-20 p-2 sm:p-4 flex justify-between items-center border-b">
                 <div className="flex items-center space-x-2 rtl:space-x-reverse">
                     <ResponsiveLogo className="h-8 w-8" />
                     <span className="text-lg font-bold text-[#3A3A3A] hidden sm:inline">{t('appName')}</span>
@@ -74,7 +99,7 @@ const Header: React.FC = () => {
                                             </button>
                                         )}
                     {/* Ritual quick CTA */}
-                    <a href="/ritual" className="hidden sm:inline-flex items-center px-3 py-2 rounded-md bg-[var(--accent)] text-white text-sm">{t('nav.ritual', 'Daily Ritual')}</a>
+                    <button onClick={handleRitualClick} className="hidden sm:inline-flex items-center px-3 py-2 rounded-md bg-[var(--accent)] text-white text-sm">{t('nav.ritual', 'Daily Ritual')}</button>
                     <button onClick={() => {
                         // Open profile panel
                         setProfileOpen(true);

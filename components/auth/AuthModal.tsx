@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import Modal from '../ui/Modal';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,8 @@ import { useToast } from '../ui/Toast';
 import { Button } from '../../design-system/Button';
 import { firebaseService, auth as firebaseAuth } from '../../services/firebase';
 
+import { Input } from '../../design-system/Input';
+
 interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -15,14 +17,10 @@ interface AuthModalProps {
 
 const InputField: React.FC<{id: string, label: string, type: string, value: string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, required?: boolean}> = 
 ({id, label, type, value, onChange, required}) => (
-    <div>
-        <label htmlFor={id} className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
-        <input id={id} type={type} value={value} onChange={onChange} required={required}
-            className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]" />
-    </div>
+    <Input id={id} type={type} value={value} onChange={onChange} required={required} label={label} />
 );
 
-const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }: AuthModalProps) => {
     const { login, signup, signInWithGoogle, generateUniqueUsernames, isFirebaseEnabled } = useAuth();
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = React.useState<'login' | 'signup'>('login');
@@ -98,6 +96,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             return;
         }
 
+
         if (!password.trim()) {
             setError(t('auth.errorPassword'));
             return;
@@ -115,7 +114,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             // For local fallback, include submitted document names so they are recorded.
             const meta: any = { role: selectedRole };
             if (!isFirebaseEnabled && documents.length > 0) {
-                meta.submittedDocuments = documents.map(f => f.name);
+                meta.submittedDocuments = documents.map((f: File) => f.name);
             }
 
             // Create account first (without files) so we get the user id
@@ -142,18 +141,18 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                             const f = documents[i];
                             const idx = i;
 
-                            const p = firebaseService.uploadSingleDocument(userId, f, (pct) => {
-                                setUploadProgress(prev => { const n = [...(prev || [])]; n[idx] = pct; return n; });
+                            const p = firebaseService.uploadSingleDocument(userId, f, (pct: number) => {
+                                setUploadProgress((prev: number[]) => { const n = [...(prev || [])]; n[idx] = pct; return n; });
                             }).then(res => {
                                 if (res && res.url) {
-                                    setUploadControllers(prev => { const n = [...(prev || [])]; n[idx] = { status: 'done', url: res.url }; return n; });
+                                    setUploadControllers((prev: any[]) => { const n = [...(prev || [])]; n[idx] = { status: 'done', url: res.url }; return n; });
                                     return { success: true, url: res.url };
                                 } else {
-                                    setUploadControllers(prev => { const n = [...(prev || [])]; n[idx] = { status: 'error', error: String(res?.error || 'upload failed') }; return n; });
+                                    setUploadControllers((prev: any[]) => { const n = [...(prev || [])]; n[idx] = { status: 'error', error: String(res?.error || 'upload failed') }; return n; });
                                     return { success: false, error: res?.error };
                                 }
                             }).catch(err => {
-                                setUploadControllers(prev => { const n = [...(prev || [])]; n[idx] = { status: 'error', error: String(err) }; return n; });
+                                setUploadControllers((prev: any[]) => { const n = [...(prev || [])]; n[idx] = { status: 'error', error: String(err) }; return n; });
                                 return { success: false, error: err };
                             });
 
@@ -245,8 +244,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
             {activeTab === 'login' ? (
                 <form onSubmit={handleLogin} className="space-y-4">
-                    <InputField id="login-username" label={t('auth.username')} type="text" value={username} onChange={e => setUsername(e.target.value)} required />
-                    <InputField id="login-password" label={t('auth.password')} type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+                    <InputField id="login-username" label={t('auth.username')} type="text" value={username} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)} required />
+                    <InputField id="login-password" label={t('auth.password')} type="password" value={password} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} required />
                     {error && <p className="text-red-500 text-xs text-right">{error}</p>}
                     <button type="submit" disabled={loading || googleLoading} className="w-full mt-4 bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors disabled:bg-gray-400">
                         {loading ? t('auth.loginLoading') : t('auth.login')}
@@ -292,7 +291,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                             </div>
                         ) : (
                             <div className="space-y-2">
-                                {generatedUsernames.map(name => (
+                                {generatedUsernames.map((name: string) => (
                                     <button
                                         type="button"
                                         key={name}
@@ -319,7 +318,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
                         <div className="pt-2">
                             <label className="block text-sm font-medium text-gray-600 mb-2">{t('auth.uploadDocs')}</label>
-                            <input type="file" multiple onChange={(e) => {
+                            <input type="file" multiple onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                 const files = e.target.files ? Array.from(e.target.files) : [];
                                 setDocuments(files);
                                 setUploadProgress(files.map(() => 0));
@@ -327,7 +326,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                             {documents.length > 0 && <p className="text-xs text-gray-600 mt-1">{documents.length} {t('auth.documentsSelected')}</p>}
                             {documents.length > 0 && (
                                 <div className="space-y-3 mt-2">
-                                    {documents.map((f, idx) => {
+                                    {documents.map((f: File, idx: number) => {
                                         const pct = uploadProgress[idx] ?? 0;
                                         const ctrl = uploadControllers[idx] || { status: 'idle' };
                                         return (
@@ -358,15 +357,15 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                                                             // cancel
                                                             try {
                                                                 uploadControllers[idx]?.cancel && uploadControllers[idx].cancel();
-                                                                setUploadControllers(prev => {
+                                                                setUploadControllers((prev: any[]) => {
                                                                     const next = [...prev];
                                                                     next[idx] = { ...(next[idx] || {}), status: 'error', error: 'cancelled' };
                                                                     return next;
                                                                 });
                                                                 toast.show('Upload cancelled', 'info', { label: 'Undo', cb: () => {
                                                                     // a soft undo: re-add file to the list for retry
-                                                                    setUploadControllers(prev => { const n = [...prev]; n[idx] = { status: 'idle' }; return n; });
-                                                                    setUploadProgress(prev => { const n = [...(prev || [])]; n[idx] = 0; return n; });
+                                                                    setUploadControllers((prev: any[]) => { const n = [...prev]; n[idx] = { status: 'idle' }; return n; });
+                                                                    setUploadProgress((prev: number[]) => { const n = [...(prev || [])]; n[idx] = 0; return n; });
                                                                 }});
                                                             } catch (e) { console.warn(e); }
                                                         }}>Cancel</Button>
@@ -374,22 +373,22 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                                                     {ctrl.status === 'error' && (
                                                         <Button variant="secondary" onClick={async () => {
                                                             // retry single file
-                                                            setUploadControllers(prev => { const n = [...prev]; n[idx] = { status: 'uploading' }; return n; });
-                                                            setUploadProgress(prev => { const n = [...(prev || [])]; n[idx] = 0; return n; });
+                                                            setUploadControllers((prev: any[]) => { const n = [...prev]; n[idx] = { status: 'uploading' }; return n; });
+                                                            setUploadProgress((prev: number[]) => { const n = [...(prev || [])]; n[idx] = 0; return n; });
                                                             try {
                                                                 const userId = firebaseAuth?.currentUser?.uid;
                                                                 if (!userId) throw new Error('No user id');
                                                                 // call uploadSingleDocument
-                                                                const res = await firebaseService.uploadSingleDocument(userId, f, (p) => setUploadProgress(prev => { const n = [...(prev || [])]; n[idx] = p; return n; }));
+                                                                const res = await firebaseService.uploadSingleDocument(userId, f, (p: number) => setUploadProgress((prev: number[]) => { const n = [...(prev || [])]; n[idx] = p; return n; }));
                                                                 if (res.url) {
-                                                                    setUploadControllers(prev => { const n = [...(prev || [])]; n[idx] = { status: 'done', url: res.url }; return n; });
+                                                                    setUploadControllers((prev: any[]) => { const n = [...(prev || [])]; n[idx] = { status: 'done', url: res.url }; return n; });
                                                                     toast.show('Upload succeeded', 'success');
                                                                 } else {
-                                                                    setUploadControllers(prev => { const n = [...(prev || [])]; n[idx] = { status: 'error', error: String(res.error || 'upload failed') }; return n; });
+                                                                    setUploadControllers((prev: any[]) => { const n = [...(prev || [])]; n[idx] = { status: 'error', error: String(res.error || 'upload failed') }; return n; });
                                                                     toast.show('Upload failed', 'error');
                                                                 }
                                                             } catch (err) {
-                                                                setUploadControllers(prev => { const n = [...(prev || [])]; n[idx] = { status: 'error', error: String(err) }; return n; });
+                                                                setUploadControllers((prev: any[]) => { const n = [...(prev || [])]; n[idx] = { status: 'error', error: String(err) }; return n; });
                                                                 toast.show('Upload failed', 'error');
                                                             }
                                                         }}>Retry</Button>
@@ -402,7 +401,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                             )}
                         </div>
                     </div>
-                    <InputField id="signup-password" label={t('auth.password')} type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+                    <InputField id="signup-password" label={t('auth.password')} type="password" value={password} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} required />
                     
                     <p className="text-xs text-gray-500 text-center pt-2">{t('auth.identityChoiceInfo')}</p>
 

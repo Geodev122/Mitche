@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Preview } from '@storybook/react';
 import '../styles/theme.css';
 import ThemeProvider from '../components/theme/ThemeProvider';

@@ -1,7 +1,8 @@
-import React from 'react';
+import * as React from 'react';
 import { useAuth } from '../context/AuthContext';
 import * as ReactRouterDOM from 'react-router-dom';
 import { Shield } from 'lucide-react';
+import Button from '../design-system/Button';
 import AuthModal from '../components/auth/AuthModal';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
@@ -40,12 +41,12 @@ const Login: React.FC = () => {
                     </div>
                 </div>
 
-                <button
+                <Button
                     onClick={() => setIsModalOpen(true)}
-                    className="w-full max-w-sm bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors text-lg shadow-md"
+                    className="w-full max-w-sm text-lg"
                 >
                     {t('login.startJourney')}
-                </button>
+                </Button>
                 
                  <p className="text-xs text-gray-400 mt-8 text-center max-w-sm">
                     {t('login.agreement')}

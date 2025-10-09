@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { useData } from '../context/DataContext';
 import Card from '../components/ui/Card';
 import { BookOpen, Zap, Wind, Users, Heart } from 'lucide-react';
@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 // A component to render the pattern visually
-const PatternVisual: React.FC<{ pattern: TapestryThreadPattern }> = ({ pattern }) => {
+const PatternVisual: React.FC<{ pattern: TapestryThreadPattern }> = ({ pattern }: { pattern: TapestryThreadPattern }) => {
     const commonClasses = "absolute inset-0 opacity-5";
     if (pattern === TapestryThreadPattern.Spirals) {
         return <div className={`${commonClasses} bg-[radial-gradient(#3A3A3A_1px,transparent_1px)] [background-size:20px_20px]`}></div>;
@@ -30,11 +30,11 @@ const colorMap: { [key in TapestryThreadColor]: { border: string, text: string, 
 };
 
 
-const ThreadCard: React.FC<{ thread: TapestryThread }> = ({ thread }) => {
+const ThreadCard: React.FC<{ thread: TapestryThread }> = ({ thread }: { thread: TapestryThread }) => {
     const { echoThread } = useData();
     const { t } = useTranslation();
     const [isPulsing, setIsPulsing] = React.useState(false);
-    const colors = colorMap[thread.color];
+    const colors = colorMap[thread.color as keyof typeof colorMap];
 
     const handleEcho = () => {
         echoThread(thread.id);
@@ -90,7 +90,7 @@ const ThreadCard: React.FC<{ thread: TapestryThread }> = ({ thread }) => {
     );
 }
 
-const Skeleton: React.FC<{ className?: string }> = ({ className }) => (
+const Skeleton: React.FC<{ className?: string }> = ({ className }: { className?: string }) => (
   <div className={`bg-gray-200 rounded animate-pulse ${className}`}></div>
 );
 

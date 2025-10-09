@@ -53,6 +53,7 @@ export interface User {
   hopePointsBreakdown: {
     [key in HopePointCategory]?: number;
   };
+  pillars?: { [key: string]: number }; // Added to support constellation/pillar calculations
   // New fields for Reveal Protocol
   nominationStatus?: 'Nominated' | 'AcceptedReveal' | 'AcceptedAnonymous';
   realName?: string;

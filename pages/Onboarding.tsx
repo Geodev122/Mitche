@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -19,11 +19,11 @@ const Onboarding: React.FC = () => {
   const [error, setError] = React.useState('');
 
   const handleNext = () => {
-    setStep(prev => prev + 1);
+    setStep((prev: number) => prev + 1);
   };
   
   const handleBack = () => {
-      setStep(prev => prev - 1);
+      setStep((prev: number) => prev - 1);
   };
 
   const handleIdentitySubmit = () => {
@@ -53,7 +53,7 @@ const Onboarding: React.FC = () => {
     }
   };
   
-  const StepWrapper: React.FC<{children: React.ReactNode}> = ({children}) => (
+  const StepWrapper: React.FC<{children: React.ReactNode}> = ({children}: {children: React.ReactNode}) => (
       <div className="w-full max-w-md text-center animate-fade-in-down space-y-6 flex flex-col items-center">
           {children}
       </div>
