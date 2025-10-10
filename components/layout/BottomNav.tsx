@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
-import { Home, MessageSquare, Calendar, BookOpen, Shield, Trophy, PackageSearch, Zap } from 'lucide-react';
+import { Home, MessageSquare, Calendar, BookOpen, Shield, Trophy, PackageSearch, Zap, Award } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { Role } from '../../types';
@@ -16,7 +16,8 @@ const BottomNav: React.FC = () => {
     { path: '/events', label: t('nav.events'), icon: Calendar, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
   { path: '/ritual', label: t('nav.ritual', 'Daily Ritual'), icon: Zap, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
   // Phase 1 features are now integrated into main flows; no standalone nav entry
-    { path: '/admin', label: t('nav.admin'), icon: Shield, roles: [Role.Admin] },
+    { path: '/leaderboard', label: t('nav.leaderboard'), icon: Trophy, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
+    { path: '/achievements', label: t('nav.achievements'), icon: Award, roles: [Role.Citizen, Role.NGO, Role.PublicWorker, Role.Admin] },
   ];
   
   const accessibleNavItems = navItems.filter(item => user && item.roles.includes(user.role));

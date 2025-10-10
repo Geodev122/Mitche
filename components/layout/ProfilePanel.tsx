@@ -34,18 +34,15 @@ interface SettingsButtonProps {
 }
 
 const SettingsButton: React.FC<SettingsButtonProps> = ({icon: Icon, label, onClick, isDestructive, children}) => (
-    <button
-        onClick={onClick}
-        className={`w-full flex items-center text-left p-3 rounded-md transition-colors ${
+    <ReactRouterDOM.Link to={onClick ? '#' : ''} onClick={onClick} className={`w-full flex items-center text-left p-3 rounded-md transition-colors ${
             isDestructive 
                 ? 'text-red-600 hover:bg-red-50' 
                 : 'text-gray-700 hover:bg-gray-100'
-        }`}
-    >
+        }`}>
         <Icon className="w-5 h-5 mr-3" />
         <span className="flex-grow">{label}</span>
-        {children}
-    </button>
+        {children || <ChevronRightIcon className="w-5 h-5 text-gray-400" />}
+    </ReactRouterDOM.Link>
 );
 
 interface ProfilePanelProps {

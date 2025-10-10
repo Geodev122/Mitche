@@ -4,9 +4,11 @@ import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { RequestType, RequestMode } from '../types';
 import { ArrowRight, ArrowLeft, Eye, Shield } from 'lucide-react';
-import RippleButton from '../components/ui/RippleButton';
-import Card from '../components/ui/Card';
-import Button from '../components/ui/Button';
+import PageContainer from '../components/layout/PageContainer';
+import { Input } from '../design-system/Input';
+import { Select } from '../design-system/Select';
+import { Textarea } from '../design-system/Textarea';
+import Button from '../design-system/Button';
 import ConfirmationModal from '../components/ui/ConfirmationModal';
 import { useTranslation } from 'react-i18next';
 
@@ -42,8 +44,8 @@ const CreateRequest: React.FC = () => {
   const BackArrow = i18n.dir() === 'rtl' ? ArrowRight : ArrowLeft;
 
   return (
-    <>
-      <div className="p-4 pb-32">
+    <PageContainer>
+      <div className="pb-32">
         <header className="flex items-center my-6">
           <button onClick={handleBackNavigation} className="p-2">
               <BackArrow size={24} className="text-gray-700" />
@@ -52,28 +54,39 @@ const CreateRequest: React.FC = () => {
         </header>
         <p className="text-center text-md text-gray-500 mb-6">{t('createRequest.subtitle')}</p>
         
-  <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">{t('createRequest.form.title')}</label>
-            <input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]" placeholder={t('createRequest.form.titlePlaceholder')} />
-          </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <Input
+            label={t('createRequest.form.title')}
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            required
+            placeholder={t('createRequest.form.titlePlaceholder')}
+          />
           
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">{t('createRequest.form.category')}</label>
-            <select value={type} onChange={e => setType(e.target.value as RequestType)} className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]">
-              {Object.values(RequestType).map(t_val => <option key={t_val} value={t_val}>{t(`requestTypes.${t_val}`)}</option>)}
-            </select>
-          </div>
+          <Select
+            label={t('createRequest.form.category')}
+            value={type}
+            onChange={e => setType(e.target.value as RequestType)}
+          >
+            {Object.values(RequestType).map(t_val => <option key={t_val} value={t_val}>{t(`requestTypes.${t_val}`)}</option>)}
+          </Select>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">{t('createRequest.form.region')}</label>
-            <input type="text" value={region} onChange={e => setRegion(e.target.value)} required className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]" placeholder={t('createRequest.form.regionPlaceholder')} />
-          </div>
+          <Input
+            label={t('createRequest.form.region')}
+            value={region}
+            onChange={e => setRegion(e.target.value)}
+            required
+            placeholder={t('createRequest.form.regionPlaceholder')}
+          />
           
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">{t('createRequest.form.description')}</label>
-            <textarea value={description} onChange={e => setDescription(e.target.value)} required rows={5} className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]" placeholder={t('createRequest.form.descriptionPlaceholder')}></textarea>
-          </div>
+          <Textarea
+            label={t('createRequest.form.description')}
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            required
+            rows={5}
+            placeholder={t('createRequest.form.descriptionPlaceholder')}
+          />
           
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-2">{t('createRequest.form.mode')}</label>
@@ -91,10 +104,8 @@ const CreateRequest: React.FC = () => {
             </div>
           </div>
 
-          <div className="fixed bottom-16 left-0 right-0 bg-[#FBF9F4]/80 backdrop-blur-sm p-4 border-t border-[#F1EADF]">
-            <Card>
-              <Button type="submit" className="w-full" variant="primary">{t('createRequest.form.submit')}</Button>
-            </Card>
+          <div className="fixed bottom-4 left-0 right-0 bg-transparent p-4">
+            <Button type="submit" className="w-full max-w-md mx-auto">{t('createRequest.form.submit')}</Button>
           </div>
         </form>
       </div>
@@ -102,13 +113,10 @@ const CreateRequest: React.FC = () => {
         isOpen={isConfirmModalOpen}
         onClose={() => setConfirmModalOpen(false)}
         onConfirm={() => navigate(-1)}
-        title={t('createRequest.discardTitle')}
-        confirmText={t('createRequest.discardConfirm')}
-        cancelText={t('createRequest.discardCancel')}
-      >
-        <p>{t('createRequest.discardBody')}</p>
-      </ConfirmationModal>
-    </>
+        title={t('createRequest.confirm.title')}
+        message={t('createRequest.confirm.message')}
+      />
+    </PageContainer>
   );
 };
 

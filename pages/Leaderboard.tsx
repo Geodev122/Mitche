@@ -6,6 +6,7 @@ import { User } from '../types';
 import SymbolIcon from '../components/ui/SymbolIcon';
 import Card from '../components/ui/Card';
 import { Trophy, Crown, ShieldCheck } from 'lucide-react';
+import PageContainer from '../components/layout/PageContainer';
 
 const getPodiumClass = (rank: number) => {
     switch (rank) {
@@ -79,81 +80,81 @@ const Leaderboard: React.FC = () => {
     const isCurrentUserInTop3 = currentUserRank > 0 && currentUserRank <= 3;
 
     return (
-        <div className="p-4 pb-24">
-            <header className="text-center my-6">
-                <Trophy className="w-12 h-12 mx-auto text-[#D4AF37] mb-2" />
-                <h1 className="text-3xl font-bold text-gray-800">{t('leaderboard.title')}</h1>
-                <p className="text-md text-gray-500 mt-1">{t('leaderboard.subtitle')}</p>
-            </header>
+        <PageContainer title={t('leaderboard.title') || undefined} subtitle={t('leaderboard.subtitle') || undefined}>
+            <div className="pb-24">
+                <header className="text-center my-6">
+                    <Trophy className="w-12 h-12 mx-auto text-[#D4AF37] mb-2" />
+                </header>
 
-            {/* Top 3 Podium */}
-            {topThree.length > 0 && (
-                 <Card className="mb-6">
-                    <div className="grid grid-cols-3 gap-2 items-end">
-                        {/* 2nd Place */}
-                        <div className="mt-4">
-                            {topThree[1] && <PodiumCard user={topThree[1]} rank={2} isCurrentUser={topThree[1].id === currentUser.id} />}
+                {/* Top 3 Podium */}
+                {topThree.length > 0 && (
+                    <Card className="mb-6">
+                        <div className="grid grid-cols-3 gap-2 items-end">
+                            {/* 2nd Place */}
+                            <div className="mt-4">
+                                {topThree[1] && <PodiumCard user={topThree[1]} rank={2} isCurrentUser={topThree[1].id === currentUser.id} />}
+                            </div>
+                            {/* 1st Place */}
+                            <div>
+                                {topThree[0] && <PodiumCard user={topThree[0]} rank={1} isCurrentUser={topThree[0].id === currentUser.id} />}
+                            </div>
+                            {/* 3rd Place */}
+                            <div className="mt-4">
+                                {topThree[2] && <PodiumCard user={topThree[2]} rank={3} isCurrentUser={topThree[2].id === currentUser.id} />}
+                            </div>
                         </div>
-                         {/* 1st Place */}
-                        <div>
-                             {topThree[0] && <PodiumCard user={topThree[0]} rank={1} isCurrentUser={topThree[0].id === currentUser.id} />}
-                        </div>
-                         {/* 3rd Place */}
-                        <div className="mt-4">
-                            {topThree[2] && <PodiumCard user={topThree[2]} rank={3} isCurrentUser={topThree[2].id === currentUser.id} />}
-                        </div>
+                    </Card>
+                )}
+
+                {/* Rest of the list */}
+                <div className="space-y-2">
+                    <div className="flex items-center text-xs font-bold text-gray-500 px-4 py-2">
+                        <div className="w-1/6 text-left">#</div>
+                        <div className="w-3/6">{t('leaderboard.bearer')}</div>
+                        <div className="w-2/6 text-right">{t('leaderboard.points')}</div>
                     </div>
-                </Card>
-            )}
-
-            {/* Rest of the list */}
-            <div className="space-y-2">
-                 <div className="flex items-center text-xs font-bold text-gray-500 px-4 py-2">
-                    <div className="w-1/6 text-left">#</div>
-                    <div className="w-3/6">{t('leaderboard.bearer')}</div>
-                    <div className="w-2/6 text-right">{t('leaderboard.points')}</div>
+                    {restOfUsers.map((user, index) => {
+                        const rank = index + 4;
+                        const isCurrentUser = user.id === currentUser.id;
+                        return (
+                            <div key={user.id} className={`flex items-center p-3 rounded-lg ${isCurrentUser ? 'bg-[#D4AF37]/20 border border-[#D4AF37]' : 'bg-white'}`}>
+                                <div className="w-1/6 font-bold text-gray-700">{rank}</div>
+                                <div className="w-3/6 flex items-center space-x-3 rtl:space-x-reverse">
+                                    <SymbolIcon name={user.symbolicIcon} className="w-6 h-6 text-gray-500" />
+                                    <div className="flex items-center gap-1">
+                                        <span className="font-semibold text-gray-800 truncate">{user.symbolicName}</span>
+                                        {user.isVerified && <ShieldCheck className="w-4 h-4 text-blue-500 flex-shrink-0" aria-label={t('verifiedOrg') as string} />}
+                                    </div>
+                                </div>
+                                <div className="w-2/6 text-right font-bold text-[#3A3A3A]">{user.hopePoints}</div>
+                            </div>
+                        );
+                    })}
                 </div>
-                {restOfUsers.map((user, index) => {
-                    const rank = index + 4;
-                    const isCurrentUser = user.id === currentUser.id;
-                    return (
-                        <div key={user.id} className={`flex items-center p-3 rounded-lg ${isCurrentUser ? 'bg-[#D4AF37]/20 border border-[#D4AF37]' : 'bg-white'}`}>
-                            <div className="w-1/6 font-bold text-gray-700">{rank}</div>
-                            <div className="w-3/6 flex items-center space-x-3 rtl:space-x-reverse">
-                                <SymbolIcon name={user.symbolicIcon} className="w-6 h-6 text-gray-500" />
-                                <div className="flex items-center gap-1">
-                                    <span className="font-semibold text-gray-800 truncate">{user.symbolicName}</span>
-                                    {user.isVerified && <ShieldCheck className="w-4 h-4 text-blue-500 flex-shrink-0" aria-label={t('verifiedOrg') as string} />}
+
+                {/* Current User's Rank */}
+                {currentUserRank > 0 && !isCurrentUserInTop3 && (
+                    <div className="fixed bottom-20 left-4 right-4 z-10">
+                        <div className="bg-white/80 backdrop-blur-sm p-3 rounded-xl shadow-lg border border-[#D4AF37] flex items-center justify-between">
+                            <div className="flex items-center">
+                                <span className="font-bold text-lg text-gray-700 mr-4 rtl:mr-0 rtl:ml-4">#{currentUserRank}</span>
+                                <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                                    <SymbolIcon name={currentUser.symbolicIcon} className="w-8 h-8 text-gray-600" />
+                                    <div>
+                                        <p className="font-bold text-gray-800">{currentUser.symbolicName}</p>
+                                        <p className="text-xs text-gray-500">{t('leaderboard.yourPosition')}</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="w-2/6 text-right font-bold text-[#3A3A3A]">{user.hopePoints}</div>
+                            <div className="text-right rtl:text-left">
+                            <p className="font-bold text-lg text-[#D4AF37]">{currentUser.hopePoints}</p>
+                            <p className="text-xs text-gray-500">{t('leaderboard.points')}</p>
+                            </div>
                         </div>
-                    );
-                })}
+                    </div>
+                )}
             </div>
-
-            {/* Current User's Rank */}
-            {currentUserRank > 0 && !isCurrentUserInTop3 && (
-                <div className="fixed bottom-20 left-4 right-4 z-10">
-                     <div className="bg-white/80 backdrop-blur-sm p-3 rounded-xl shadow-lg border border-[#D4AF37] flex items-center justify-between">
-                        <div className="flex items-center">
-                            <span className="font-bold text-lg text-gray-700 mr-4 rtl:mr-0 rtl:ml-4">#{currentUserRank}</span>
-                            <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                                <SymbolIcon name={currentUser.symbolicIcon} className="w-8 h-8 text-gray-600" />
-                                <div>
-                                    <p className="font-bold text-gray-800">{currentUser.symbolicName}</p>
-                                    <p className="text-xs text-gray-500">{t('leaderboard.yourPosition')}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="text-right rtl:text-left">
-                           <p className="font-bold text-lg text-[#D4AF37]">{currentUser.hopePoints}</p>
-                           <p className="text-xs text-gray-500">{t('leaderboard.points')}</p>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
+        </PageContainer>
     );
 };
 

@@ -1,9 +1,7 @@
-import React from 'react';
+import * as React from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import Card from '../components/ui/Card';
 import SymbolIcon from '../components/ui/SymbolIcon';
-import Modal from '../components/ui/Modal';
 import { Request, RequestStatus, Offering, Role, CommendationType } from '../types';
 import { timeSince } from '../utils/time';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +9,14 @@ import { ArrowLeft, ArrowRight, Info, Heart, Tag, Shield, ShieldCheck, Award } f
 import CommendationModal from '../components/ui/CommendationModal';
 import { useData } from '../context/DataContext';
 import { useToast } from '../components/ui/Toast';
+import PageContainer from '../components/layout/PageContainer';
+import Button from '../design-system/Button';
+import ConfirmationModal from '../components/ui/ConfirmationModal';
+import { Textarea } from '../design-system/Textarea';
+import { Input } from '../design-system/Input';
+import { Select } from '../design-system/Select';
+import Modal from '../design-system/Modal';
+
 
 const statusStyles: { [key in RequestStatus]: { text: string; classes: string } } = {
   [RequestStatus.Open]: { text: 'requestStatus.Open', classes: 'bg-green-100 text-green-700' },
@@ -57,7 +63,7 @@ const RequestDetail: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { getRequestById, getOfferingsForRequest, addOffering, initiateHelp, confirmReceipt, fulfillRequest, leaveCommendation } = useData();
   const { addTapestryThread } = useData();
-  const { user, getUserById, enhancedFirebase } = useAuth();
+  const { user, getUserById } = useAuth();
   
   const [isHelpModalOpen, setHelpModalOpen] = React.useState(false);
   const [isEncourageModalOpen, setEncourageModalOpen] = React.useState(false);
@@ -102,209 +108,213 @@ const RequestDetail: React.FC = () => {
 
   const handleSendEncouragement = () => {
     if (encouragementMessage.trim() === '') return;
-    const offering = {
+    addOffering({
       requestId: request.id,
-      type: 'Encouragement' as 'Encouragement',
+      type: 'Encouragement',
       message: encouragementMessage,
       pointsEarned: 3,
-    };
-    addOffering(offering, user.id);
+    }, user.id);
     setEncourageModalOpen(false);
     setEncouragementMessage('');
+    toast.show(t('requestDetail.encouragementSent'));
+  };
+
+  const handleAddTapestry = () => {
+    if (tapestryStory.trim() === '') return;
+    addTapestryThread({
+      requestId: request.id,
+      story: tapestryStory,
+      isAnonymous: tapestryRevealChoice === 'Anonymous',
+      authorName: tapestryRevealChoice === 'Reveal' ? tapestryRealName : user.symbolicName || 'Anonymous',
+      authorPhotoUrl: tapestryRevealChoice === 'Reveal' ? tapestryPhotoUrl : user.photoUrl,
+      color: tapestryColor,
+      pattern: tapestryPattern,
+    }, user.id);
+    setAddTapestryOpen(false);
+    // Reset tapestry form
+    setTapestryStory('');
+    setTapestryRevealChoice('Anonymous');
+    setTapestryRealName('');
+    setTapestryPhotoUrl('');
+    toast.show(t('requestDetail.tapestryAdded'));
   };
 
   const renderActionButtons = () => {
-    let buttons = null;
     if (isOwner) {
       if (request.status === RequestStatus.Pending && !request.isConfirmedByRequester) {
-        buttons = <button onClick={() => confirmReceipt(request.id)} className="w-full px-4 py-3 text-sm bg-green-500 text-white rounded-lg font-bold hover:bg-green-600">{t('echoes.card.confirmReceipt')}</button>;
+        return <Button onClick={() => confirmReceipt(request.id)} variant="primary" className="w-full">{t('echoes.card.confirmReceipt')}</Button>;
       }
     } else if (request.status === RequestStatus.Open) {
-      buttons = (
+      return (
         <div className="flex flex-col sm:flex-row gap-2">
-          <button onClick={() => setHelpModalOpen(true)} className="flex-1 px-4 py-3 text-sm bg-[#3A3A3A] text-white rounded-lg font-bold hover:bg-opacity-80">{t('echoes.card.provideHelp')}</button>
-          <button onClick={() => setEncourageModalOpen(true)} className="flex-1 px-4 py-3 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50">{t('echoes.card.sendEncouragement')}</button>
-          {/* Chat feature removed — kept interaction focused on help/encourage/tapestry flows */}
-          <button onClick={() => setAddTapestryOpen(true)} className="flex-1 px-4 py-3 text-sm bg-amber-500 text-white rounded-lg font-bold hover:bg-amber-600">Add to Tapestry</button>
+          <Button onClick={() => setHelpModalOpen(true)} variant="primary" className="flex-1">{t('echoes.card.provideHelp')}</Button>
+          <Button onClick={() => setEncourageModalOpen(true)} variant="secondary" className="flex-1">{t('echoes.card.sendEncouragement')}</Button>
+          <Button onClick={() => setAddTapestryOpen(true)} variant="outline" className="flex-1">{t('requestDetail.addToTapestry')}</Button>
         </div>
       );
     } else if (request.status === RequestStatus.Pending && isHelper) {
       if (request.isConfirmedByRequester) {
-        buttons = <button onClick={() => fulfillRequest(request.id, user.id)} className="w-full px-4 py-3 text-sm bg-[#D4AF37] text-white rounded-lg font-bold hover:bg-opacity-80">{t('echoes.card.claimHopePoints')}</button>;
+        return <Button onClick={() => fulfillRequest(request.id, user.id)} variant="primary" className="w-full">{t('echoes.card.claimHopePoints')}</Button>;
       } else {
-        buttons = <button className="w-full px-4 py-3 text-sm bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed" disabled>{t('echoes.card.waitingReceipt')}</button>;
+        return <Button className="w-full" disabled>{t('echoes.card.waitingReceipt')}</Button>;
       }
     }
     
     const canLeaveCommendation = request.status === RequestStatus.Fulfilled && ((isOwner && !request.requesterCommended) || (isHelper && !request.helperCommended));
     if(canLeaveCommendation) {
-        buttons = (
-            <button onClick={() => setCommendationModalOpen(true)} className="w-full px-4 py-3 text-sm bg-blue-500 text-white rounded-lg font-bold hover:bg-blue-600 flex items-center justify-center gap-2">
+        return (
+            <Button onClick={() => setCommendationModalOpen(true)} variant="primary" className="w-full flex items-center justify-center gap-2">
                 <Award size={18} /> {t('commendations.leaveButton')}
-            </button>
+            </Button>
         );
     }
 
-    if (!buttons) return null;
-
-    return (
-        <div className="fixed bottom-16 left-0 right-0 bg-[#FBF9F4]/80 backdrop-blur-sm p-4 border-t border-[#F1EADF] z-10">
-            {buttons}
-        </div>
-    );
+    return null;
   };
-  
-  const currentStatus = statusStyles[request.status];
+
   const BackArrow = i18n.dir() === 'rtl' ? ArrowRight : ArrowLeft;
 
   return (
-    <>
-      <div className="p-4 pb-32">
+    <PageContainer>
+      <div className="pb-24">
         <header className="flex items-center my-4">
-          <button onClick={() => navigate('/echoes')} className="p-2 mr-2 rtl:mr-0 rtl:ml-2 rounded-full hover:bg-gray-100">
+          <button onClick={() => navigate(-1)} className="p-2">
             <BackArrow size={24} className="text-gray-700" />
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">{t('requestDetail.title')}</h1>
+          <h1 className="text-xl font-bold text-gray-800 mx-4 truncate">{request.title}</h1>
         </header>
-        
-        <div className="space-y-4">
-            <Card>
-                <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-[#F1EADF] rounded-full flex items-center justify-center">
-                        <SymbolIcon name={request.userSymbolicIcon} className="w-7 h-7 text-[#D4AF37]" />
-                    </div>
-                    <div className="mx-3">
-                        <h3 className="font-bold text-gray-800">{request.userSymbolicName}</h3>
-                        <p className="text-xs text-gray-500">{t('requestDetail.postedOn')} {timeSince(request.timestamp, t)}</p>
-                    </div>
-                </div>
-                <h2 className="text-xl font-bold text-gray-800 mb-2">{request.title}</h2>
-                <p className="text-gray-600 whitespace-pre-wrap">{request.description}</p>
-                 {helper && 
-                    <div className="text-sm text-center bg-blue-50 text-blue-700 font-semibold p-2 rounded-md mt-4 flex items-center justify-center gap-2">
-                        <span>{t('requestDetail.helper')}: {helper.symbolicName}</span>
-                         {helper.isVerified && <ShieldCheck className="w-4 h-4 text-blue-500" aria-label={t('verifiedOrg') as string} />}
-                    </div>
-                }
-            </Card>
-            
-            <Card>
-                <h3 className="text-lg font-bold text-gray-800 mb-4">{t('requestDetail.detailsTitle')}</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <DetailItem icon={Info} label={t('requestStatus.title')} value={t(currentStatus.text)} />
-                    <DetailItem icon={Tag} label={t('createRequest.form.category')} value={t(`requestTypes.${request.type}`)} />
-                    <DetailItem icon={Shield} label={t('createRequest.form.mode')} value={request.mode === 'Loud' ? t('createRequest.form.modeLoud') : t('createRequest.form.modeSilent')} />
-                </div>
-            </Card>
 
-            {renderActionButtons()}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
+          <div className="flex justify-between items-center mb-4">
+            <div className={`px-3 py-1 text-xs font-semibold rounded-full ${statusStyles[request.status].classes}`}>
+              {t(statusStyles[request.status].text)}
+            </div>
+            <p className="text-xs text-gray-400">{timeSince(request.timestamp, t)}</p>
+          </div>
+          
+          <p className="text-gray-700 mb-6">{request.description}</p>
 
-            <Card>
-                <h3 className="text-lg font-bold text-gray-800 mb-2 px-4 pt-2">{t('requestDetail.encouragementTitle')}</h3>
-                {encouragements.length > 0 ? (
-                    <div>{encouragements.map(offering => <EncouragementCard key={offering.id} offering={offering} />)}</div>
-                ) : (
-                    <div className="text-center text-gray-500 py-8 px-4">
-                        <Heart className="w-8 h-8 mx-auto text-gray-300 mb-2" />
-                        <p>{t('requestDetail.noEncouragement')}</p>
-                    </div>
-                )}
-            </Card>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+            <DetailItem icon={Tag} label={t('requestDetail.type')} value={t(`requestTypes.${request.type}`)} />
+            <DetailItem icon={Info} label={t('requestDetail.region')} value={request.region} />
+            <DetailItem icon={request.mode === 'Loud' ? ShieldCheck : Shield} label={t('requestDetail.mode')} value={t(`requestModes.${request.mode}`)} />
+            {helper && (
+              <div className="flex items-start text-sm col-span-2">
+                <SymbolIcon name={helper.symbolicIcon} className="w-4 h-4 text-gray-400 mt-1 mr-3 rtl:mr-0 rtl:ml-3 flex-shrink-0" />
+                <div>
+                  <p className="font-semibold text-gray-500">{t('requestDetail.helper')}</p>
+                  <p className="text-gray-800">{helper.symbolicName}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {encouragements.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-lg font-bold text-gray-800 mb-2 flex items-center">
+              <Heart className="w-5 h-5 text-pink-500 mr-2" />
+              {t('requestDetail.encouragementsTitle')}
+            </h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              {encouragements.map(offering => <EncouragementCard key={offering.id} offering={offering} />)}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="fixed bottom-0 left-0 right-0 bg-[#FBF9F4]/80 backdrop-blur-sm p-4 border-t border-[#F1EADF]">
+        <div className="max-w-2xl mx-auto">
+          {renderActionButtons()}
         </div>
       </div>
-      
-      <Modal isOpen={isHelpModalOpen} onClose={() => setHelpModalOpen(false)} title={t('echoes.helpModal.titleHelp')}>
-        <>
-            <p className="text-gray-600 mb-4">{t('echoes.helpModal.bodyHelp')}</p>
-            <p className="text-center font-bold text-lg bg-gray-100 p-2 rounded-md">{t('echoes.helpModal.phoneNumber')}</p>
-            <p className="text-xs text-gray-400 text-center my-2">{t('echoes.helpModal.dummyPhone')}</p>
-        </>
-        <button onClick={handleInitiateHelp} className="w-full mt-4 bg-[#3A3A3A] text-white py-3 rounded-lg font-bold hover:bg-opacity-90">{t('echoes.helpModal.confirmHelp')}</button>
-      </Modal>
 
-      <Modal isOpen={isAddTapestryOpen} onClose={() => setAddTapestryOpen(false)} title={t('tapestry.add.title', 'Add to Hope Tapestry')}>
-        <div>
-          <p className="text-sm text-gray-600 mb-2">{t('tapestry.add.instructions', 'Share a short story to honor or recognize someone.')}</p>
-          <textarea value={tapestryStory} onChange={(e) => setTapestryStory(e.target.value)} rows={4} className="w-full px-3 py-2 border rounded-md mb-2" placeholder={t('tapestry.add.placeholder', 'Write your story...')} />
+      {/* Modals */}
+      <ConfirmationModal
+        isOpen={isHelpModalOpen}
+        onClose={() => setHelpModalOpen(false)}
+        onConfirm={handleInitiateHelp}
+        title={t('requestDetail.confirmHelp.title')}
+        message={t('requestDetail.confirmHelp.message')}
+        confirmText={t('requestDetail.confirmHelp.confirm')}
+        cancelText={t('requestDetail.confirmHelp.cancel')}
+      />
 
-          <div className="flex gap-2 mb-2">
-            <label className="flex items-center gap-2">
-              <input type="radio" name="reveal" checked={tapestryRevealChoice === 'Anonymous'} onChange={() => setTapestryRevealChoice('Anonymous')} /> {t('tapestry.add.anonymous', 'Anonymous')}
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="radio" name="reveal" checked={tapestryRevealChoice === 'Reveal'} onChange={() => setTapestryRevealChoice('Reveal')} /> {t('tapestry.add.reveal', 'Reveal my name')}
-            </label>
-          </div>
-
-          {tapestryRevealChoice === 'Reveal' && (
-            <>
-              <input value={tapestryRealName} onChange={(e) => setTapestryRealName(e.target.value)} placeholder={t('tapestry.add.realName', 'Your name')} className="w-full px-3 py-2 border rounded-md mb-2" />
-              <input value={tapestryPhotoUrl} onChange={(e) => setTapestryPhotoUrl(e.target.value)} placeholder={t('tapestry.add.photoUrl', 'Photo URL (optional)')} className="w-full px-3 py-2 border rounded-md mb-2" />
-            </>
-          )}
-
-          <div className="flex gap-2 mb-2">
-            <select value={tapestryColor} onChange={(e) => setTapestryColor(e.target.value)} className="px-2 py-2 border rounded-md">
-              <option>Amber</option>
-              <option>Gold</option>
-              <option>Blue</option>
-              <option>Green</option>
-            </select>
-            <select value={tapestryPattern} onChange={(e) => setTapestryPattern(e.target.value)} className="px-2 py-2 border rounded-md">
-              <option>Spirals</option>
-              <option>Lines</option>
-              <option>Dots</option>
-            </select>
-          </div>
-
-          <div className="flex gap-2">
-            <button className="flex-1 bg-amber-500 text-white py-2 rounded-md" onClick={async () => {
-              if (!tapestryStory.trim()) return;
-              const createdId = await addTapestryThread({
-                honoreeUserId: request.userId,
-                honoreeSymbolicName: request.userSymbolicName,
-                honoreeSymbolicIcon: request.userSymbolicIcon,
-                isAnonymous: tapestryRevealChoice === 'Anonymous',
-                story: tapestryStory,
-                color: tapestryColor as any,
-                pattern: tapestryPattern as any,
-                rippleTag: 1,
-                echoes: 0
-              });
-              if (createdId) {
-                setAddTapestryOpen(false);
-                setTapestryStory('');
-                toast.show(t('tapestry.add.success', 'Added to tapestry successfully'), 'success');
-                // Navigate to tapestry and pass highlight id in state
-                navigate('/tapestry', { state: { highlightThreadId: createdId } });
-              }
-            }}>{t('tapestry.add.submit', 'Add to Tapestry')}</button>
-            <button className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-md" onClick={() => setAddTapestryOpen(false)}>{t('cancel', 'Cancel')}</button>
+      <Modal isOpen={isEncourageModalOpen} onClose={() => setEncourageModalOpen(false)} title={t('requestDetail.encourageModal.title')}>
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">{t('requestDetail.encourageModal.description')}</p>
+          <Textarea 
+            value={encouragementMessage}
+            onChange={(e) => setEncouragementMessage(e.target.value)}
+            placeholder={t('requestDetail.encourageModal.placeholder')}
+            rows={4}
+          />
+          <div className="flex justify-end gap-2">
+            <Button variant="secondary" onClick={() => setEncourageModalOpen(false)}>{t('common.cancel')}</Button>
+            <Button variant="primary" onClick={handleSendEncouragement}>{t('requestDetail.encourageModal.submit')}</Button>
           </div>
         </div>
       </Modal>
 
-      <Modal isOpen={isEncourageModalOpen} onClose={() => setEncourageModalOpen(false)} title={t('echoes.encourageModal.title')}>
-          <textarea 
-            value={encouragementMessage}
-            onChange={(e) => setEncouragementMessage(e.target.value)}
-            rows={4}
-            className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]"
-            placeholder={t('echoes.encourageModal.placeholder')}
-          />
-          <button onClick={handleSendEncouragement} className="w-full mt-4 bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90">{t('echoes.encourageModal.send')}</button>
+      <CommendationModal
+        isOpen={isCommendationModalOpen}
+        onClose={() => setCommendationModalOpen(false)}
+        onSubmit={handleLeaveCommendation}
+        isRequester={isOwner}
+      />
+
+      <Modal isOpen={isAddTapestryOpen} onClose={() => setAddTapestryOpen(false)} title={t('requestDetail.tapestryModal.title')}>
+        <div className="space-y-4">
+            <p className="text-sm text-gray-600">{t('requestDetail.tapestryModal.description')}</p>
+            <Textarea
+                value={tapestryStory}
+                onChange={e => setTapestryStory(e.target.value)}
+                placeholder={t('requestDetail.tapestryModal.storyPlaceholder')}
+                rows={5}
+                required
+            />
+            <Select label={t('requestDetail.tapestryModal.identityLabel')} value={tapestryRevealChoice} onChange={e => setTapestryRevealChoice(e.target.value as 'Reveal' | 'Anonymous')}>
+                <option value="Anonymous">{t('requestDetail.tapestryModal.anonymous')}</option>
+                <option value="Reveal">{t('requestDetail.tapestryModal.reveal')}</option>
+            </Select>
+            {tapestryRevealChoice === 'Reveal' && (
+                <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
+                    <Input
+                        label={t('requestDetail.tapestryModal.realNameLabel')}
+                        value={tapestryRealName}
+                        onChange={e => setTapestryRealName(e.target.value)}
+                        placeholder={t('requestDetail.tapestryModal.realNamePlaceholder')}
+                    />
+                    <Input
+                        label={t('requestDetail.tapestryModal.photoUrlLabel')}
+                        value={tapestryPhotoUrl}
+                        onChange={e => setTapestryPhotoUrl(e.target.value)}
+                        placeholder={t('requestDetail.tapestryModal.photoUrlPlaceholder')}
+                    />
+                </div>
+            )}
+            <div className="grid grid-cols-2 gap-4">
+              <Select label={t('requestDetail.tapestryModal.colorLabel')} value={tapestryColor} onChange={e => setTapestryColor(e.target.value)}>
+                  <option>Amber</option>
+                  <option>Rose</option>
+                  <option>Sky</option>
+                  <option>Jade</option>
+              </Select>
+              <Select label={t('requestDetail.tapestryModal.patternLabel')} value={tapestryPattern} onChange={e => setTapestryPattern(e.target.value)}>
+                  <option>Spirals</option>
+                  <option>Weave</option>
+                  <option>Dots</option>
+                  <option>Blossom</option>
+              </Select>
+            </div>
+            <div className="flex justify-end gap-2 pt-4">
+                <Button variant="secondary" onClick={() => setAddTapestryOpen(false)}>{t('common.cancel')}</Button>
+                <Button variant="primary" onClick={handleAddTapestry}>{t('requestDetail.tapestryModal.submit')}</Button>
+            </div>
+        </div>
       </Modal>
-      
-      {isCommendationModalOpen && (
-        <CommendationModal 
-            isOpen={isCommendationModalOpen}
-            onClose={() => setCommendationModalOpen(false)}
-            onSubmit={handleLeaveCommendation}
-            userName={isOwner ? (helper?.symbolicName || '') : request.userSymbolicName}
-        />
-      )}
-      {/* Chat removed */}
-    </>
+
+    </PageContainer>
   );
 };
 

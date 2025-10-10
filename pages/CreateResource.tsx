@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
@@ -6,6 +6,11 @@ import { ResourceCategory } from '../types';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import ConfirmationModal from '../components/ui/ConfirmationModal';
 import { useTranslation } from 'react-i18next';
+import PageContainer from '../components/layout/PageContainer';
+import { Input } from '../design-system/Input';
+import { Select } from '../design-system/Select';
+import { Textarea } from '../design-system/Textarea';
+import Button from '../design-system/Button';
 
 const CreateResource: React.FC = () => {
   const navigate = ReactRouterDOM.useNavigate();
@@ -40,8 +45,8 @@ const CreateResource: React.FC = () => {
   const BackArrow = i18n.dir() === 'rtl' ? ArrowRight : ArrowLeft;
 
   return (
-    <>
-      <div className="p-4 pb-32">
+    <PageContainer>
+      <div className="pb-32">
         <header className="flex items-center my-6">
           <button onClick={handleBackNavigation} className="p-2">
               <BackArrow size={24} className="text-gray-700" />
@@ -51,42 +56,58 @@ const CreateResource: React.FC = () => {
         <p className="text-center text-md text-gray-500 mb-6">{t('createResource.subtitle')}</p>
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">{t('createResource.form.title')}</label>
-            <input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]" placeholder={t('createResource.form.titlePlaceholder')} />
-          </div>
+          <Input
+            label={t('createResource.form.title')}
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            required
+            placeholder={t('createResource.form.titlePlaceholder')}
+          />
           
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">{t('createResource.form.category')}</label>
-            <select value={category} onChange={e => setCategory(e.target.value as ResourceCategory)} className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]">
-              {Object.values(ResourceCategory).map(c_val => <option key={c_val} value={c_val}>{t(`resourceCategories.${c_val}`)}</option>)}
-            </select>
-          </div>
+          <Select
+            label={t('createResource.form.category')}
+            value={category}
+            onChange={e => setCategory(e.target.value as ResourceCategory)}
+          >
+            {Object.values(ResourceCategory).map(c_val => <option key={c_val} value={c_val}>{t(`resourceCategories.${c_val}`)}</option>)}
+          </Select>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">{t('createResource.form.region')}</label>
-            <input type="text" value={region} onChange={e => setRegion(e.target.value)} required className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]" placeholder={t('createResource.form.regionPlaceholder')} />
-          </div>
+          <Input
+            label={t('createResource.form.region')}
+            value={region}
+            onChange={e => setRegion(e.target.value)}
+            required
+            placeholder={t('createResource.form.regionPlaceholder')}
+          />
           
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">{t('createResource.form.schedule')}</label>
-            <input type="text" value={schedule} onChange={e => setSchedule(e.target.value)} required className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]" placeholder={t('createResource.form.schedulePlaceholder')} />
-          </div>
+          <Input
+            label={t('createResource.form.schedule')}
+            value={schedule}
+            onChange={e => setSchedule(e.target.value)}
+            required
+            placeholder={t('createResource.form.schedulePlaceholder')}
+          />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">{t('createResource.form.description')}</label>
-            <textarea value={description} onChange={e => setDescription(e.target.value)} required rows={4} className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]" placeholder={t('createResource.form.descriptionPlaceholder')}></textarea>
-          </div>
+          <Textarea
+            label={t('createResource.form.description')}
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            required
+            rows={4}
+            placeholder={t('createResource.form.descriptionPlaceholder')}
+          />
           
-           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">{t('createResource.form.contact')}</label>
-            <input type="text" value={contactInfo} onChange={e => setContactInfo(e.target.value)} className="w-full px-4 py-2 bg-white border border-[#EAE2D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#D4AF37]" placeholder={t('createResource.form.contactPlaceholder')} />
-          </div>
+          <Input
+            label={t('createResource.form.contact')}
+            value={contactInfo}
+            onChange={e => setContactInfo(e.target.value)}
+            placeholder={t('createResource.form.contactPlaceholder')}
+          />
 
-          <div className="fixed bottom-16 left-0 right-0 bg-[#FBF9F4]/80 backdrop-blur-sm p-4 border-t border-[#F1EADF]">
-            <button type="submit" className="w-full bg-[#D4AF37] text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors">
+          <div className="fixed bottom-4 left-0 right-0 bg-transparent p-4">
+            <Button type="submit" className="w-full max-w-md mx-auto">
               {t('createResource.form.submit')}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
@@ -95,12 +116,11 @@ const CreateResource: React.FC = () => {
         onClose={() => setConfirmModalOpen(false)}
         onConfirm={() => navigate(-1)}
         title={t('createEvent.discardTitle')}
+        message={t('createEvent.discardBody')}
         confirmText={t('createEvent.discardConfirm')}
         cancelText={t('createEvent.discardCancel')}
-      >
-        <p>{t('createEvent.discardBody')}</p>
-      </ConfirmationModal>
-    </>
+      />
+    </PageContainer>
   );
 };
 

@@ -138,6 +138,7 @@ const Main: React.FC = () => {
         <ReactRouterDOM.Route path="analytics" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]}><AnalyticsDashboard /></ProtectedRoute>} />
         <ReactRouterDOM.Route path="constellation" element={<Constellation />} />
         <ReactRouterDOM.Route path="achievements" element={<AchievementsPage />} />
+        <ReactRouterDOM.Route path="leaderboard" element={<Leaderboard />} />
         <ReactRouterDOM.Route path="resources" element={<ResourceHub />} />
         <ReactRouterDOM.Route path="resources/:resourceId" element={<ResourceDetail />} />
         <ReactRouterDOM.Route path="resources/new" element={<ProtectedRoute roles={[Role.NGO, Role.PublicWorker, Role.Admin]} verifiedOnly={true}><CreateResource /></ProtectedRoute>} />

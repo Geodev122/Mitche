@@ -42,24 +42,10 @@ const Dashboard: React.FC = () => {
   // Route to appropriate dashboard based on role
   switch (user.role) {
     case Role.Citizen:
-      // Mobile-first experience
-      if (useIsMobile()) {
-        return <MobileDashboard />;
-      }
-      return (
-        <div>
-          <MigrationNotice />
-          <CitizenDashboard />
-        </div>
-      );
+      return <MobileDashboard />;
     case Role.NGO:
     case Role.PublicWorker:
-      return (
-        <div>
-          <MigrationNotice />
-          <OrganizationDashboard />
-        </div>
-      );
+      return <MobileDashboard />;
     case Role.Admin:
       return <ReactRouterDOM.Navigate to="/admin" replace />;
     default:

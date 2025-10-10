@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { useData } from '../context/DataContext';
-import Card from '../components/ui/Card';
 import { BookOpen, Zap, Wind, Users, Heart } from 'lucide-react';
-import RippleButton from '../components/ui/RippleButton';
 import SymbolIcon from '../components/ui/SymbolIcon';
 import { TapestryThread, TapestryThreadColor, TapestryThreadPattern } from '../types';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import PageContainer from '../components/layout/PageContainer';
+import PageHeader from '../components/ui/PageHeader';
+import Card from '../components/ui/Card';
+import Button from '../design-system/Button';
 
 // A component to render the pattern visually
 const PatternVisual: React.FC<{ pattern: TapestryThreadPattern }> = ({ pattern }: { pattern: TapestryThreadPattern }) => {
@@ -36,7 +38,9 @@ const ThreadCard: React.FC<{ thread: TapestryThread }> = ({ thread }: { thread: 
     const [isPulsing, setIsPulsing] = React.useState(false);
     const colors = colorMap[thread.color as keyof typeof colorMap];
 
-    const handleEcho = () => {
+    const handleEcho = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
         echoThread(thread.id);
         setIsPulsing(true);
         setTimeout(() => setIsPulsing(false), 800); // Match animation duration
@@ -55,7 +59,7 @@ const ThreadCard: React.FC<{ thread: TapestryThread }> = ({ thread }: { thread: 
             style={cardStyle}
         >
             <PatternVisual pattern={thread.pattern} />
-            <div className="relative z-10">
+            <div className="relative z-10 p-4">
                 <div className="flex items-center mb-4">
                     {thread.isAnonymous ? (
                          <div className={`w-14 h-14 ${colors.bg} rounded-full flex items-center justify-center flex-shrink-0`}>
@@ -80,40 +84,36 @@ const ThreadCard: React.FC<{ thread: TapestryThread }> = ({ thread }: { thread: 
                         <Zap className="w-4 h-4 mr-1 rtl:mr-0 rtl:ml-1 text-blue-400" />
                         <span>{thread.rippleTag}</span>
                     </div>
-                    <RippleButton onClick={handleEcho} className="flex items-center hover:text-green-500 transition-colors active:scale-95" title="Echo this Story">
+                    <Button onClick={handleEcho} variant="ghost" size="sm" className="flex items-center hover:text-green-500 transition-colors active:scale-95" title="Echo this Story">
                         <Wind className="w-4 h-4 mr-1 rtl:mr-0 rtl:ml-1" />
                         <span>{t('tapestry.echoStory', { count: thread.echoes })}</span>
-                    </RippleButton>
+                    </Button>
                 </div>
             </div>
         </Card>
     );
 }
 
-const Skeleton: React.FC<{ className?: string }> = ({ className }: { className?: string }) => (
-  <div className={`bg-gray-200 rounded animate-pulse ${className}`}></div>
-);
-
 const ThreadCardSkeleton: React.FC = () => (
     <Card className="relative overflow-hidden border-2 border-gray-200">
          <div className="relative z-10">
             <div className="flex items-center mb-4">
-                <Skeleton className="w-14 h-14 rounded-full flex-shrink-0" />
+                <div className="w-14 h-14 rounded-full flex-shrink-0 bg-gray-200 animate-pulse" />
                 <div className="mx-4 flex-grow space-y-2">
-                    <Skeleton className="h-5 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
+                    <div className="h-5 w-3/4 bg-gray-200 rounded animate-pulse" />
+                    <div className="h-4 w-1/2 bg-gray-200 rounded animate-pulse" />
                 </div>
             </div>
             
             <div className="space-y-2">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-5/6" />
+                <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
+                <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
+                <div className="h-4 w-5/6 bg-gray-200 rounded animate-pulse" />
             </div>
 
             <div className="flex justify-between items-center border-t border-gray-200 pt-3 mt-4">
-                <Skeleton className="h-5 w-12" />
-                <Skeleton className="h-5 w-24" />
+                <div className="h-5 w-12 bg-gray-200 rounded animate-pulse" />
+                <div className="h-5 w-24 bg-gray-200 rounded animate-pulse" />
             </div>
         </div>
     </Card>
@@ -139,7 +139,7 @@ const HopeTapestry: React.FC = () => {
         const el = refs.current[highlightThreadId];
         if (el) {
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            el.classList.add('ring-4', 'ring-amber-300');
+            el.classList.add('ring-4', 'ring-amber-300', 'transition-all', 'duration-300');
             setTimeout(() => el.classList.remove('ring-4', 'ring-amber-300'), 3000);
         }
     }, [highlightThreadId, tapestryThreads]);
@@ -148,91 +148,76 @@ const HopeTapestry: React.FC = () => {
         ? sortedThreads
         : sortedThreads.filter(t => t.color === filter);
 
-    const filterOptions: { label: string; value: 'All' | TapestryThreadColor; }[] = [
-        { label: t('tapestry.filterAll'), value: 'All' },
-        { label: t('tapestry.filterBuilders'), value: TapestryThreadColor.Gold },
-        { label: t('tapestry.filterHeroes'), value: TapestryThreadColor.Blue },
-        { label: t('tapestry.filterVoices'), value: TapestryThreadColor.Amber },
-    ];
-
     return (
-        <div className="p-4 pb-24">
-            <header className="text-center my-6">
-                <BookOpen className="w-12 h-12 mx-auto text-[#D4AF37] mb-2"/>
-                <h1 className="text-3xl font-bold text-gray-800">{t('tapestry.title')}</h1>
-                <p className="text-md text-gray-500 mt-1">{t('tapestry.subtitle')}</p>
-            </header>
-            
-            <Card className="mb-6">
-                 <div className="flex justify-around text-center">
-                    <div className="flex flex-col items-center">
-                        <Users className="w-6 h-6 text-gray-500 mb-1" />
-                        <span className="font-bold text-lg">{totalThreads}</span>
-                        <span className="text-xs text-gray-500">{t('tapestry.threads')}</span>
+        <PageContainer>
+            <PageHeader
+                icon={<BookOpen size={28} />}
+                title={t('tapestry.title')}
+                subtitle={t('tapestry.subtitle')}
+            />
+
+            <Card className="my-6">
+                <div className="grid grid-cols-3 divide-x divide-gray-200 text-center">
+                    <div className="p-3">
+                        <p className="text-2xl font-bold text-gray-800">{totalThreads}</p>
+                        <p className="text-sm text-gray-500">{t('tapestry.totalThreads')}</p>
                     </div>
-                    <div className="flex flex-col items-center">
-                        <Heart className="w-6 h-6 text-gray-500 mb-1" />
-                        <span className="font-bold text-lg">{totalEchoes}</span>
-                        <span className="text-xs text-gray-500">{t('tapestry.echoes')}</span>
+                    <div className="p-3">
+                        <p className="text-2xl font-bold text-gray-800">{totalEchoes}</p>
+                        <p className="text-sm text-gray-500 flex items-center justify-center gap-1"><Wind size={14} /> {t('tapestry.totalEchoes')}</p>
                     </div>
-                    <div className="flex flex-col items-center">
-                        <Zap className="w-6 h-6 text-gray-500 mb-1" />
-                        <span className="font-bold text-lg">{totalRipples}</span>
-                        <span className="text-xs text-gray-500">{t('tapestry.souls')}</span>
+                    <div className="p-3">
+                        <p className="text-2xl font-bold text-gray-800">{totalRipples}</p>
+                        <p className="text-sm text-gray-500 flex items-center justify-center gap-1"><Zap size={14} /> {t('tapestry.totalRipples')}</p>
                     </div>
                 </div>
             </Card>
 
-            <div className="mb-6">
+            <div className="mb-4">
                 <div className="flex space-x-2 rtl:space-x-reverse overflow-x-auto pb-2 -mx-4 px-4">
-                    {filterOptions.map(opt => {
-                        const isActive = filter === opt.value;
-                        let activeClasses = '';
-                        if (isActive) {
-                            if (opt.value === 'All') {
-                                activeClasses = 'bg-[#3A3A3A] text-white border-transparent';
-                            } else {
-                                const colors = colorMap[opt.value];
-                                activeClasses = `${colors.bg} ${colors.text} ${colors.border}`;
-                            }
-                        }
-                        const inactiveClasses = 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50';
-
-                        return (
-                            <button
-                                key={opt.value}
-                                onClick={() => setFilter(opt.value)}
-                                className={`px-4 py-2 text-sm font-semibold rounded-full border transition-colors whitespace-nowrap ${isActive ? activeClasses : inactiveClasses}`}
-                            >
-                                {opt.label}
-                            </button>
-                        );
-                    })}
+                    <FilterChip label={t('tapestry.allThreads')} value="All" currentFilter={filter} setFilter={setFilter} />
+                    {Object.values(TapestryThreadColor).map(color => (
+                        <FilterChip key={color} label={color} value={color} currentFilter={filter} setFilter={setFilter} />
+                    ))}
                 </div>
             </div>
 
-            <div className="space-y-6">
-                {loading ? (
-                    <>
-                        <ThreadCardSkeleton />
-                        <ThreadCardSkeleton />
-                    </>
-                ) : filteredThreads.length > 0 ? (
-                    filteredThreads.map((thread) => (
-                        <div key={thread.id} ref={(el) => { refs.current[thread.id] = el; }}>
+            {loading ? (
+                <div className="space-y-4">
+                    <ThreadCardSkeleton />
+                    <ThreadCardSkeleton />
+                </div>
+            ) : filteredThreads.length > 0 ? (
+                <div className="space-y-4">
+                    {filteredThreads.map(thread => (
+                        <div key={thread.id} ref={el => { if(refs.current) refs.current[thread.id] = el; }}>
                             <ThreadCard thread={thread} />
                         </div>
-                    ))
-                ) : (
-                     <div className="text-center text-gray-500 py-16">
-                        <BookOpen size={48} className="mx-auto text-gray-300 mb-4" />
-                        <p className="font-semibold">{t('tapestry.emptyTitle')}</p>
-                        <p className="text-sm">{t('tapestry.emptySubtitle')}</p>
-                    </div>
-                )}
-            </div>
-        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="text-center py-16 text-gray-500">
+                    <Heart size={48} className="mx-auto text-gray-300 mb-4" />
+                    <p className="font-semibold">{t('tapestry.emptyTitle')}</p>
+                    <p className="text-sm">{t('tapestry.emptySubtitle')}</p>
+                </div>
+            )}
+        </PageContainer>
     );
 };
+
+const FilterChip: React.FC<{ label: string; value: any; currentFilter: any; setFilter: (value: any) => void; }> = 
+({ label, value, currentFilter, setFilter }) => (
+  <button
+    onClick={() => setFilter(value)}
+    className={`px-4 py-2 text-sm font-semibold rounded-full border transition-colors whitespace-nowrap ${
+      currentFilter === value
+        ? 'bg-[#3A3A3A] text-white border-transparent'
+        : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+    }`}
+  >
+    {label}
+  </button>
+);
 
 export default HopeTapestry;

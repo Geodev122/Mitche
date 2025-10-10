@@ -1,31 +1,43 @@
 import * as React from 'react';
-import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import * as ReactRouterDOM from 'react-router-dom';
-import { MessageSquare, Calendar, BookOpen } from 'lucide-react';
+import { useNavigate, Navigate } from 'react-router-dom';
+import { MessageSquare, Calendar, BookOpen, Star, Sun } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { AdvancedSearch } from '../../components/search/AdvancedSearch';
 import TapestryPreview from '../../components/tapestry/TapestryPreview';
 import { RatingSystem } from '../../components/rating/RatingSystem';
-import Modal from '../../components/ui/Modal';
 import DailyRitual from '../../components/ui/DailyRitual';
-import { DEMO_REQUESTS, DEMO_EVENTS, DEMO_RESOURCES } from './demoData';
+import PageContainer from '../../components/layout/PageContainer';
+import Card from '../../components/ui/Card';
+
+const NavTile: React.FC<{ title: string; subtitle: string; path: string; icon: React.ElementType }> = ({ title, subtitle, path, icon: Icon }) => {
+    const navigate = useNavigate();
+    return (
+        <Card 
+            onClick={() => navigate(path)} 
+            className="flex items-center gap-6 p-6 cursor-pointer hover:shadow-lg hover:border-amber-400 transition-all duration-300 group"
+        >
+            <div className="bg-amber-50 p-4 rounded-full group-hover:bg-amber-100 transition-colors">
+                <Icon className="w-8 h-8 text-amber-500" />
+            </div>
+            <div>
+                <h2 className="font-bold text-lg text-gray-800">{title}</h2>
+                <p className="text-sm text-gray-500">{subtitle}</p>
+            </div>
+        </Card>
+    );
+};
 
 const CitizenDashboard: React.FC = () => {
   const { user } = useAuth();
-  const navigate = ReactRouterDOM.useNavigate();
   const { t } = useTranslation();
-  // Advanced search moved to sidebar/profile panel; remove inline search from main dashboard
-  const [ratingModalOpen, setRatingModalOpen] = React.useState(false);
-  const [ratingTarget, setRatingTarget] = React.useState<{ id: string; type: any; name?: string } | null>(null);
+  const navigate = useNavigate();
 
-  // Safety check - should not happen due to App.tsx routing, but good practice
   if (!user) {
-    return <ReactRouterDOM.Navigate to="/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   if (!user.hasCompletedOnboarding) {
-    return <ReactRouterDOM.Navigate to="/onboarding" replace />;
+    return <Navigate to="/onboarding" replace />;
   }
 
   const navTiles = [
@@ -35,72 +47,53 @@ const CitizenDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="shell">
-      <header className="shell-header">
-        <h1 className="text-lg font-bold text-gray-800">{t('dashboard.citizen.title', 'Sanctuary')}</h1>
-      </header>
-      <main className="shell-content">
-        <div className="p-4 pb-24">
+    <PageContainer>
+      <div className="p-4 md:p-6 border-b border-gray-200">
+        <h1 className="text-2xl font-bold text-gray-800">{t('dashboard.citizen.title', 'Sanctuary')}</h1>
+      </div>
+      <div className="p-4 md:p-6">
           <header className="text-center my-8">
-            <h1 className="text-2xl text-gray-700">
+            <h1 className="text-3xl font-bold text-gray-800">
               {t('sanctuary.welcome', { name: user?.symbolicName || 'Friend' })}
             </h1>
-            <p className="text-md text-gray-500 mt-2">"{t('sanctuary.quote')}"</p>
+            <p className="text-md text-gray-500 mt-2 max-w-2xl mx-auto">"{t('sanctuary.quote')}"</p>
           </header>
 
-          {/* Tapestry preview (Phase 1 feature surfaced on Home) */}
-          <div className="mb-6">
+          <div className="mb-8">
             <TapestryPreview />
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {navTiles.map((tile) => (
-              <div 
-                key={tile.path} 
-                onClick={() => navigate(tile.path)} 
-                className="bg-white rounded-xl shadow-sm border border-[#F1EADF] p-6 flex items-center space-x-4 rtl:space-x-reverse cursor-pointer hover:shadow-md hover:border-[#D4AF37] active:scale-95 transition-all duration-300"
-              >
-                <div className="bg-[#FBF9F4] p-4 rounded-full">
-                    <tile.icon className="w-8 h-8 text-[#D4AF37]" />
-                </div>
-                <div>
-                  <h2 className="font-bold text-lg text-gray-800">{tile.title}</h2>
-                  <p className="text-sm text-gray-500">{tile.subtitle}</p>
-                </div>
-              </div>
+              <NavTile key={tile.path} {...tile} />
             ))}
           </div>
 
-          {/* AdvancedSearch intentionally removed from main dashboard; accessible from sidebar/profile */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-gray-100 rounded-full"><Star className="w-5 h-5 text-gray-600" /></div>
+                    <h3 className="font-semibold text-lg text-gray-800">{t('dashboard.ratingExample.title')}</h3>
+                </div>
+                <RatingSystem
+                    targetId="sample-user-1"
+                    targetType="user"
+                    targetName="Community Helper"
+                    currentRating={{ average: 4.6, count: 21 }}
+                    showReviewForm={true}
+                />
+            </Card>
 
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-lg p-4">
-              <h3 className="font-semibold mb-3">Quick Rating Example</h3>
-              <RatingSystem
-                targetId="sample-user-1"
-                targetType="user"
-                targetName="Community Helper"
-                currentRating={{ average: 4.6, count: 21 }}
-                showReviewForm={true}
-              />
-            </div>
-
-            <DailyRitual />
+            <Card>
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-gray-100 rounded-full"><Sun className="w-5 h-5 text-gray-600" /></div>
+                    <h3 className="font-semibold text-lg text-gray-800">{t('dashboard.dailyRitual.title')}</h3>
+                </div>
+                <DailyRitual />
+            </Card>
           </div>
-
-          <Modal isOpen={ratingModalOpen} onClose={() => setRatingModalOpen(false)} title={ratingTarget ? `Rate ${ratingTarget.name || ratingTarget.id}` : 'Rate'}>
-            {ratingTarget && (
-              <RatingSystem
-                targetId={ratingTarget.id}
-                targetType={ratingTarget.type}
-                targetName={ratingTarget.name}
-                onRatingSubmitted={() => setRatingModalOpen(false)}
-              />
-            )}
-          </Modal>
-        </div>
-      </main>
-    </div>
+      </div>
+    </PageContainer>
   );
 };
 

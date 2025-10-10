@@ -9,26 +9,8 @@ const Layout: React.FC = () => {
       {/* skip link for keyboard users */}
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:bg-white focus:p-2 focus:rounded focus:shadow">Skip to content</a>
       <Header />
-      <main id="main-content" className="flex-grow max-w-6xl mx-auto p-4">
-        {/* Grid: sidebar / main / right */}
-        <div className="grid-3">
-          {/* Sidebar: will render the Outlet's sidebar via route nesting or show blank */}
-          <aside className="sidebar-profile">
-            {/* allow nested routes to render here if needed */}
-            <ReactRouterDOM.Outlet context={{ region: 'sidebar' }} />
-          </aside>
-
-          {/* Main content */}
-          <section>
-            <ReactRouterDOM.Outlet />
-          </section>
-
-          {/* Right column: contextual hero */}
-          <aside className="right-hero">
-            {/* Additional widgets can mount here via routes or direct components */}
-            {/* default content: nothing, pages may render their own right-column content */}
-          </aside>
-        </div>
+      <main id="main-content" className="flex-grow">
+        <ReactRouterDOM.Outlet />
       </main>
 
       {/* Floating Action Button for quick create */}

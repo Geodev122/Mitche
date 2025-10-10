@@ -1,11 +1,13 @@
 import * as React from 'react';
 import AchievementsPanel from '../components/ui/AchievementsPanel';
 
+import PageContainer from '../components/layout/PageContainer';
+
 const AchievementsPage: React.FC = () => {
   return (
-    <div className="container mx-auto p-4">
+    <PageContainer title="Achievements">
       <AchievementsPanel />
-    </div>
+    </PageContainer>
   );
 };
 
