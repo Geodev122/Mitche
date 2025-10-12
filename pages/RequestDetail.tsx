@@ -16,6 +16,7 @@ import { Textarea } from '../design-system/Textarea';
 import { Input } from '../design-system/Input';
 import { Select } from '../design-system/Select';
 import Modal from '../design-system/Modal';
+import { TapestryThreadColor, TapestryThreadPattern } from '../types/tapestryThread';
 
 
 const statusStyles: { [key in RequestStatus]: { text: string; classes: string } } = {
@@ -122,14 +123,13 @@ const RequestDetail: React.FC = () => {
   const handleAddTapestry = () => {
     if (tapestryStory.trim() === '') return;
     addTapestryThread({
-      requestId: request.id,
       story: tapestryStory,
       isAnonymous: tapestryRevealChoice === 'Anonymous',
       authorName: tapestryRevealChoice === 'Reveal' ? tapestryRealName : user.symbolicName || 'Anonymous',
       authorPhotoUrl: tapestryRevealChoice === 'Reveal' ? tapestryPhotoUrl : user.photoUrl,
-      color: tapestryColor,
-      pattern: tapestryPattern,
-    }, user.id);
+      color: tapestryColor as TapestryThreadColor,
+      pattern: tapestryPattern as TapestryThreadPattern,
+    });
     setAddTapestryOpen(false);
     // Reset tapestry form
     setTapestryStory('');
@@ -235,10 +235,11 @@ const RequestDetail: React.FC = () => {
         onClose={() => setHelpModalOpen(false)}
         onConfirm={handleInitiateHelp}
         title={t('requestDetail.confirmHelp.title')}
-        message={t('requestDetail.confirmHelp.message')}
         confirmText={t('requestDetail.confirmHelp.confirm')}
         cancelText={t('requestDetail.confirmHelp.cancel')}
-      />
+      >
+        <p>{t('requestDetail.confirmHelp.message')}</p>
+      </ConfirmationModal>
 
       <Modal isOpen={isEncourageModalOpen} onClose={() => setEncourageModalOpen(false)} title={t('requestDetail.encourageModal.title')}>
         <div className="space-y-4">
@@ -260,7 +261,7 @@ const RequestDetail: React.FC = () => {
         isOpen={isCommendationModalOpen}
         onClose={() => setCommendationModalOpen(false)}
         onSubmit={handleLeaveCommendation}
-        isRequester={isOwner}
+        userName={isOwner ? helper?.symbolicName || 'Helper' : request.user?.symbolicName || 'Requester'}
       />
 
       <Modal isOpen={isAddTapestryOpen} onClose={() => setAddTapestryOpen(false)} title={t('requestDetail.tapestryModal.title')}>
@@ -295,16 +296,10 @@ const RequestDetail: React.FC = () => {
             )}
             <div className="grid grid-cols-2 gap-4">
               <Select label={t('requestDetail.tapestryModal.colorLabel')} value={tapestryColor} onChange={e => setTapestryColor(e.target.value)}>
-                  <option>Amber</option>
-                  <option>Rose</option>
-                  <option>Sky</option>
-                  <option>Jade</option>
+                  {Object.values(TapestryThreadColor).map(color => <option key={color} value={color}>{color}</option>)}
               </Select>
               <Select label={t('requestDetail.tapestryModal.patternLabel')} value={tapestryPattern} onChange={e => setTapestryPattern(e.target.value)}>
-                  <option>Spirals</option>
-                  <option>Weave</option>
-                  <option>Dots</option>
-                  <option>Blossom</option>
+                  {Object.values(TapestryThreadPattern).map(pattern => <option key={pattern} value={pattern}>{pattern}</option>)}
               </Select>
             </div>
             <div className="flex justify-end gap-2 pt-4">

@@ -114,8 +114,9 @@ const CreateRequest: React.FC = () => {
         onClose={() => setConfirmModalOpen(false)}
         onConfirm={() => navigate(-1)}
         title={t('createRequest.confirm.title')}
-        message={t('createRequest.confirm.message')}
-      />
+      >
+        <p>{t('createRequest.confirm.message')}</p>
+      </ConfirmationModal>
     </PageContainer>
   );
 };

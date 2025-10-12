@@ -159,6 +159,24 @@ const AdminDashboard: React.FC = () => {
     const [page, setPage] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(8);
 
+    const filteredUsers = React.useMemo(() => {
+        return users.filter(u => 
+            (u.displayName || '').toLowerCase().includes(queryText.toLowerCase()) ||
+            (u.symbolicName || '').toLowerCase().includes(queryText.toLowerCase()) ||
+            (u.username || '').toLowerCase().includes(queryText.toLowerCase())
+        );
+    }, [users, queryText]);
+
+    const paginatedUsers = React.useMemo(() => {
+        const start = (page - 1) * pageSize;
+        return filteredUsers.slice(start, start + pageSize);
+    }, [filteredUsers, page, pageSize]);
+
+    const totalPages = React.useMemo(() => {
+        return Math.ceil(filteredUsers.length / pageSize);
+    }, [filteredUsers, pageSize]);
+
+
     const refreshUsers = React.useCallback(() => {
         setUsers(getAllUsers());
     }, [getAllUsers]);
@@ -380,7 +398,7 @@ const AdminDashboard: React.FC = () => {
     return (
         <div className="p-4 sm:p-6">
             <PageHeader
-                icon={<Shield size={28} />}
+                icon={Shield}
                 title={t('admin.title')}
                 subtitle={t('admin.subtitle')}
             />

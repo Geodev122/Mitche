@@ -99,10 +99,11 @@ const CreateEvent: React.FC = () => {
         onClose={() => setConfirmModalOpen(false)}
         onConfirm={() => navigate(-1)}
         title={t('createEvent.discardTitle')}
-        message={t('createEvent.discardBody')}
         confirmText={t('createEvent.discardConfirm')}
         cancelText={t('createEvent.discardCancel')}
-      />
+      >
+        <p>{t('createEvent.discardBody')}</p>
+      </ConfirmationModal>
     </PageContainer>
   );
 };

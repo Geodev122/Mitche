@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { useData } from '../context/DataContext';
 import { PlusCircle, PackageSearch, ShieldCheck, Star } from 'lucide-react';
 import * as ReactRouterDOM from 'react-router-dom';
@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { useRatingModal } from '../context/RatingModalContext';
 import { useTranslation } from 'react-i18next';
 import { timeSince } from '../utils/time';
+import { Skeleton } from '../components/ui/Skeleton';
 import PageContainer from '../components/layout/PageContainer';
 import PageHeader from '../components/ui/PageHeader';
 import Button from '../design-system/Button';
@@ -110,19 +111,18 @@ const ResourceHub: React.FC = () => {
   const { t } = useTranslation();
   const [filter, setFilter] = React.useState<ResourceCategory | 'All'>('All');
 
-  const filteredResources = resources.filter(res => filter === 'All' || res.category === filter);
-  
+  const filteredResources = filter === 'All' ? resources : resources.filter(r => r.category === filter);
+
   const canCreateResource = user && user.isVerified && [Role.NGO, Role.PublicWorker, Role.Admin].includes(user.role);
 
   return (
     <PageContainer>
       <PageHeader
-        icon={<PackageSearch size={28} />}
-        title={t('resources.title')}
-        subtitle={t('resources.subtitle')}
+        icon={PackageSearch}
+        title={t('resourceHub.title')}
+        subtitle={t('resourceHub.subtitle')}
       />
-
-      <div className="my-4">
+      <div className="mb-4">
           <div className="flex space-x-2 rtl:space-x-reverse overflow-x-auto pb-2 -mx-4 px-4">
               <FilterChip label={t('echoes.allCategories')} value="All" currentFilter={filter} setFilter={setFilter} />
               {Object.values(ResourceCategory).map(type => (

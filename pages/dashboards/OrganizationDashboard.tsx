@@ -69,7 +69,7 @@ const OrganizationDashboard: React.FC = () => {
                     <Card className="flex flex-col">
                         <div className="flex justify-between items-center mb-3">
                             <h2 className="text-xl font-bold text-gray-800">{t('orgDashboard.silentWhispers.title')}</h2>
-                            <Button variant="link" onClick={() => navigate('/echoes')}>{t('orgDashboard.viewAll')}</Button>
+                            <Button variant="ghost" onClick={() => navigate('/echoes')}>{t('orgDashboard.viewAll')}</Button>
                         </div>
                         <p className="text-sm text-gray-500 mb-4">{t('orgDashboard.silentWhispers.subtitle')}</p>
                         <div className="space-y-2 flex-grow">
@@ -83,7 +83,7 @@ const OrganizationDashboard: React.FC = () => {
                     <Card className="flex flex-col">
                         <div className="flex justify-between items-center mb-3">
                             <h2 className="text-xl font-bold text-gray-800">{t('orgDashboard.echoes.title')}</h2>
-                            <Button variant="link" onClick={() => navigate('/echoes')}>{t('orgDashboard.viewAll')}</Button>
+                            <Button variant="ghost" onClick={() => navigate('/echoes')}>{t('orgDashboard.viewAll')}</Button>
                         </div>
                         <div className="space-y-2 flex-grow">
                             {loudRequests.slice(0, 3).map(req => (
@@ -98,7 +98,7 @@ const OrganizationDashboard: React.FC = () => {
                     <Card>
                         <div className="flex justify-between items-center mb-3">
                             <h2 className="text-xl font-bold text-gray-800">{t('orgDashboard.events.title')}</h2>
-                            <Button variant="link" onClick={() => navigate('/events')}>{t('orgDashboard.viewAll')}</Button>
+                            <Button variant="ghost" onClick={() => navigate('/events')}>{t('orgDashboard.viewAll')}</Button>
                         </div>
                         <div className="space-y-2">
                             {orgEvents.slice(0, 3).map(event => (

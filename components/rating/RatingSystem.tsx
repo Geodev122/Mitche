@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 
 interface RatingSystemProps {
   targetId: string;
-  targetType: 'user' | 'request' | 'offering' | 'event';
+  targetType: 'user' | 'request' | 'offering' | 'event' | 'resource';
   targetName?: string;
   currentRating?: {
     average: number;
@@ -102,6 +102,7 @@ export const RatingSystem: React.FC<RatingSystemProps> = ({
       case 'request': return 'Request';
       case 'offering': return 'Offering';
       case 'event': return 'Event';
+      case 'resource': return 'Resource';
       default: return 'Item';
     }
   };

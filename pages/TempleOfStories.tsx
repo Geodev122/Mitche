@@ -151,7 +151,7 @@ const HopeTapestry: React.FC = () => {
     return (
         <PageContainer>
             <PageHeader
-                icon={<BookOpen size={28} />}
+                icon={BookOpen}
                 title={t('tapestry.title')}
                 subtitle={t('tapestry.subtitle')}
             />

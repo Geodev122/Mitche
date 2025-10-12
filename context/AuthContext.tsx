@@ -29,7 +29,7 @@ interface AuthContextType {
   updateAnyUser: (updatedUser: User) => void;
   getAllUsers: () => User[];
   generateUniqueUsernames: () => string[];
-  updateVerificationStatus: (userId: string, status: 'Approved' | 'Rejected') => void;
+  updateVerificationStatus: (userId: string, status: VerificationStatus) => void;
   migrateToFirebase: () => Promise<void>;
   // Enhanced services for Phase 1 features (loaded dynamically)
   enhancedFirebase: any;
@@ -390,7 +390,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
   
-  const updateVerificationStatus = (userId: string, status: 'Approved' | 'Rejected') => {
+  const updateVerificationStatus = (userId: string, status: VerificationStatus) => {
     if (isFirebaseEnabled) {
       getFirebaseService().then(fs => fs.updateUser(userId, {
         verificationStatus: status,
@@ -405,8 +405,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           saveUsers(users);
           
           if (user && user.id === userId) {
-              setUser(users[userIndex]);
-              localStorage.setItem('michyUser', JSON.stringify(users[userIndex]));
+            const updatedUser = { ...user, verificationStatus: status, isVerified: status === 'Approved' };
+            setUser(updatedUser);
+            localStorage.setItem('michyUser', JSON.stringify(updatedUser));
           }
       }
     }

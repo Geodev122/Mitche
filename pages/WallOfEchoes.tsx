@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { useData } from '../context/DataContext';
 import { PlusCircle, MessageSquare, Star } from 'lucide-react';
 import * as ReactRouterDOM from 'react-router-dom';
@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { timeSince } from '../utils/time';
 import { useRatingModal } from '../context/RatingModalContext';
+import { Skeleton } from '../components/ui/Skeleton';
 import PageContainer from '../components/layout/PageContainer';
 import PageHeader from '../components/ui/PageHeader';
 import Button from '../design-system/Button';
@@ -115,54 +116,36 @@ const WallOfEchoes: React.FC = () => {
     ? requests.filter(req => req.mode === RequestMode.Loud)
     : requests;
 
-  const filteredRequests = visibleRequests.filter(req => filter === 'All' || req.type === filter);
-  
-  const canCreateRequest = user?.role === Role.Citizen;
+  const filteredRequests = requests.filter(r => r.mode === 'Loud');
 
-  return (
-    <PageContainer>
-      <PageHeader
-        icon={<MessageSquare size={28} />}
-        title={t('echoes.title')}
-        subtitle={t('echoes.subtitle')}
-      />
+    return (
+        <PageContainer>
+            <PageHeader
+                icon={MessageSquare}
+                title={t('echoes.title')}
+                subtitle={t('echoes.subtitle')}
+            />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {loading && Array.from({ length: 6 }).map((_, i) => <RequestCardSkeleton key={i} />)}
+                {!loading && filteredRequests.length === 0 && (
+                    <div className="col-span-full text-center py-16 text-gray-500">
+                        <MessageSquare size={48} className="mx-auto text-gray-300 mb-4" />
+                        <p className="font-semibold">{t('echoes.emptyTitle')}</p>
+                        <p className="text-sm">{t('echoes.emptySubtitle')}</p>
+                    </div>
+                )}
+                {!loading && filteredRequests.map(request => <RequestCard key={request.id} request={request} />)}
+            </div>
 
-      <div className="my-4">
-          <div className="flex space-x-2 rtl:space-x-reverse overflow-x-auto pb-2 -mx-4 px-4">
-              <FilterChip label={t('echoes.allCategories')} value="All" currentFilter={filter} setFilter={setFilter} />
-              {Object.values(RequestType).map(type => (
-                <FilterChip key={type} label={t(`requestTypes.${type}`)} value={type} currentFilter={filter} setFilter={setFilter} />
-              ))}
-          </div>
-      </div>
-
-
-      {loading ? (
-        <div className="space-y-4 mt-6">
-          <RequestCardSkeleton />
-          <RequestCardSkeleton />
-        </div>
-      ) : filteredRequests.length > 0 ? (
-        <div className="space-y-4 mt-6">
-          {filteredRequests.map(request => <RequestCard key={request.id} request={request} />)}
-        </div>
-      ) : (
-        <div className="text-center py-16 text-gray-500">
-          <MessageSquare size={48} className="mx-auto text-gray-300 mb-4" />
-          <p className="font-semibold">{t('echoes.emptyTitle')}</p>
-          <p className="text-sm">{t('echoes.emptySubtitle')}</p>
-        </div>
-      )}
-
-      {canCreateRequest && (
-        <ReactRouterDOM.Link to="/echoes/new" className="fixed bottom-24 right-6 rtl:right-auto rtl:left-6">
-          <Button size="lg" className="shadow-lg">
-            <PlusCircle size={20} className="mr-2" /> {t('echoes.create')}
-          </Button>
-        </ReactRouterDOM.Link>
-      )}
-    </PageContainer>
-  );
+            {user?.role === Role.Citizen && (
+                <ReactRouterDOM.Link to="/echoes/new" className="fixed bottom-24 right-6 rtl:right-auto rtl:left-6">
+                    <Button size="lg" className="shadow-lg">
+                        <PlusCircle size={20} className="mr-2" /> {t('echoes.create')}
+                    </Button>
+                </ReactRouterDOM.Link>
+            )}
+        </PageContainer>
+    );
 };
 
 export default WallOfEchoes;

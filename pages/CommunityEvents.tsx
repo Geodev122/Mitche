@@ -99,7 +99,7 @@ const CommunityEvents: React.FC = () => {
   return (
     <PageContainer>
       <PageHeader
-        icon={<Users size={28} />}
+        icon={Users}
         title={t('events.title')}
         subtitle={t('events.subtitle')}
       />
